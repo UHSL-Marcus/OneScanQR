@@ -1,0 +1,17 @@
+POST http://apiharness.ensygnia.net/RequestOnescanSession.aspx?_dt=1464172128539 HTTP/1.1
+Host: apiharness.ensygnia.net
+Connection: keep-alive
+Content-Length: 1124
+Accept: application/json, text/javascript, */*; q=0.01
+Origin: http://apiharness.ensygnia.net
+X-Requested-With: XMLHttpRequest
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36
+Content-Type: application/json; charset=UTF-8
+DNT: 1
+Referer: http://apiharness.ensygnia.net/padlock.aspx
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.8
+Cookie: ARRAffinity=6a717d3fdddcc7ad602b0319c28d60e5005b35fed10192cfd602f9bf203f49ce
+
+{"padlock":"%7b%22ProcessType%22%3a%22Login%22%2c%22MessageType%22%3a%22StartLogin%22%2c%22SessionData%22%3a%22%7b%5c%22FullPayload%5c%22%3a%7b%5c%22ProcessType%5c%22%3a%5c%22Login%5c%22%2c%5c%22MessageType%5c%22%3a%5c%22StartLogin%5c%22%2c%5c%22SessionData%5c%22%3a%5c%22CUSTOM+SESSION+DATA%5c%22%2c%5c%22Version%5c%22%3a2%2c%5c%22MetaData%5c%22%3a%7b%5c%22EndpointURL%5c%22%3a%5c%22http%3a%2f%2fapiharness.ensygnia.net%2fOnescanCallback.aspx%5c%22%7d%2c%5c%22LoginPayload%5c%22%3a%7b%5c%22FriendlyName%5c%22%3a%5c%22API+Harness%5c%22%2c%5c%22SiteIdentifier%5c%22%3a%5c%22EE9D8995-04BB-452A-A4FE-066D3550662A%5c%22%2c%5c%22LoginMode%5c%22%3a%5c%22UserToken%5c%22%7d%7d%2c%5c%22TransactionId%5c%22%3a%5c%228082d60e-0fde-621e-69a4-ccc80df5d496%5c%22%2c%5c%22LoginResponseType%5c%22%3a%5c%22ProcessComplete%5c%22%7d%22%2c%22Version%22%3a2%2c%22MetaData%22%3a%7b%22EndpointURL%22%3a%22http%3a%2f%2fapiharness.ensygnia.net%2fOnescanCallback.aspx%22%7d%2c%22LoginPayload%22%3a%7b%22FriendlyName%22%3a%22API+Harness%22%2c%22SiteIdentifier%22%3a%22EE9D8995-04BB-452A-A4FE-066D3550662A%22%2c%22LoginMode%22%3a%22UserToken%22%7d%7d"}
+{"padlock":"%7B%22ProcessType%22%3A%22Login%22%2C%22MessageType%22%3A%22StartLogin%22%2C%22SessionData%22%3A%22CUSTOM%20SESSION%20DATA%22%2C%22Verson%22%3A2%2C%22MetaData%22%3A%7B%22EndpointURL%22%3A%22http%3A%2F%2Fapiharness.ensygnia.net%2FOnescanCallback.aspx%22%7D%2C%22LoginPayload%22%3A%7B%22FriendlyName%22%3A%22API%20Harness%22%2C%22SiteIdentifier%22%3A%22EE9D8995-04BB-452A-A4FE-066D3550662A%22%2C%22LoginMode%22%3A%22UserToken%22%7D%7D"}
