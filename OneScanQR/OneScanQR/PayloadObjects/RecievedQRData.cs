@@ -2,7 +2,7 @@
 
 namespace OneScanQR.PayloadObjects
 {
-    class Recieved
+    class RecievedQRData
     {
         public string Version;
         public string[] Errors;
@@ -11,9 +11,11 @@ namespace OneScanQR.PayloadObjects
         public bool PlayMode;
         public bool Success;
 
-        public static Recieved GetObject(string json)
+        public static RecievedQRData GetObject(string json)
         {
-            return JsonConvert.DeserializeObject<Recieved>(json);
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.NullValueHandling = NullValueHandling.Ignore;
+            return JsonConvert.DeserializeObject<RecievedQRData>(json, settings);
         }
         
     }

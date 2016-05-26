@@ -17,3 +17,10 @@ C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanQR\OneScanQR\bin\Debug\System
 C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanQR\OneScanQR\bin\Debug\System.Web.Http.xml
 C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanQR\OneScanQR\bin\Debug\System.Net.Http.xml
 C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanQR\OneScanQR\bin\Debug\System.Net.Http.Formatting.xml
+C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanQR\OneScanQR\bin\Debug\HtmlAgilityPack.dll
+C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanQR\OneScanQR\bin\Debug\HtmlRenderer.dll
+C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanQR\OneScanQR\bin\Debug\HtmlRenderer.WinForms.dll
+C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanQR\OneScanQR\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanQR\OneScanQR\bin\Debug\HtmlAgilityPack.xml
+C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanQR\OneScanQR\bin\Debug\HtmlRenderer.pdb
+C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanQR\OneScanQR\bin\Debug\HtmlRenderer.WinForms.pdb

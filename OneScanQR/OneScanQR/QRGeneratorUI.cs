@@ -3,6 +3,7 @@ using System.Windows.Forms;
 
 using OneScanQR.PayloadObjects;
 using OneScanQR.Utils;
+using System.Drawing;
 
 namespace OneScanQR
 {
@@ -27,18 +28,19 @@ namespace OneScanQR
                 BasePayload payload = new BasePayload();
                 payload.SetLoginPayload(lType);
                 string loginJson = payload.GetJson(true);
-                string padlock = (new Padlock(loginJson)).GetJson();
-                string resp;
-                if (HTTPRequest.HTTPJsonRequest(padlock, out resp))
+
+                Bitmap QR;
+                OneScanRequests oneScan = new OneScanRequests();
+                if (oneScan.padlockStart(loginJson, out QR))
                 {
-                    Recieved recievedPayload = Recieved.GetObject(resp);
-                    QRBox.Image = QRGen.GenerateQRCode(recievedPayload.qrImageData.QRData);
+                    QRBox.Image = QR;
+                    string url;
+                    if (oneScan.padlockContinue(out url))
+                        urlTxtBx.Text = url;
+                    else urlTxtBx.Text = "Continue Failed";
                 }
-                else
-                {
-                    QRBox.Image = QRGen.GenerateQRCode("http://ensygnia.com/?h31CmyJzshaaQfT461+IKw==");
-                }
+                else urlTxtBx.Text = "Padlock Failed";
             }
-    }
+        }
     }
 }

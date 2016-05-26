@@ -32,7 +32,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.QRBox = new System.Windows.Forms.PictureBox();
             this.QRGenBtn = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.urlTxtBx = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.QRBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -72,20 +72,19 @@
             this.QRGenBtn.UseVisualStyleBackColor = true;
             this.QRGenBtn.Click += new System.EventHandler(this.QRGenBtn_Click);
             // 
-            // textBox1
+            // urlTxtBx
             // 
-            this.textBox1.Location = new System.Drawing.Point(228, 12);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(284, 60);
-            this.textBox1.TabIndex = 4;
+            this.urlTxtBx.Location = new System.Drawing.Point(228, 12);
+            this.urlTxtBx.Name = "urlTxtBx";
+            this.urlTxtBx.Size = new System.Drawing.Size(284, 20);
+            this.urlTxtBx.TabIndex = 4;
             // 
             // QRGeneratorUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(524, 393);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.urlTxtBx);
             this.Controls.Add(this.QRGenBtn);
             this.Controls.Add(this.QRBox);
             this.Controls.Add(this.label1);
@@ -104,7 +103,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox QRBox;
         private System.Windows.Forms.Button QRGenBtn;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox urlTxtBx;
     }
 }
 
