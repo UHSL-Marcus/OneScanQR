@@ -33,8 +33,8 @@ namespace OneScanQR
                     responseBrowser.Visible = false;
                     QRBox.Image = QR;
                     
-                    if (!oneScan.padlockContinue(ScanComplete))
-                        urlTxtBx.Text = "Continue Failed";
+                    //if (!oneScan.padlockContinue(ScanComplete))
+                       // urlTxtBx.Text = "Continue Failed";
                 }
                 else urlTxtBx.Text = "Padlock Failed";
             }

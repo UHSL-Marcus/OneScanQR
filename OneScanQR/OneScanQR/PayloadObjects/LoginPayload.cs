@@ -21,11 +21,4 @@ namespace OneScanQR.PayloadObjects
         UserToken,
         TokenOrCredentials
     }
-
-    enum LoginResponseTypes
-    {
-        ProcessComplete,
-        RegisterUser,
-        LoginProblem
-    }
 }

@@ -11,8 +11,8 @@ namespace OneScanQR.Utils
         public static string GetPayload(LoginTypes type)
         {
             BasePayload payload = new BasePayload();
-            payload.SetLoginPayload(type, Guid.NewGuid().ToString(), true, LoginResponseTypes.ProcessComplete);
-            return payload.GetJson(true);
+            payload.SetLoginPayload(type, Guid.NewGuid().ToString());
+            return payload.GetJson();
         }
     }
 }
