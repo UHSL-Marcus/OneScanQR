@@ -10,13 +10,14 @@ using System.Text;
 
 namespace OneScanQR.Utils
 {
+    public delegate void HTTPAsyncCallback(string s);
     class RequestStruct
     {
         public WebRequest request;
         public WebResponse response;
         public Stream responseStream;
         public string responsedata;
-        public Action<string> asyncCallback;
+        public HTTPAsyncCallback asyncCallback;
 
         public RequestStruct()
         {
@@ -30,7 +31,7 @@ namespace OneScanQR.Utils
     }
     class HTTPRequest
     {
-        public static bool HTTPPostRequestAsync(string url, string data, Action<string> callback, NameValueCollection headers = null, NameValueCollection parameters = null)
+        public static bool HTTPPostRequestAsync(string url, string data, HTTPAsyncCallback callback, NameValueCollection headers = null, NameValueCollection parameters = null)
         {
             bool success = false;
 
@@ -95,7 +96,8 @@ namespace OneScanQR.Utils
             return success;
         }
 
-        public static bool HTTPGetRequestAsync(string url, Action<string> callback, NameValueCollection headers = null, NameValueCollection parameters = null)
+        
+        public static bool HTTPGetRequestAsync(string url, HTTPAsyncCallback callback, NameValueCollection headers = null, NameValueCollection parameters = null)
         {
             bool success = false;
 
@@ -128,11 +130,11 @@ namespace OneScanQR.Utils
 
             bool success = false;
             reqSt = null;
-
             try
             {
                 //using (WebClient client = GetWebClient(headers, parameters))
                 //success = DecodeReply(client.DownloadString(url), client, ref reply);
+                reqSt = new RequestStruct();
 
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(GetUrl(url, parameters));
                 req.Method = "GET";
@@ -229,6 +231,7 @@ namespace OneScanQR.Utils
             return success;
         }
 
+        
         private static void RequestCallback(IAsyncResult ar)
         {
             RequestStruct requestStruct = (RequestStruct)ar.AsyncState;

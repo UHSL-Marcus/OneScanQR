@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace OneScanQR.Utils
 {
@@ -99,8 +100,8 @@ namespace OneScanQR.Utils
             return success;
         }
 
-        delegate void callbackDel(string s);
-        public bool padlockContinue(out string finalUrl)
+        public delegate void padLockScannedCallback(bool success, string s);
+        public bool padlockContinue(padLockScannedCallback final)
         {
             bool success = false;
 
@@ -117,31 +118,33 @@ namespace OneScanQR.Utils
             NameValueCollection parameters = new NameValueCollection();
             parameters.Add("OnescanSessionID", sessionID);
 
-            RecievedStatusData data = new RecievedStatusData();
-            callbackDel callback = delegate(string s) {
-
-            };
-            do
+            HTTPAsyncCallback callback = null; 
+            callback = delegate(string reply)
             {
-                try
+                RecievedStatusData data = RecievedStatusData.GetObject(reply);
+                if (data.Status == 2)
+                    final(true, data.RedirectURL);
+                else
                 {
-                    string reply;
-                    if (HTTPRequest.HTTPGetRequestAsync(pollTarget, callback, headers, parameters))
-                    {
-                        data = RecievedStatusData.GetObject(reply);
-                    }
+                    Thread.Sleep(1000);
+                    if (data.Status == 3 || !HTTPRequest.HTTPGetRequestAsync(pollTarget, callback, headers, parameters))
+                        final(false, "");
                 }
-                catch (Exception e)
+            };
+           
+            try
+            {
+                if (HTTPRequest.HTTPGetRequestAsync(pollTarget, callback, headers, parameters))
                 {
-                    Console.WriteLine("Exception: " + e);
+                    success = true;
                 }
             }
-            while (data.Status != 2);
-
-            finalUrl = data.RedirectURL;
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e);
+            }
 
             return success;
         }
-        
     }
 }

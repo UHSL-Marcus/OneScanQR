@@ -14,18 +14,22 @@ namespace OneScanQR.PayloadObjects
         public MetaData MetaData = new MetaData();
         public LoginPayload LoginPayload;
 
-        public void SetLoginPayload(LoginTypes LoginMode, bool fullPayload = true, LoginResponseTypes respType = LoginResponseTypes.LoginProblem)
+        [JsonIgnore]
+        public string transactionID;
+
+        public void SetLoginPayload(LoginTypes LoginMode, string transactionID, bool fullPayload = true, LoginResponseTypes respType = LoginResponseTypes.LoginProblem)
         {
             LoginPayload = new LoginPayload();
             ProcessType = "Login";
             MessageType = "StartLogin";
+            this.transactionID = transactionID;
             LoginPayload.LoginMode = LoginMode.ToString();
             if (LoginMode == LoginTypes.Register)
                 LoginPayload.Profiles = new string[] { "basic" };  
             
             if (fullPayload)
             {
-                BaseFullPayload tempFpl = new BaseFullPayload(); tempFpl.SetLoginFullPayload(LoginMode, respType);
+                BaseFullPayload tempFpl = new BaseFullPayload(); tempFpl.SetLoginFullPayload(LoginMode, respType, transactionID);
                 SessionData = tempFpl.GetJson();
             } 
         }
@@ -48,12 +52,13 @@ namespace OneScanQR.PayloadObjects
         public string TransactionId = "tempID";
         public string LoginResponseType;
 
-        public void SetLoginFullPayload(LoginTypes type, LoginResponseTypes respType)
+        public void SetLoginFullPayload(LoginTypes type, LoginResponseTypes respType, string tranID)
         {
             FullPayload = new BasePayload();
-            FullPayload.SetLoginPayload(type, false);
+            FullPayload.SetLoginPayload(type, tranID, false);
 
             LoginResponseType = respType.ToString();
+            TransactionId = tranID;
         }
 
         public string GetJson()
@@ -66,10 +71,11 @@ namespace OneScanQR.PayloadObjects
 
     class MetaData
     {
-        public string EndpointURL = "http://apiharness.ensygnia.net/OnescanCallback.aspx";
+        //public string EndpointURL = "http://apiharness.ensygnia.net/OnescanCallback.aspx";
+        public string EndpointURL = "http://mmtsnap.mmt.herts.ac.uk/sssvc/ServiceImplimentation/start.svc"
     }
 
-    
 
-    
+
+
 }

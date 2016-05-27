@@ -33,6 +33,7 @@
             this.QRBox = new System.Windows.Forms.PictureBox();
             this.QRGenBtn = new System.Windows.Forms.Button();
             this.urlTxtBx = new System.Windows.Forms.TextBox();
+            this.responseBrowser = new System.Windows.Forms.WebBrowser();
             ((System.ComponentModel.ISupportInitialize)(this.QRBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -79,16 +80,26 @@
             this.urlTxtBx.Size = new System.Drawing.Size(284, 20);
             this.urlTxtBx.TabIndex = 4;
             // 
+            // responseBrowser
+            // 
+            this.responseBrowser.Location = new System.Drawing.Point(14, 78);
+            this.responseBrowser.MinimumSize = new System.Drawing.Size(20, 20);
+            this.responseBrowser.Name = "responseBrowser";
+            this.responseBrowser.Size = new System.Drawing.Size(498, 303);
+            this.responseBrowser.TabIndex = 5;
+            this.responseBrowser.Visible = false;
+            // 
             // QRGeneratorUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(524, 393);
+            this.Controls.Add(this.responseBrowser);
             this.Controls.Add(this.urlTxtBx);
             this.Controls.Add(this.QRGenBtn);
-            this.Controls.Add(this.QRBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.LoginActionCmbx);
+            this.Controls.Add(this.QRBox);
             this.Name = "QRGeneratorUI";
             this.Text = "OneScan QR";
             ((System.ComponentModel.ISupportInitialize)(this.QRBox)).EndInit();
@@ -104,6 +115,7 @@
         private System.Windows.Forms.PictureBox QRBox;
         private System.Windows.Forms.Button QRGenBtn;
         private System.Windows.Forms.TextBox urlTxtBx;
+        private System.Windows.Forms.WebBrowser responseBrowser;
     }
 }
 
