@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OneScanBackend")]
+[assembly: AssemblyTitle("OneScanWebServer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("OneScanBackend")]
+[assembly: AssemblyProduct("OneScanWebServer")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("9ca22df7-9005-427e-9edf-91f069ecccb6")]
+[assembly: Guid("5aa69f1b-8f9d-4e9e-a2d2-73fdd0b245f4")]
 
 // Version information for an assembly consists of the following four values:
 //
