@@ -1,30 +1,34 @@
-﻿using Microsoft.Web.WebSockets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.WebSockets;
+using System.Net.WebSockets;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Text;
+using Microsoft.Web.WebSockets;
 
-namespace WebSocketTest
+namespace WSChat
 {
     /// <summary>
-    /// Summary description for ChatHandler
+    /// Summary description for WSHandler
     /// </summary>
-    public class ChatHandler : IHttpHandler
+    public class WSHandler : IHttpHandler
     {
-
+        List<MyWSHandler> connections = new List<MyWSHandler>();
         public void ProcessRequest(HttpContext context)
         {
-            context.Response.ContentType = "text/plain";
-            context.Response.Write("Hello World");
-        }
-
-        public bool IsReusable
-        {
-            get
+            if (context.IsWebSocketRequest)
             {
-                return false;
+                MyWSHandler handler = new MyWSHandler();
+                context.AcceptWebSocketRequest(handler);
+                connections.Add(handler);
             }
         }
+
+        public bool IsReusable { get { return false; } }
+
     }
 
     public class MyWSHandler : WebSocketHandler

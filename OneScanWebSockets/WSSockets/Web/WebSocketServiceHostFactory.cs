@@ -9,7 +9,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.Threading.Tasks;
 
-namespace PushFrenzy.Web
+namespace WS.Web
 {
     public class WebSocketServiceHostFactory : ServiceHostFactory
     {

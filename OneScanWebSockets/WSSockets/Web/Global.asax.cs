@@ -6,9 +6,9 @@ using System.Web;
 using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
-using PushFrenzy.Server;
+using WS.Server;
 
-namespace PushFrenzy.Web
+namespace WS.Web
 {
     public class Global : System.Web.HttpApplication
     {
