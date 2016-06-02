@@ -10,13 +10,13 @@ using System.Text;
 
 namespace OneScanWebApp.Utils
 {
-    public delegate void HTTPAsyncCallback(string s);
+    public delegate void HTTPAsyncCallback(byte[] ba);
     class RequestStruct
     {
         public WebRequest request;
         public WebResponse response;
         public Stream responseStream;
-        public string responsedata;
+        public byte[] responsedata;
         public HTTPAsyncCallback asyncCallback;
 
         public RequestStruct()
@@ -25,7 +25,7 @@ namespace OneScanWebApp.Utils
             responseStream = null;
             response = null;
             asyncCallback = null;
-            responsedata = "";
+            responsedata = new byte[0];
         }
 
     }
@@ -46,10 +46,10 @@ namespace OneScanWebApp.Utils
             return success;
         }
 
-        public static bool HTTPPostRequest(string url, string data, out string reply, NameValueCollection headers = null, NameValueCollection parameters = null)
+        public static bool HTTPPostRequest(string url, string data, out byte[] reply, NameValueCollection headers = null, NameValueCollection parameters = null)
         {
             bool success = false;
-            reply = "";
+            reply = new byte[0];
 
             RequestStruct requestStruct;
             if (HTTPBuildPostRequest(url, data, out requestStruct, headers, parameters))
@@ -111,10 +111,10 @@ namespace OneScanWebApp.Utils
 
             return success;
         }
-        public static bool HTTPGetRequest(string url, out string reply, NameValueCollection headers = null, NameValueCollection parameters = null)
+        public static bool HTTPGetRequest(string url, out byte[] reply, NameValueCollection headers = null, NameValueCollection parameters = null)
         {
             bool success = false;
-            reply = "";
+            reply = new byte[0];
 
             RequestStruct requestStruct;
             if (HTTPBuildGetRequest(url, out requestStruct, headers, parameters))
@@ -199,24 +199,26 @@ namespace OneScanWebApp.Utils
 
         private static void AddHeaders(ref HttpWebRequest req, NameValueCollection headers)
         {
-
-            foreach (string header in headers.AllKeys)
+            if (headers != null)
             {
-                string val = headers[header];
-                switch (header)
+                foreach (string header in headers.AllKeys)
                 {
-                    case "Connection": if (val.Equals("keep-alive")) req.KeepAlive = true; break;
-                    case "Host": req.Host = val; break;
-                    case "Accept": req.Accept = val; break;
-                    case "User-Agent": req.UserAgent = val; break;
-                    case "Content-Type": req.ContentType = val; break;
-                    case "Referer": req.Referer = val; break;
-                    default: req.Headers.Add(header, val); break;
+                    string val = headers[header];
+                    switch (header)
+                    {
+                        case "Connection": if (val.Equals("keep-alive")) req.KeepAlive = true; break;
+                        case "Host": req.Host = val; break;
+                        case "Accept": req.Accept = val; break;
+                        case "User-Agent": req.UserAgent = val; break;
+                        case "Content-Type": req.ContentType = val; break;
+                        case "Referer": req.Referer = val; break;
+                        default: req.Headers.Add(header, val); break;
+                    }
                 }
             }
         }
 
-        private static bool DoRequest(ref RequestStruct requestStruct, ref string reply)
+        private static bool DoRequest(ref RequestStruct requestStruct, ref byte[] reply)
         {
             bool success = false;
 
@@ -254,44 +256,25 @@ namespace OneScanWebApp.Utils
                 {
                     using (GZipStream decompressStream = new GZipStream(responseStream, CompressionMode.Decompress))
                     {
-                        rs.responsedata = (new StreamReader(decompressStream)).ReadToEnd();
+                        rs.responsedata = StreamToArray(decompressStream);
                         success = true;
                     }
 
                 }
-                else { rs.responsedata = (new StreamReader(responseStream)).ReadToEnd(); success = true; }
+                else { rs.responsedata = StreamToArray(responseStream); success = true; }
             }
 
             return success;
         }
 
-        
-
-        /*private static bool DecodeReply(object input, WebClient client,  ref string reply)
+        private static byte[] StreamToArray(Stream input)
         {
-            bool success = false;
-
-            using (Stream responseStream = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
-                StreamWriter w = new StreamWriter(responseStream);
-                w.Write(input);
-                w.Flush();
-                //responseStream.Position = 0;
-
-                if (client.ResponseHeaders["Content-Encoding"].Equals("gzip"))
-                {
-                    using (GZipStream decompressStream = new GZipStream(responseStream, CompressionMode.Decompress))
-                    {
-                        reply = (new StreamReader(decompressStream)).ReadToEnd();
-                        success = true;
-                    }
-
-                }
-                else { reply = (new StreamReader(responseStream)).ReadToEnd(); success = true; }
+                input.CopyTo(ms);
+                return ms.ToArray();
             }
-
-            return success;
-        }*/
+        }
     }
 
     public static class WebHeadersCollectionExtention

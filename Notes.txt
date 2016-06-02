@@ -1,0 +1,11 @@
+Request mode: 0 = login, 1 = registration
+
+HMAC = SHA1
+Door QR request: 
+HMAC the door secret with "mode=0&qr_img=x&door_id=y" where x and y are the correct values. append the base64 of this hash as "data=" to the get. 
+
+Registration: 
+generate a secret and a key pair. Store in database. 
+HMAC the generated secret with "mode=1&qr_img=x&door_id=x&key=y" where y is the correct value and y is the key for the secret. Append the base64 of this has as "data=" to the get link. The generated secret will be removed from the database once registration is complete. 
+
+this will validate the qr requests to stop anybody just linking to the webpage and recieving a QR code. Especially for registration.  

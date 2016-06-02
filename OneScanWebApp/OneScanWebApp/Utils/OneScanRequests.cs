@@ -23,7 +23,9 @@ namespace OneScanWebApp.Utils
             headers.Add("x-onescan-signature", hmac);
             try
             {
-                success = HTTPRequest.HTTPPostRequest(ConfigurationManager.AppSettings["OnescanServerURL"], data, out reply, headers);
+                byte[] bytes;
+                success = HTTPRequest.HTTPPostRequest(ConfigurationManager.AppSettings["OnescanServerURL"], data, out bytes, headers);
+                reply = System.Text.Encoding.Default.GetString(bytes);
             }
             catch (Exception e)
             {
@@ -33,10 +35,11 @@ namespace OneScanWebApp.Utils
             return success;
         }
 
-        public static bool GetQRData(string data, out string QR)
+        public static bool GetQRData(string data, out string QR, out string sessionID)
         {
             bool success = false;
             QR = null;
+            sessionID = null;
 
             try
             {
@@ -48,6 +51,7 @@ namespace OneScanWebApp.Utils
                     if (jsonReply.Success)
                     {
                         QR = jsonReply.qrImageData.QRData;
+                        sessionID = jsonReply.qrImageData.Session.SessionID;
                         success = true;
                     }
                 }
