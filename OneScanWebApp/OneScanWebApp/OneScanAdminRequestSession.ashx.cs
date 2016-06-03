@@ -1,49 +1,44 @@
-﻿using System;
+﻿using OneScanWebApp.Database;
+using OneScanWebApp.Database.Objects;
+using OneScanWebApp.PayloadObjects;
+using OneScanWebApp.Utils;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Web;
-using OneScanWebApp.Utils;
-using OneScanWebApp.PayloadObjects;
-using OneScanWebApp.Database;
-using System.IO;
-using System.Web.SessionState;
-using OneScanWebApp.Database.Objects;
-using Newtonsoft.Json;
 
 namespace OneScanWebApp
 {
     /// <summary>
-    /// Summary description for RequestOneScanSessionHandler
+    /// Summary description for OneScanAdminRequestSession
     /// </summary>
-    public class OneScanRequestSessionHandler : IHttpHandler, IRequiresSessionState
+    public class OneScanAdminRequestSession : IHttpHandler
     {
 
         public void ProcessRequest(HttpContext context)
         {
-
             int mode;
             if (!int.TryParse(context.Request.QueryString["mode"], out mode))
                 return;
 
-            string doorID = context.Request.QueryString["door_id"];
+            string guid = context.Request.QueryString["guid"];
             string hmac = context.Request.QueryString["data"];
 
             int QR_img;
-            if (!int.TryParse(context.Request.QueryString["qr_img"], out QR_img) || doorID == null || hmac == null)
+            if (!int.TryParse(context.Request.QueryString["qr_img"], out QR_img) || guid == null || hmac == null)
                 return;
 
-            string toHmac = "mode=" + mode + "&qr_img=" + QR_img + "&door_id=" + doorID;
+            string toHmac = "mode=" + mode + "&qr_img=" + QR_img + "&guid=" + guid;
 
             string secret = "";
             LoginTypes loginType;
-            
+
             switch (mode)
             {
                 case 0:
-                    List<Door> doors;
-                    if (!SQLControls.getEntryByColumn(doorID, "DoorID", out doors) || doors.Count > 1)
-                        return;
-                    secret = doors[0].DoorSecret;
+                    secret = ConfigurationManager.AppSettings["AdminSecret"];
                     loginType = LoginTypes.UserToken;
                     break;
                 case 1:
@@ -58,20 +53,19 @@ namespace OneScanWebApp
                 default: return;
             }
 
-           
             if (!HMAC.ValidateHash(toHmac, secret, hmac))
-                return;  
+                return;
 
             BasePayload payload = new BasePayload();
-            payload.SetLoginPayload(loginType, doorID);
+            payload.SetLoginPayload(loginType, "", "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanAdminCallback.ashx");
 
             string QR, sessionID;
             if (OneScanRequests.GetQRData(JsonUtils.GetJson(payload), out QR, out sessionID))
             {
                 string t;
-                Global.OneScanSessions.TryRemove(doorID, out t);
-                
-                if (!Global.OneScanSessions.TryAdd(doorID, sessionID))
+                Global.OneScanAdminSessions.TryRemove(guid, out t);
+
+                if (!Global.OneScanAdminSessions.TryAdd(guid, sessionID))
                     return;
 
                 if (QR_img == 1)
@@ -86,13 +80,10 @@ namespace OneScanWebApp
                     }
 
                     QR = Convert.ToBase64String(byteArray);
-                    
+
                 }
 
                 context.Response.Write(QR);
-
-                
-
             }
         }
 
@@ -103,11 +94,5 @@ namespace OneScanWebApp
                 return false;
             }
         }
-    }
-
-    class RequestResponse
-    {
-        public string SessionID;
-        public string Data;
     }
 }

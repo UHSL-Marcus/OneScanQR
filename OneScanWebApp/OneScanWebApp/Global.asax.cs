@@ -25,6 +25,20 @@ namespace OneScanWebApp
             }
         }
 
+        private static ConcurrentDictionary<string, string> _onescanAdminSessions;
+
+        public static ConcurrentDictionary<string, string> OneScanAdminSessions
+        {
+            get
+            {
+                if (_onescanAdminSessions == null)
+                {
+                    _onescanAdminSessions = new ConcurrentDictionary<string, string>();
+                }
+                return _onescanAdminSessions;
+            }
+        }
+
         protected void Application_Start(object sender, EventArgs e)
         {
 

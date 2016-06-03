@@ -70,12 +70,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Admin\Login.aspx" />
     <Content Include="DoorControl.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\DoorControl.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Admin\Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Database\Objects\AdminToken.cs" />
     <Compile Include="Database\Objects\Door.cs" />
     <Compile Include="Database\Objects\DoorUserTokenPair.cs" />
     <Compile Include="Database\Objects\RegistrationToken.cs" />
@@ -90,11 +99,20 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="OneScanAdminCallback.ashx.cs">
+      <DependentUpon>OneScanAdminCallback.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="OneScanAdminGetResult.ashx.cs">
+      <DependentUpon>OneScanAdminGetResult.ashx</DependentUpon>
+    </Compile>
     <Compile Include="OneScanCallback.ashx.cs">
       <DependentUpon>OneScanCallback.ashx</DependentUpon>
     </Compile>
     <Compile Include="OneScanGetResult.ashx.cs">
       <DependentUpon>OneScanGetResult.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="OneScanAdminRequestSession.ashx.cs">
+      <DependentUpon>OneScanAdminRequestSession.ashx</DependentUpon>
     </Compile>
     <Compile Include="PayloadObjects\ProcessOutcomePayload.cs" />
     <Compile Include="PayloadObjects\RecievedLoginData.cs" />
@@ -124,6 +142,9 @@
     <Content Include="OneScanRequestSession.ashx" />
     <Content Include="OneScanGetResult.ashx" />
     <Content Include="OneScanCallback.ashx" />
+    <Content Include="OneScanAdminRequestSession.ashx" />
+    <Content Include="OneScanAdminCallback.ashx" />
+    <Content Include="OneScanAdminGetResult.ashx" />
     <None Include="Properties\PublishProfiles\FTP.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

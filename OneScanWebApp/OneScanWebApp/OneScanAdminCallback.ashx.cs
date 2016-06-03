@@ -8,14 +8,13 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
-using System.Web.SessionState;
 
 namespace OneScanWebApp
 {
     /// <summary>
-    /// Summary description for OneScanCallback
+    /// Summary description for OneScanAdminCallback
     /// </summary>
-    public class OneScanCallback : IHttpHandler
+    public class OneScanAdminCallback : IHttpHandler
     {
 
         public void ProcessRequest(HttpContext context)
@@ -36,58 +35,39 @@ namespace OneScanWebApp
                 string json = sr.ReadToEnd();
                 string hmac = context.Request.Headers["x-onescan-signature"];
                 //if (!HMAC.ValidateHash(json, ConfigurationManager.AppSettings["AuthSecret"], hmac))
-                   // return;
+                // return;
+
 
                 LoginReply = JsonUtils.GetObject<RecievedLoginData>(json);
+
             }
 
             ProcessOutcomePayload outcome = new ProcessOutcomePayload();
 
-
             if (LoginReply.Success)
             {
+
                 int? userTokenId;
-                SQLControls.getEntryIDByColumn<UserToken>(LoginReply.UserToken.UserToken, "Token", out userTokenId);
-                    
-                int? doorId;
-                if(!SQLControls.getEntryIDByColumn<Door>(LoginReply.SessionData, "DoorID", out doorId)) { 
+                SQLControls.getEntryIDByColumn<AdminToken>(LoginReply.UserToken.UserToken, "UserToken", out userTokenId);
 
-                    DoorUserTokenPair pair = new DoorUserTokenPair();
-                    pair.DoorID = doorId;
-
-                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
+                if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
+                {
+                    outcome.Success = true;
+                    outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
+                }
+                if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
+                {
+                    if (userTokenId == null)
                     {
-                        pair.UserToken = userTokenId;
-                        if (SQLControls.getEntryExists(pair))
-                        {
-                            outcome.Success = true;
-                            outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
-                        }
+                        AdminToken at = new AdminToken();
+                        at.UserToken = LoginReply.UserToken.UserToken;
+                        SQLControls.doInsertReturnID(at, out userTokenId);
                     }
 
-                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
+                    if (userTokenId != null)
                     {
-                        if (userTokenId == null)
-                        {
-                            UserToken ut = new UserToken();
-                            ut.Token = LoginReply.UserToken.UserToken;
-                            SQLControls.doInsertReturnID(ut, out userTokenId);
-                        }
-
-                        if (userTokenId != null)
-                        {
-                            pair.UserToken = userTokenId;
-
-                            int? id;
-                            if (!SQLControls.getEntryID(pair, out id))
-                                SQLControls.doInsertReturnID(pair, out id);
-                            if (id != null)
-                            {
-                                outcome.Success = true;
-                                outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
-                            }
-                        }
-
+                        outcome.Success = true;
+                        outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
                     }
                 }
             }
@@ -104,7 +84,6 @@ namespace OneScanWebApp
                 sw.Write(jsonResponse);
                 context.Response.Flush();
             }
-
         }
 
         public bool IsReusable

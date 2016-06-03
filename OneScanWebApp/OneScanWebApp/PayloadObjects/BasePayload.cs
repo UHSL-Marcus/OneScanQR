@@ -10,12 +10,14 @@
         public MetaData MetaData = new MetaData();
         public LoginPayload LoginPayload;
 
-        public void SetLoginPayload(LoginTypes LoginMode, string SessionData)
+        public void SetLoginPayload(LoginTypes LoginMode, string SessionData, string callback = null)
         {
             LoginPayload = new LoginPayload();
             ProcessType = ProcessTypes.Login.ToString(); ;
             MessageType = MessageTypes.StartLogin.ToString(); ;
             this.SessionData = SessionData;
+            if (callback != null)
+                MetaData.EndpointURL = callback;
 
             LoginPayload.LoginMode = LoginMode.ToString();
             if (LoginMode == LoginTypes.Register)

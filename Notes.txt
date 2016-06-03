@@ -4,8 +4,30 @@ HMAC = SHA1
 Door QR request: 
 HMAC the door secret with "mode=0&qr_img=x&door_id=y" where x and y are the correct values. append this as "data=" to the get. 
 
-Registration: 
+Door Registration: 
 generate a secret and a key pair. Store in database. 
-HMAC the generated secret with "mode=1&qr_img=x&door_id=x&key=y" where y is the correct value and y is the key for the secret. Append this as "data=" to the get link. The generated secret will be removed from the database once registration is complete. 
+HMAC the generated secret with "mode=1&qr_img=x&door_id=y&key=z" where x and y are the correct values and z is the key for the secret. Append this as "data=" to the get link. The generated secret will be removed from the database once registration is complete. 
 
-this will validate the qr requests to stop anybody just linking to the webpage and recieving a QR code. Especially for registration.  
+this will validate the qr requests to stop anybody just linking to the webpage and recieving a QR code. Especially for registration.
+
+Door QR Result:
+HMAC door secret with "mode=0&door_id=y", where y is the correct value. append this as "data=" to the get. 
+
+Door Registration Result:
+HMAC the generated secret with "mode=1&door_id=x&key=y" where x is the correct value and y is the key for the secret. append this as "data=" to the get. 
+
+
+Admin:
+guid is a unique identifer of the requesting app/website/device so the correct onescan session can be polled for. 
+Login QR request:
+HMAC "mode=0&qr_img=x&guid=y" ,where x and y are the correct values, with the admin secret. append this as "data=" to the get.
+
+Admin Registration: 
+generate a secret and a key pair. Store in database. 
+HMAC "mode=0&qr_img=x&guid=y&key=z" ,where x and y are the correct values and z is the key for the secret, with the generated secret. append this as "data=" to the get. The generated secret will be removed from the database once registration is complete.
+
+Admin QR Result:
+HMAC door secret with "mode=0&door_id=y", where y is the correct value. append this as "data=" to the get. 
+
+Admin Registration Result:
+HMAC the generated secret with "mode=1&door_id=x&key=y" where x is the correct value and y is the key for the secret. append this as "data=" to the get.  
