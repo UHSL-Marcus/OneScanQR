@@ -72,13 +72,14 @@
   <ItemGroup>
     <Content Include="DoorControl.aspx" />
     <Content Include="Global.asax" />
-    <Content Include="OneScanCallback.aspx" />
     <Content Include="Scripts\DoorControl.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database\Objects\Door.cs" />
+    <Compile Include="Database\Objects\DoorUserTokenPair.cs" />
     <Compile Include="Database\Objects\RegistrationToken.cs" />
+    <Compile Include="Database\Objects\UserToken.cs" />
     <Compile Include="DoorControl.aspx.cs">
       <DependentUpon>DoorControl.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -91,13 +92,6 @@
     </Compile>
     <Compile Include="OneScanCallback.ashx.cs">
       <DependentUpon>OneScanCallback.ashx</DependentUpon>
-    </Compile>
-    <Compile Include="OneScanCallback.aspx.cs">
-      <DependentUpon>OneScanCallback.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="OneScanCallback.aspx.designer.cs">
-      <DependentUpon>OneScanCallback.aspx</DependentUpon>
     </Compile>
     <Compile Include="OneScanGetResult.ashx.cs">
       <DependentUpon>OneScanGetResult.ashx</DependentUpon>

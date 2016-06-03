@@ -30,12 +30,15 @@ namespace OneScanWebApp
             byte[] reply;
             HTTPRequest.HTTPGetRequest(currDomain + "OneScanRequestSession.ashx?" + query, out reply);
 
-            RequestResponse rr = JsonUtils.GetObject<RequestResponse>(System.Text.Encoding.Default.GetString(reply));
+            qrImg.ImageUrl = "data:image/bmp;base64," + System.Text.Encoding.Default.GetString(reply);
 
-            qrImg.ImageUrl = "data:image/png;base64," + rr.Data;
+            query = "door_id=1";
+            hmac = HMAC.Hash(query, "sec");
+            query += "&data=" + hmac;
 
-            Page.ClientScript.RegisterStartupScript(GetType(), "pollScript", "pollOneScan('"+ rr.SessionID + "')", true);
+            Page.ClientScript.RegisterStartupScript(GetType(), "pollScript", "pollOneScan('"+ currDomain + "OneScanGetResult.ashx?" + query + "')", true);
 
         }
+
     }
 }

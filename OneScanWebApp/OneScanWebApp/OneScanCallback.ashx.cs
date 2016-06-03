@@ -1,4 +1,6 @@
-﻿using OneScanWebApp.PayloadObjects;
+﻿using OneScanWebApp.Database;
+using OneScanWebApp.Database.Objects;
+using OneScanWebApp.PayloadObjects;
 using OneScanWebApp.Utils;
 using System;
 using System.Collections.Generic;
@@ -42,31 +44,54 @@ namespace OneScanWebApp
             }
 
             ProcessOutcomePayload outcome = new ProcessOutcomePayload();
-            int success = 3;
+
 
             if (LoginReply.Success)
             {
-                if (LoginReply.ProcessType.Equals(ProcessTypes.Login.ToString()) 
-                    && LoginReply.MessageType.Equals(MessageTypes.StartLogin.ToString()))
-                {
-                    string token = LoginReply.UserToken.UserToken;
-                    // check in database
-                    Random rand = new Random();
-                    if (rand.Next(21) > 10)
+
+                int? userTokenId;
+                if (!SQLControls.getEntryIDByColumn<UserToken>(LoginReply.UserToken.UserToken, "Token", out userTokenId)) {
+                    UserToken ut = new UserToken();
+                    ut.Token = LoginReply.UserToken.UserToken;
+                    SQLControls.doInsertReturnID(ut, out userTokenId);
+                }
+
+                int? doorId;
+                SQLControls.getEntryIDByColumn<Door>(LoginReply.SessionData, "DoorID", out doorId);
+
+                if (doorId != null && userTokenId != null) {
+
+                    DoorUserTokenPair pair = new DoorUserTokenPair();
+                    pair.DoorID = doorId; pair.UserToken = userTokenId;
+
+                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()))
                     {
-                        outcome.Success = true;
-                        outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
-                        success = 2;
+                        if (SQLControls.getEntryExists(pair))
+                        {
+                            outcome.Success = true;
+                            outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
+                        }
+
+                    }
+
+                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
+                    {
+
+                        int? id;
+                        if (!SQLControls.getEntryID(pair, out id))
+                            SQLControls.doInsertReturnID(pair, out id);
+                        if (id != null)
+                        {
+                            outcome.Success = true;
+                            outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
+                        }
+
                     }
                 }
             }
 
             string reply;
-            OneScanRequests.SendOneScanPayload(JsonUtils.GetJson(outcome), out reply);
-
-            SessionData sd = JsonUtils.GetObject<SessionData>(LoginReply.SessionData);
-            if (Global.OneScanSessionStatus.Keys.Contains(sd.sessionID))
-                Global.OneScanSessionStatus[sd.sessionID] = success.ToString();
+            OneScanRequests.SendOneScanPayload(JsonUtils.GetJson(outcome), out reply);  
         }
 
         public bool IsReusable

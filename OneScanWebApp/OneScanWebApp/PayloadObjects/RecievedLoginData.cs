@@ -11,6 +11,7 @@ namespace OneScanWebApp.PayloadObjects
         public int? Version;
         public UserTokenPayload UserToken = new UserTokenPayload();
         public LoginPayload LoginPayload;
+        public LoginCredentialsPayload LoginCredentials;
         public string MessageType;
         public string ProcessType;
         public bool PlayMode;
@@ -21,5 +22,13 @@ namespace OneScanWebApp.PayloadObjects
     class UserTokenPayload
     {
         public string UserToken;
+    }
+
+    class LoginCredentialsPayload
+    {
+        public string[] Profiles;
+        public string FirstName;
+        public string LastName;
+        public string Email;
     }
 }

@@ -1,32 +1,41 @@
 ﻿
 
-var sessionID;
+var url;
 
-function httpGetAsync(theUrl, callback) {
+function httpGetAsync(url, callback) {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function () {
-        alert("state: " + xmlHttp.readyState + ", status: " + xmlHttp.status);
-        if (xmlHttp.readyState == 4) //&& xmlHttp.status == 200)
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback(xmlHttp.responseText);
     }
-    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.open("GET", url, true); // true for asynchronous 
     xmlHttp.send(null);
 }
 
 function httpResponseCallback(response) {
-    alert("Callback");
     alert(response);
+    if (response < 2)
+        setTimeout(function(){httpGetAsync(url, httpResponseCallback)}, 1000);
+    else {
+        document.getElementById("qrImg").style.display = 'none';
+        var scanResult;
+        if (response == 2) {
+            document.getElementById("doorStatusLbl").innerHTML = "Unlocked";
+            scanResult = "Scan Success";
+        }
+        else if (response == 3) {
+            scanResult = "Scan Failed";
+        }
+        document.getElementById("scanStatusLbl").innerHTML = scanResult;
+    }
 }
 
-function pollOneScan(_sessionID) {
-    sessionID = _sessionID;
-    alert("SessionID: " + _sessionID);
-    httpGetAsync("https://liveservice.ensygnia.net/api/PartnerGateway/1/CheckOnescanSessionStatus?OnescanSessionID=" + sessionID, function (response) {
-        alert(response);
-        alert("Callback");
-    });
+function pollOneScan(_url) {
+    url = _url;
+    alert("Url: " + url);
+    httpGetAsync(url, httpResponseCallback);
 
-    alert("sent2");
+    alert("sent");
 }
 
 

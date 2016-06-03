@@ -68,8 +68,11 @@ namespace OneScanWebApp
             string QR, sessionID;
             if (OneScanRequests.GetQRData(JsonUtils.GetJson(payload), out QR, out sessionID))
             {
-                RequestResponse rr = new RequestResponse();
-                rr.SessionID = sessionID;
+                string t;
+                Global.OneScanSessions.TryRemove(doorID, out t);
+                
+                if (!Global.OneScanSessions.TryAdd(doorID, sessionID))
+                    return;
 
                 if (QR_img == 1)
                 {
@@ -82,14 +85,12 @@ namespace OneScanWebApp
                         byteArray = stream.ToArray();
                     }
 
-                    rr.Data = Convert.ToBase64String(byteArray);
+                    QR = Convert.ToBase64String(byteArray);
                     
                 }
-                else
-                    rr.Data = QR;
 
-                
-                context.Response.Write(JsonUtils.GetJson(rr));
+                context.Response.Write(QR);
+
                 
 
             }
@@ -99,7 +100,7 @@ namespace OneScanWebApp
         {
             get
             {
-                return true;
+                return false;
             }
         }
     }

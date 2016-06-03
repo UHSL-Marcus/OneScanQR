@@ -10,8 +10,9 @@
 <body>
     <form id="form1" runat="server">
         <asp:Button ID="getQrbtn" runat="server" OnClick="getQrbtn_Click" Text="Get QR" />
+        <span id="scanStatusLbl"></span>
         Door Status:
-        <asp:Label ID="doorStatusLbl" runat="server" Text="Locked"></asp:Label>
+        <span id="doorStatusLbl">Locked</span>
         <br /><asp:Image ID="qrImg" runat="server" />
     </form>
 </body>

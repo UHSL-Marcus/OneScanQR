@@ -1,8 +1,4 @@
-﻿using System;
-
-using Newtonsoft.Json;
-
-namespace OneScanWebApp.PayloadObjects
+﻿namespace OneScanWebApp.PayloadObjects
 {
 
     class BasePayload
@@ -44,16 +40,6 @@ namespace OneScanWebApp.PayloadObjects
 
     class MetaData
     {
-        public string EndpointURL = "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanCallback.aspx";
+        public string EndpointURL = "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanCallback.ashx";
     }
-
-    class SessionData
-    {
-        public string doorID;
-        public string sessionID;
-    }
-
-
-
-
 }

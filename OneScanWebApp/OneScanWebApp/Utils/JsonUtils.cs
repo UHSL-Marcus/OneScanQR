@@ -12,6 +12,7 @@ namespace OneScanWebApp.Utils
         {
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.NullValueHandling = NullValueHandling.Ignore;
+            settings.MissingMemberHandling = MissingMemberHandling.Ignore;
             return JsonConvert.SerializeObject(ob, settings);
 
         }

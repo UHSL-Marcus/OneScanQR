@@ -11,7 +11,7 @@ namespace OneScanWebApp.Database
     public class SQLControls
     {
 
-        public static bool getColumnByData(object checkInfo, string table, string inColumn, string outColumn, out object output)
+        public static bool getSingleColumnByColumn(object checkInfo, string table, string inColumn, string outColumn, out object output)
         {
             return getSingleEntry("SELECT * FROM " + table + " WHERE " + inColumn + " = '" + checkInfo + "'", outColumn, out output);
         }
@@ -21,6 +21,30 @@ namespace OneScanWebApp.Database
             Type type = typeof(TYPE);
             output = getData<TYPE>("SELECT * FROM " + type.Name + " WHERE " + column + " = '" + info + "'");
             return (output.Count > 0);
+        }
+
+        public static bool getEntryIDByColumn<TYPE>(object info, string column, out int? output)
+        {
+            Type type = typeof(TYPE);
+            output = null;
+            bool success = false;
+
+            object id;
+            if (getSingleEntry("SELECT Id FROM " + type.Name + " WHERE " + column + " = '" + info + "'", "Id", out id))
+            {
+                if (id is int)
+                {
+                    output = (int)id;
+                    success = true; ;
+                }
+            }
+            return success;
+        }
+
+        public static bool getEntryExistsByColumn<TYPE>(object info, string column)
+        {
+            List<TYPE> l = new List<TYPE>();
+            return getEntryByColumn<TYPE>(info, column, out l);
         }
 
         private static bool doNonQuery(string sql)
@@ -65,6 +89,125 @@ namespace OneScanWebApp.Database
             return success;
 
         }
+
+        private static object formatValue(object value)
+        {
+            if (value is DateTime)
+                return ((DateTime)value).ToString("yyyy-MM-dd");
+            else if (value is int || value is string)
+                return value;
+            else if (value is string[])
+                return string.Join(",", value as string[]);
+
+            return null;
+        }
+
+        public static bool getEntryExists<TYPE>(TYPE ob)
+        {
+            int? i;
+            return getEntryID(ob, out i);
+        }
+
+
+        public static bool getEntryID<TYPE>(TYPE ob, out int? output)
+        {
+            Type type = typeof(TYPE);
+            bool success = false;
+            output = null;
+
+            string query = "SELECT* FROM " + type.Name + " WHERE ";
+
+            FieldInfo[] fields = type.GetFields();
+            for (int i = 0; i < fields.Length; i++)
+            {
+
+                if (!fields[i].Name.Equals("Id"))
+                {
+                    Type valueType = fields[i].GetType();
+                    object value = fields[i].GetValue(ob);
+
+                    query += fields[i].Name + "=" + "'" + formatValue(value) + "'";
+
+                    if (i + 1 < fields.Length)
+                        query += " AND ";
+                }
+            }
+
+            object id;
+            if (getSingleEntry(query, "Id", out id)) {
+                if (id is int)
+                {
+                    output = (int)id;
+                    success = true; ;
+                }
+            }
+            return success;
+        }
+
+        public static bool doInsertReturnID<TYPE>(TYPE ob, out int? output)
+        {
+            Type type = typeof(TYPE);
+            output = null;
+            bool success = false;
+
+            string declaration = "DECLARE @outputTable table(Id int NOT NULL)";
+
+            string queryName = " INSERT INTO " + type.Name;
+            string queryValues = "";
+
+
+            FieldInfo[] fields = type.GetFields();
+            for (int i = 0; i < fields.Length; i++)
+            {
+
+                if (!fields[i].Name.Equals("Id"))
+                {
+                    if (queryValues.Length < 1)
+                    {
+                        queryName += "(";
+                        queryValues += " VALUES(";
+                    }
+
+                    queryName += fields[i].Name;
+
+                    Type valueType = fields[i].GetType();
+                    object value = fields[i].GetValue(ob);
+
+                    queryValues += "'" + formatValue(value) + "'";
+
+                    if (i + 1 < fields.Length)
+                    {
+                        queryName += ",";
+                        queryValues += ",";
+                    }
+                }
+
+            }
+            if (queryValues.Length > 0)
+            {
+                queryName += ")";
+                queryValues += ")";
+            }
+            else queryValues += " DEFAULT VALUES";
+
+            queryName += " OUTPUT INSERTED.Id INTO @outputTable";
+
+            string select = "; SELECT Id FROM @outputTable;";
+
+            object id;
+            if(getSingleEntry(declaration + queryName + queryValues + select, "Id", out id))
+            {
+                if (id is int)
+                {
+                    output = (int)id;
+                    success = true;
+                }
+            }
+            return success;
+
+        }
+
+
 
         private static List<TYPE> getData<TYPE>(string sql)
         {
