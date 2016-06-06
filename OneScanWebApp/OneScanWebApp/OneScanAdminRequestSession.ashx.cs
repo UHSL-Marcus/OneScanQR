@@ -33,6 +33,7 @@ namespace OneScanWebApp
             string toHmac = "mode=" + mode + "&qr_img=" + QR_img + "&guid=" + guid;
 
             string secret = "";
+            string customData = "";
             LoginTypes loginType;
 
             switch (mode)
@@ -45,10 +46,11 @@ namespace OneScanWebApp
                     string key = context.Request.QueryString["key"];
                     toHmac += "&key=" + key;
                     List<RegistrationToken> regtokns;
-                    if (!SQLControls.getEntryByColumn(key, "Key", out regtokns) || regtokns.Count > 1)
+                    if (!SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
                         return;
                     secret = regtokns[0].Secret;
                     loginType = LoginTypes.Register;
+                    customData = key;
                     break;
                 default: return;
             }
@@ -57,7 +59,7 @@ namespace OneScanWebApp
                 return;
 
             BasePayload payload = new BasePayload();
-            payload.SetLoginPayload(loginType, "", "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanAdminCallback.ashx");
+            payload.SetLoginPayload(loginType, customData, "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanAdminCallback.ashx");
 
             string QR, sessionID;
             if (OneScanRequests.GetQRData(JsonUtils.GetJson(payload), out QR, out sessionID))

@@ -1,0 +1,34 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="AdminWebPortal.master.cs" Inherits="AdminWebPortal.Main.AdminWebPortal" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+
+    <link href="~/Content/Site/Site.css" rel="stylesheet"/>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <div id="sidebar" class="left-side">
+                <ul>
+                    <li>
+                        <a href="/Views/Main/UserAdmin.aspx"><span>Users</span></a>
+                    </li>
+                    <li>
+                        <a href="/Views/Main/AdminUserAdmin.aspx"><span>Admin Users</span></a>
+                    </li>
+                </ul>
+            </div>
+            <div id="rightside" class="right-side">
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder" runat="server" >
+        
+                </asp:ContentPlaceHolder>
+            </div>
+        </div>
+    </form>
+</body>
+</html>

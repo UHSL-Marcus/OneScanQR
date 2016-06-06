@@ -8,6 +8,7 @@ namespace OneScanWebApp.Database.Objects
     public class RegistrationToken
     {
         public int? Id;
+        public string AuthKey;
         public string Secret;
     }
 }

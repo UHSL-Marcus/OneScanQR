@@ -41,6 +41,14 @@ namespace OneScanWebApp.Database
             return success;
         }
 
+        public static bool deleteEntryByColumn<TYPE>(object info, string column)
+        {
+            Type type = typeof(TYPE);
+            string query = "DELETE FROM " + type.Name + " WHERE " + column + "='" + info + "'";
+            return doNonQuery(query);
+
+        }
+
         public static bool getEntryExistsByColumn<TYPE>(object info, string column)
         {
             List<TYPE> l = new List<TYPE>();
@@ -206,8 +214,6 @@ namespace OneScanWebApp.Database
             return success;
 
         }
-
-
 
         private static List<TYPE> getData<TYPE>(string sql)
         {

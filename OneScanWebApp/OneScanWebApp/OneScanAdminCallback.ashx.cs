@@ -61,7 +61,15 @@ namespace OneScanWebApp
                     {
                         AdminToken at = new AdminToken();
                         at.UserToken = LoginReply.UserToken.UserToken;
-                        SQLControls.doInsertReturnID(at, out userTokenId);
+                        if (SQLControls.doInsertReturnID(at, out userTokenId))
+                        {
+                            AdminUser au = new AdminUser();
+                            au.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
+                            au.AdminToken = userTokenId;
+
+                            userTokenId = null;
+                            SQLControls.doInsertReturnID(at, out userTokenId);
+                        }
                     }
 
                     if (userTokenId != null)
@@ -69,6 +77,8 @@ namespace OneScanWebApp
                         outcome.Success = true;
                         outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
                     }
+
+                    SQLControls.deleteEntryByColumn<RegistrationToken>(LoginReply.SessionData, "AuthKey");
                 }
             }
 
