@@ -42,52 +42,74 @@ namespace OneScanWebApp
             }
 
             ProcessOutcomePayload outcome = new ProcessOutcomePayload();
+            SessionData sData = JsonUtils.GetObject<SessionData>(LoginReply.SessionData);
 
+            string sessionKey = sData.doorID;
+            if (sData.regkey != null)
+                sessionKey += sData.regkey;
 
-            if (LoginReply.Success)
+            if (Global.OneScanAdminSessions.ContainsKey(sessionKey))
             {
-                int? userTokenId;
-                SQLControls.getEntryIDByColumn<UserToken>(LoginReply.UserToken.UserToken, "Token", out userTokenId);
-                    
-                int? doorId;
-                if(!SQLControls.getEntryIDByColumn<Door>(LoginReply.SessionData, "DoorID", out doorId)) { 
+                if (LoginReply.Success)
+                {
+                    int? userTokenId;
+                    SQLControls.getEntryIDByColumn<UserToken>(LoginReply.UserToken.UserToken, "Token", out userTokenId);
 
-                    DoorUserTokenPair pair = new DoorUserTokenPair();
-                    pair.DoorID = doorId;
-
-                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
+                    int? doorId;
+                    if (!SQLControls.getEntryIDByColumn<Door>(LoginReply.SessionData, "DoorID", out doorId))
                     {
-                        pair.UserToken = userTokenId;
-                        if (SQLControls.getEntryExists(pair))
-                        {
-                            outcome.Success = true;
-                            outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
-                        }
-                    }
 
-                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
-                    {
-                        if (userTokenId == null)
-                        {
-                            UserToken ut = new UserToken();
-                            ut.Token = LoginReply.UserToken.UserToken;
-                            SQLControls.doInsertReturnID(ut, out userTokenId);
-                        }
+                        DoorUserTokenPair pair = new DoorUserTokenPair();
+                        pair.DoorID = doorId;
 
-                        if (userTokenId != null)
+                        if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
                         {
                             pair.UserToken = userTokenId;
-
-                            int? id;
-                            if (!SQLControls.getEntryID(pair, out id))
-                                SQLControls.doInsertReturnID(pair, out id);
-                            if (id != null)
+                            if (SQLControls.getEntryExists(pair))
                             {
                                 outcome.Success = true;
                                 outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
                             }
                         }
 
+                        if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
+                        {
+                            bool continueReg = false;
+
+                            if (userTokenId == null)
+                            {
+                                UserToken ut = new UserToken();
+                                ut.Token = LoginReply.UserToken.UserToken;
+                                if (SQLControls.doInsertReturnID(ut, out userTokenId))
+                                {
+                                    User u = new User();
+                                    u.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
+                                    u.UserToken = userTokenId;
+
+                                    if (SQLControls.doInsert(ut))
+                                        continueReg = true;
+                                }
+                            }
+                            else continueReg = true;
+
+                            if (continueReg)
+                            {
+                                pair.UserToken = userTokenId;
+
+                                int? id;
+                                if (!SQLControls.getEntryID(pair, out id))
+                                    SQLControls.doInsertReturnID(pair, out id);
+
+                                if (id != null)
+                                {
+                                    outcome.Success = true;
+                                    outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
+                                }
+                            }
+
+                            SQLControls.deleteEntryByColumn<RegistrationToken>(sData.regkey, "AuthKey");
+
+                        }
                     }
                 }
             }

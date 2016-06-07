@@ -1,23 +1,18 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="UserAdmin.aspx.cs" Inherits="AdminWebPortal.Views.Main.UserAdmin" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="ScriptContent" runat="server">
+</asp:Content>
+
 <asp:Content ID="Content" ContentPlaceHolderID="MainContentPlaceholder" runat="server">
     <div class="content-padding">
         <div class="panel panel-default">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-					    <th>User Name</th>
-					    <th>UserToken</th>
-                        <th></th>
-				    </tr>
-                </thead>
-                <tbody>
-			        <tr>
-                        <td>User 1</td>
-                        <td>Token1</td>
-                        <td><a>Delete</a></td>
-                    </tr>
-			    </tbody>
-            </table>
+            <asp:Table runat="server" ID="usersTbl" CssClass="table table-striped">
+                <asp:TableHeaderRow>
+                    <asp:TableHeaderCell>Username</asp:TableHeaderCell>
+                    <asp:TableHeaderCell>Token</asp:TableHeaderCell>
+                    <asp:TableHeaderCell>Actions</asp:TableHeaderCell>
+                </asp:TableHeaderRow>
+            </asp:Table> 
         </div>
     </div>
 </asp:Content>

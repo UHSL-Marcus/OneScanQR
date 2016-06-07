@@ -52,7 +52,7 @@ namespace OneScanWebApp.Database
         public static bool getEntryExistsByColumn<TYPE>(object info, string column)
         {
             List<TYPE> l = new List<TYPE>();
-            return getEntryByColumn<TYPE>(info, column, out l);
+            return getEntryByColumn(info, column, out l);
         }
 
         private static bool doNonQuery(string sql)
@@ -152,17 +152,11 @@ namespace OneScanWebApp.Database
             return success;
         }
 
-        public static bool doInsertReturnID<TYPE>(TYPE ob, out int? output)
+        private static string getInsertQuery<TYPE>(TYPE ob, string queryNameExtra = "", string queryValuesExtra = "")
         {
             Type type = typeof(TYPE);
-            output = null;
-            bool success = false;
-
-            string declaration = "DECLARE @outputTable table(Id int NOT NULL)";
-
-            string queryName = " INSERT INTO " + type.Name;
+            string queryName = "INSERT INTO " + type.Name;
             string queryValues = "";
-
 
             FieldInfo[] fields = type.GetFields();
             for (int i = 0; i < fields.Length; i++)
@@ -198,12 +192,30 @@ namespace OneScanWebApp.Database
             }
             else queryValues += " DEFAULT VALUES";
 
-            queryName += " OUTPUT INSERTED.Id INTO @outputTable";
+            return queryName + queryNameExtra + queryValues + queryValuesExtra;
+        }
 
+        public static bool doInsert<TYPE>(TYPE ob)
+        {
+            string query = getInsertQuery(ob);
+            return doNonQuery(query);
+        }
+
+        public static bool doInsertReturnID<TYPE>(TYPE ob, out int? output)
+        {
+            output = null;
+            Type type = typeof(TYPE);
+           
+            bool success = false;
+
+            string declaration = "DECLARE @outputTable table(Id int NOT NULL) ";
+            string outputExtra = " OUTPUT INSERTED.Id INTO @outputTable";
             string select = "; SELECT Id FROM @outputTable;";
 
+            string query = getInsertQuery(ob, outputExtra, select);
+
             object id;
-            if(getSingleEntry(declaration + queryName + queryValues + select, "Id", out id))
+            if(getSingleEntry(declaration + query, "Id", out id))
             {
                 if (id is int)
                 {

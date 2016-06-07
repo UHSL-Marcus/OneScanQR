@@ -1,5 +1,6 @@
 ﻿using AdminWebPortal.Database;
 using AdminWebPortal.Utils;
+using OneScanWebApp.Utils;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -13,25 +14,33 @@ namespace AdminWebPortal.Views.Main
 {
     public partial class AdminUserAdmin : System.Web.UI.Page
     {
-        private string guid;
-        private string key;
-        private string secret;
+        private readonly string GUID = "session_guid";
+        private readonly string KEY = "session_key";
+        private readonly string SECRET = "session_secret";
         protected void Page_Load(object sender, EventArgs e)
         {
-            RegisterQRDiv.Visible = false;
-            fillTable();
+            if (!ScriptManager.GetCurrent(Page).IsInAsyncPostBack)
+            {
+                RegisterQRDiv.Visible = false;
+                fillTable();
+            }
         }
 
         private void fillTable()
         {
-            DataTableReader reader = SQLControls.getDataReader("SELECT AdminUser.Id, AdminUser.Name, AdminToken.UserToken FROM AdminUser JOIN AdminToken ON AdminToken.Id=AdminUser.AdminToken");
+            TableRow headings = AdminUsersTbl.Rows[0];
+            AdminUsersTbl.Rows.Clear();
+            AdminUsersTbl.Rows.Add(headings);
+            
+
+            DataTableReader reader = SQLControls.getDataReader("SELECT AdminUser.Id, AdminToken.Id, AdminUser.Name, AdminToken.UserToken FROM AdminUser JOIN AdminToken ON AdminToken.Id=AdminUser.AdminToken");
 
             while (reader.Read())
             {
                 TableRow tRow = new TableRow();
                 TableCell tCell;
 
-                for (int i = 1; i < 3; i++)
+                for (int i = 2; i < 4; i++)
                 {
                     tCell = new TableCell();
                     tCell.Text = reader.GetString(i);
@@ -39,10 +48,34 @@ namespace AdminWebPortal.Views.Main
                 }
 
                 tCell = new TableCell();
-                tCell.Text = "Delete User: " + reader.GetInt32(0);
+
+                Button delBtn = new Button();
+                delBtn.Text = "Delete User";
+                delBtn.ID = "deleteUser" + reader.GetInt32(0).ToString();
+                delBtn.Click += DelBtn_Click;
+                delBtn.CommandArgument = string.Join(",", new string[] { reader.GetInt32(0).ToString(), reader.GetInt32(1).ToString() });
+
+                tCell.Controls.Add(delBtn);
                 tRow.Cells.Add(tCell);
 
                 AdminUsersTbl.Rows.Add(tRow);
+            }
+        }
+
+        private void DelBtn_Click(object sender, EventArgs e)
+        {
+            if(sender is Button)
+            {
+                Button btn = (Button)sender;
+                //DeleteButtonParameters args = JsonUtils.GetObject<DeleteButtonParameters>(btn.CommandArgument);
+                string[] args = btn.CommandArgument.Split(',');
+                string queryU = "DELETE FROM AdminUser WHERE Id='" + args[0] + "'";
+                string queryT = "DELETE FROM AdminToken WHERE Id='" + args[1] + "'";
+
+                SQLControls.doNonQuery(queryU);
+                SQLControls.doNonQuery(queryT);
+
+                fillTable();
             }
         }
 
@@ -51,13 +84,13 @@ namespace AdminWebPortal.Views.Main
             RegisterQRDiv.Visible = true;
             qrImg.ImageUrl = "";
 
-            key = Guid.NewGuid().ToString();
-            secret = Guid.NewGuid().ToString();
-            if (SQLControls.doNonQuery("INSERT INTO RegistrationToken VALUES('" + key + "', '" + secret + "')"))
+            Session[KEY] = Guid.NewGuid().ToString();
+            Session[SECRET] = Guid.NewGuid().ToString();
+            if (SQLControls.doNonQuery("INSERT INTO RegistrationToken VALUES('" + Session[KEY] + "', '" + Session[SECRET] + "')"))
             {
-                guid = Guid.NewGuid().ToString();
-                string query = "mode=1&qr_img=1&guid=" + guid + "&key=" + key;
-                string hmac = HMAC.Hash(query, secret);
+                Session[GUID] = Guid.NewGuid().ToString();
+                string query = "mode=1&qr_img=1&guid=" + Session[GUID] + "&key=" + Session[KEY];
+                string hmac = HMAC.Hash(query, (string)Session[SECRET]);
                 query += "&data=" + hmac;
 
                 byte[] reply;
@@ -72,8 +105,8 @@ namespace AdminWebPortal.Views.Main
 
         private string getPollUrl()
         {
-            string query = "mode=1&guid=" + guid + "&key=" + key;
-            string hmac = HMAC.Hash(query, secret);
+            string query = "mode=1&guid=" + Session[GUID] + "&key=" + Session[KEY];
+            string hmac = HMAC.Hash(query, (string)Session[SECRET]);
             query += "&data=" + hmac;
 
             return "http://localhost:3469/OneScanAdminGetResult.ashx?" + query;
@@ -88,8 +121,14 @@ namespace AdminWebPortal.Views.Main
                 if (int.TryParse(System.Text.Encoding.Default.GetString(reply), out status))
                 {
                     if (status < 2)
+                    {
                         ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "pollScript" + UniqueID, "pollTimeout();", true);
-                    else if (status > 2)
+                        if (status == 1)
+                        {
+                            // scanning
+                        }
+                    } 
+                    else if (status >= 2)
                         ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "registrationFinishScript" + UniqueID, "RegistrationFinish();", true);
 
                 }
@@ -98,7 +137,8 @@ namespace AdminWebPortal.Views.Main
 
         protected void hiddenQRCompleteBtn_Click(object sender, EventArgs e)
         {
-
+            RegisterQRDiv.Visible = false;
+            fillTable();
         }
     }
 }

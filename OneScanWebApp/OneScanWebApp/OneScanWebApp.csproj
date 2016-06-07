@@ -81,6 +81,7 @@
     <Compile Include="Database\Objects\Door.cs" />
     <Compile Include="Database\Objects\DoorUserTokenPair.cs" />
     <Compile Include="Database\Objects\RegistrationToken.cs" />
+    <Compile Include="Database\Objects\User.cs" />
     <Compile Include="Database\Objects\UserToken.cs" />
     <Compile Include="DoorControl.aspx.cs">
       <DependentUpon>DoorControl.aspx</DependentUpon>

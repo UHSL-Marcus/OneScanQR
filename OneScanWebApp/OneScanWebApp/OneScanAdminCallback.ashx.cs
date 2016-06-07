@@ -43,42 +43,49 @@ namespace OneScanWebApp
             }
 
             ProcessOutcomePayload outcome = new ProcessOutcomePayload();
+            AdminSessionData sData = JsonUtils.GetObject<AdminSessionData>(LoginReply.SessionData);
 
-            if (LoginReply.Success)
+            if (Global.OneScanAdminSessions.ContainsKey(sData.guid))
             {
-
-                int? userTokenId;
-                SQLControls.getEntryIDByColumn<AdminToken>(LoginReply.UserToken.UserToken, "UserToken", out userTokenId);
-
-                if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
+                if (LoginReply.Success)
                 {
-                    outcome.Success = true;
-                    outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
-                }
-                if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
-                {
-                    if (userTokenId == null)
-                    {
-                        AdminToken at = new AdminToken();
-                        at.UserToken = LoginReply.UserToken.UserToken;
-                        if (SQLControls.doInsertReturnID(at, out userTokenId))
-                        {
-                            AdminUser au = new AdminUser();
-                            au.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
-                            au.AdminToken = userTokenId;
 
-                            userTokenId = null;
-                            SQLControls.doInsertReturnID(at, out userTokenId);
-                        }
-                    }
+                    int? userTokenId;
+                    SQLControls.getEntryIDByColumn<AdminToken>(LoginReply.UserToken.UserToken, "UserToken", out userTokenId);
 
-                    if (userTokenId != null)
+                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
                     {
                         outcome.Success = true;
                         outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
                     }
+                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
+                    {
+                        bool continueReg = false;
 
-                    SQLControls.deleteEntryByColumn<RegistrationToken>(LoginReply.SessionData, "AuthKey");
+                        if (userTokenId == null)
+                        {
+                            AdminToken at = new AdminToken();
+                            at.UserToken = LoginReply.UserToken.UserToken;
+                            if (SQLControls.doInsertReturnID(at, out userTokenId))
+                            {
+                                AdminUser au = new AdminUser();
+                                au.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
+                                au.AdminToken = userTokenId;
+
+                                if (SQLControls.doInsert(at))
+                                    continueReg = true;
+                            }
+                        }
+                        else continueReg = true;
+
+                        if (continueReg)
+                        {
+                            outcome.Success = true;
+                            outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
+                        }
+
+                        SQLControls.deleteEntryByColumn<RegistrationToken>(sData.regkey, "AuthKey");
+                    }
                 }
             }
 

@@ -12,17 +12,17 @@ namespace AdminWebPortal.Views.Login
 {
     public partial class Login1 : System.Web.UI.Page
     {
-        private string guid;
+        private readonly string GUID = "session_guid";
         protected void Page_Load(object sender, EventArgs e)
         {
-            // check if postback or page refresh?
-            getQR();
+            if (!IsPostBack)
+                getQR();
         }
 
         private void getQR()
         {
-            guid = Guid.NewGuid().ToString();
-            string query = "mode=0&qr_img=1&guid=" + guid;
+            Session[GUID] = Guid.NewGuid().ToString();
+            string query = "mode=0&qr_img=1&guid=" + Session[GUID];
             string hmac = HMAC.Hash(query, ConfigurationManager.AppSettings["AdminSecret"]);
             query += "&data=" + hmac;
 
@@ -36,25 +36,11 @@ namespace AdminWebPortal.Views.Login
 
         private string getPollUrl()
         {
-            string query = "mode=0&guid=" + guid;
+            string query = "mode=0&guid=" + Session[GUID];
             string hmac = HMAC.Hash(query, ConfigurationManager.AppSettings["AdminSecret"]);
             query += "&data=" + hmac;
 
             return "http://localhost:3469/OneScanAdminGetResult.ashx?" + query;
-        }
-
-        protected void hiddenPostBackBtn_Click(object sender, EventArgs e)
-        {
-            FormsAuthentication.RedirectFromLoginPage("", false);
-            /*byte[] reply;
-            HTTPRequest.HTTPGetRequest(getPollUrl(), out reply);
-            int status;
-            if(int.TryParse(System.Text.Encoding.Default.GetString(reply), out status))
-            {
-                if (status == 2)
-                    FormsAuthentication.RedirectFromLoginPage("", false);
-            }*/
-
         }
 
         protected void hiddenNewQRBtn_Click(object sender, EventArgs e)
@@ -67,17 +53,25 @@ namespace AdminWebPortal.Views.Login
             byte[] reply;
             if (HTTPRequest.HTTPGetRequest(getPollUrl(), out reply))
             {
-                int status;
+                FormsAuthentication.RedirectFromLoginPage("", false);
+
+                /*int status;
                 if (int.TryParse(System.Text.Encoding.Default.GetString(reply), out status))
                 {
                     if (status < 2)
+                    {
                         ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "pollScript" + UniqueID, "pollTimeout();", true);
+                        if (status == 1)
+                        {
+                            // scanning
+                        }
+                    }   
                     else if (status == 2)
                         FormsAuthentication.RedirectFromLoginPage("", false);
                     else if (status == 3)
-                        ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "registrationFinishScript" + UniqueID, "RegistrationFinish();", true);
+                        ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "scanFailedScript" + UniqueID, "ScanFailed();", true);
 
-                }
+                }*/
             }
         }
     }

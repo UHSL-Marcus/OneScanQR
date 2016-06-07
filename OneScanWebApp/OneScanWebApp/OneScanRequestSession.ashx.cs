@@ -36,6 +36,8 @@ namespace OneScanWebApp
 
             string secret = "";
             LoginTypes loginType;
+            SessionData sData = new SessionData();
+            sData.doorID = doorID;
             
             switch (mode)
             {
@@ -54,6 +56,7 @@ namespace OneScanWebApp
                         return;
                     secret = regtokns[0].Secret;
                     loginType = LoginTypes.Register;
+                    sData.regkey = key;
                     break;
                 default: return;
             }
@@ -63,15 +66,19 @@ namespace OneScanWebApp
                 return;  
 
             BasePayload payload = new BasePayload();
-            payload.SetLoginPayload(loginType, doorID);
+            payload.SetLoginPayload(loginType, JsonUtils.GetJson(sData));
 
             string QR, sessionID;
             if (OneScanRequests.GetQRData(JsonUtils.GetJson(payload), out QR, out sessionID))
             {
+                string sessionKey = doorID;
+                if (sData.regkey != null)
+                    sessionKey += sData.regkey;
+
                 string t;
-                Global.OneScanSessions.TryRemove(doorID, out t);
+                Global.OneScanSessions.TryRemove(sessionKey, out t);
                 
-                if (!Global.OneScanSessions.TryAdd(doorID, sessionID))
+                if (!Global.OneScanSessions.TryAdd(sessionKey, sessionID))
                     return;
 
                 if (QR_img == 1)
@@ -103,6 +110,12 @@ namespace OneScanWebApp
                 return false;
             }
         }
+    }
+
+    class SessionData
+    {
+        public string doorID;
+        public string regkey;
     }
 
     class RequestResponse

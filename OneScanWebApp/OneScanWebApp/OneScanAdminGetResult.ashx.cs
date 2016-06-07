@@ -42,7 +42,7 @@ namespace OneScanWebApp
                             string key = context.Request.QueryString["key"];
                             toHmac += "&key=" + key;
                             List<RegistrationToken> regtokns;
-                            if (SQLControls.getEntryByColumn(key, "Key", out regtokns) || regtokns.Count > 1)
+                            if (SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
                                 secret = regtokns[0].Secret;
                             break;
                     }

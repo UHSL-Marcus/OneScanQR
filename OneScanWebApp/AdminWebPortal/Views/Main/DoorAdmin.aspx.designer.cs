@@ -7,45 +7,45 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AdminWebPortal.Views.Login {
+namespace AdminWebPortal.Views.Main {
     
     
-    public partial class Login1 {
+    public partial class DoorAdmin {
         
         /// <summary>
-        /// qrImg control.
+        /// DoorsTbl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image qrImg;
+        protected global::System.Web.UI.WebControls.Table DoorsTbl;
         
         /// <summary>
-        /// hiddenNewQRBtn control.
+        /// newDoorIdTxtBx control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button hiddenNewQRBtn;
+        protected global::System.Web.UI.WebControls.TextBox newDoorIdTxtBx;
         
         /// <summary>
-        /// hiddenPostBackUptPnl control.
+        /// newDoorSecretTxtBx control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel hiddenPostBackUptPnl;
+        protected global::System.Web.UI.WebControls.TextBox newDoorSecretTxtBx;
         
         /// <summary>
-        /// hiddenStatusCheckBtn control.
+        /// addDoorBtn control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button hiddenStatusCheckBtn;
+        protected global::System.Web.UI.WebControls.Button addDoorBtn;
     }
 }

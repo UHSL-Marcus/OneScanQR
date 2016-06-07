@@ -33,8 +33,10 @@ namespace OneScanWebApp
             string toHmac = "mode=" + mode + "&qr_img=" + QR_img + "&guid=" + guid;
 
             string secret = "";
-            string customData = "";
+            
             LoginTypes loginType;
+            AdminSessionData sData = new AdminSessionData();
+            sData.guid = guid;
 
             switch (mode)
             {
@@ -50,7 +52,7 @@ namespace OneScanWebApp
                         return;
                     secret = regtokns[0].Secret;
                     loginType = LoginTypes.Register;
-                    customData = key;
+                    sData.regkey = key;
                     break;
                 default: return;
             }
@@ -59,7 +61,7 @@ namespace OneScanWebApp
                 return;
 
             BasePayload payload = new BasePayload();
-            payload.SetLoginPayload(loginType, customData, "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanAdminCallback.ashx");
+            payload.SetLoginPayload(loginType, JsonUtils.GetJson(sData), "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanAdminCallback.ashx");
 
             string QR, sessionID;
             if (OneScanRequests.GetQRData(JsonUtils.GetJson(payload), out QR, out sessionID))
@@ -96,5 +98,11 @@ namespace OneScanWebApp
                 return false;
             }
         }
+    }
+
+    class AdminSessionData
+    {
+        public string guid;
+        public string regkey;
     }
 }

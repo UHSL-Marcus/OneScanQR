@@ -31,3 +31,7 @@ HMAC door secret with "mode=0&guid=y", where y is the correct value. append this
 
 Admin Registration Result:
 HMAC the generated secret with "mode=1&guid=x&key=y" where x is the correct value and y is the key for the secret. append this as "data=" to the get.  
+
+
+TODO: CANCEL
+possibly add a timeout, remove the session from the global store, if the callback cannot find the session, send a failed response to onescan
