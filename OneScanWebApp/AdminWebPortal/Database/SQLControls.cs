@@ -13,7 +13,7 @@ namespace AdminWebPortal.Database
     {
         public static bool doInsert(string table, Dictionary<string, object> values)
         {
-            string query = "INSERT INTO " + table + " (";// Door.DoorID, Door.DoorSecret) VALUES('" + newDoorIdTxtBx.Text + "','" + newDoorSecretTxtBx + "')";
+            string query = "INSERT INTO " + table + " (";
             string queryValues = " VALUES(";
 
             SqlCommand cmd = new SqlCommand();
@@ -52,6 +52,31 @@ namespace AdminWebPortal.Database
             return doNonQuery(cmd);
         }
 
+        public static bool doDeleteByIDGetID(string id, string table, out int? output)
+        {
+            bool success = false;
+            output = null;
+
+            string query = "DECLARE @outputTable table(Id int NOT NULL) " +
+                "DELETE FROM " + table + " OUTPUT INSERTED.Id INTO @outputTable " +
+                "WHERE Id ='" + id + "'; " +
+                "SELECT Id FROM @outputTable; ";
+
+            object ID;
+            if (getSingleEntry(query, "Id", out ID))
+            {
+                if (ID is int)
+                {
+                    output = (int)ID;
+                    success = true;
+                }
+            }
+
+            return success;
+
+
+        }
+
         public static bool doNonQuery(string sql)
         {
             SqlCommand cmd = new SqlCommand(sql);
@@ -75,34 +100,67 @@ namespace AdminWebPortal.Database
             return success;
         }
 
-
-        private static List<TYPE> getData<TYPE>(string sql = null)
+        private static bool getSingleEntry(string sql, string columnName, out object output)
         {
-
             DataTableReader reader = getDataReader(sql);
 
-            List<TYPE> returnList = new List<TYPE>();
+            bool success = false;
 
-            if (sql == null)
-
-
+            output = null;
 
             while (reader.Read())
             {
-
-                TYPE ob = Activator.CreateInstance<TYPE>();
-
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    string s = reader.GetName(i);
-                    FieldInfo field = ob.GetType().GetField(reader.GetName(i));
-                    if (field.FieldType == typeof(string[]))
-                        field.SetValue(ob, ((string)reader[i]).Split(','));
-                    else
-                        field.SetValue(ob, reader[i]);
-                }
+                    if (reader.GetName(i).Equals(columnName))
+                    {
+                        output = reader[i];
+                        success = true;
 
-                returnList.Add(ob);
+                    }
+                }
+            }
+
+
+            return success;
+
+        }
+
+        public interface DataObject
+        {
+            string getSQL();
+        }
+        public static List<TYPE> getData<TYPE>(DataObject ob)
+        {
+            return getData<TYPE>(ob.getSQL());
+        }
+        public static List<TYPE> getData<TYPE>(string sql)
+        {
+
+            List<TYPE> returnList = new List<TYPE>();
+
+            if (sql != null)
+            {
+
+                DataTableReader reader = getDataReader(sql);
+
+                while (reader.Read())
+                {
+
+                    TYPE ob = Activator.CreateInstance<TYPE>();
+
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        string s = reader.GetName(i);
+                        FieldInfo field = ob.GetType().GetField(reader.GetName(i));
+                        if (field.FieldType == typeof(string[]))
+                            field.SetValue(ob, ((string)reader[i]).Split(','));
+                        else
+                            field.SetValue(ob, reader[i]);
+                    }
+
+                    returnList.Add(ob);
+                }
             }
 
             return returnList;

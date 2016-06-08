@@ -52,7 +52,7 @@ namespace OneScanWebApp
                     string key = context.Request.QueryString["key"];
                     toHmac += "&key=" + key;
                     List<RegistrationToken> regtokns;
-                    if (!SQLControls.getEntryByColumn(key, "Key", out regtokns) || regtokns.Count > 1)
+                    if (!SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
                         return;
                     secret = regtokns[0].Secret;
                     loginType = LoginTypes.Register;
@@ -62,8 +62,8 @@ namespace OneScanWebApp
             }
 
            
-            if (!HMAC.ValidateHash(toHmac, secret, hmac))
-                return;  
+            //if (!HMAC.ValidateHash(toHmac, secret, hmac))
+                //return;  
 
             BasePayload payload = new BasePayload();
             payload.SetLoginPayload(loginType, JsonUtils.GetJson(sData));
@@ -116,11 +116,5 @@ namespace OneScanWebApp
     {
         public string doorID;
         public string regkey;
-    }
-
-    class RequestResponse
-    {
-        public string SessionID;
-        public string Data;
     }
 }

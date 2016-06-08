@@ -47,7 +47,7 @@ namespace AdminWebPortal.Views.Main
                 delBtn.Text = "Delete";
                 delBtn.ID = "deleteDoor" + reader.GetInt32(0).ToString();
                 delBtn.Click += DelBtn_Click;
-                delBtn.CommandArgument = reader.GetInt32(0).ToString());
+                delBtn.CommandArgument = reader.GetInt32(0).ToString();
 
                 tCell.Controls.Add(delBtn);
                 tRow.Cells.Add(tCell);

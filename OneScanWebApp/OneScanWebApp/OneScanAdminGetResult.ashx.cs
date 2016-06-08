@@ -32,6 +32,7 @@ namespace OneScanWebApp
                 {
 
                     string secret = "";
+                    string key = null;
 
                     switch (mode)
                     {
@@ -39,7 +40,7 @@ namespace OneScanWebApp
                             secret = ConfigurationManager.AppSettings["AdminSecret"];
                             break;
                         case 1:
-                            string key = context.Request.QueryString["key"];
+                            key = context.Request.QueryString["key"];
                             toHmac += "&key=" + key;
                             List<RegistrationToken> regtokns;
                             if (SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
@@ -56,6 +57,7 @@ namespace OneScanWebApp
                             if (HTTPRequest.HTTPGetRequest(ConfigurationManager.AppSettings["OnescanStatusCheckURL"] + "?OnescanSessionID=" + sessionID, out reply))
                             {
                                 status = JsonUtils.GetObject<OneScanSessionStatus>(System.Text.Encoding.Default.GetString(reply)).Status;
+                                if (key != null && status > 1) SQLControls.deleteEntryByColumn<RegistrationToken>(key, "AuthKey");
                             }
                         }
                     }

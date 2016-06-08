@@ -43,9 +43,8 @@ namespace OneScanWebApp
             }
 
             ProcessOutcomePayload outcome = new ProcessOutcomePayload();
-            AdminSessionData sData = JsonUtils.GetObject<AdminSessionData>(LoginReply.SessionData);
 
-            if (Global.OneScanAdminSessions.ContainsKey(sData.guid))
+            if (Global.OneScanAdminSessions.ContainsKey(LoginReply.SessionData))
             {
                 if (LoginReply.Success)
                 {
@@ -72,7 +71,7 @@ namespace OneScanWebApp
                                 au.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
                                 au.AdminToken = userTokenId;
 
-                                if (SQLControls.doInsert(at))
+                                if (SQLControls.doInsert(au))
                                     continueReg = true;
                             }
                         }
@@ -84,7 +83,7 @@ namespace OneScanWebApp
                             outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
                         }
 
-                        SQLControls.deleteEntryByColumn<RegistrationToken>(sData.regkey, "AuthKey");
+                        
                     }
                 }
             }

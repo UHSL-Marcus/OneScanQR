@@ -1,6 +1,5 @@
 ﻿using AdminWebPortal.Database;
 using AdminWebPortal.Utils;
-using OneScanWebApp.Utils;
 using System;
 using System.Collections.Generic;
 using System.Configuration;

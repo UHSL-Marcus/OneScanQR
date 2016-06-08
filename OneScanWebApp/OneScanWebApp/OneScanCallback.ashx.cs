@@ -48,7 +48,7 @@ namespace OneScanWebApp
             if (sData.regkey != null)
                 sessionKey += sData.regkey;
 
-            if (Global.OneScanAdminSessions.ContainsKey(sessionKey))
+            if (Global.OneScanSessions.ContainsKey(sessionKey))
             {
                 if (LoginReply.Success)
                 {
@@ -56,7 +56,7 @@ namespace OneScanWebApp
                     SQLControls.getEntryIDByColumn<UserToken>(LoginReply.UserToken.UserToken, "Token", out userTokenId);
 
                     int? doorId;
-                    if (!SQLControls.getEntryIDByColumn<Door>(LoginReply.SessionData, "DoorID", out doorId))
+                    if (SQLControls.getEntryIDByColumn<Door>(sData.doorID, "DoorID", out doorId))
                     {
 
                         DoorUserTokenPair pair = new DoorUserTokenPair();
@@ -82,11 +82,11 @@ namespace OneScanWebApp
                                 ut.Token = LoginReply.UserToken.UserToken;
                                 if (SQLControls.doInsertReturnID(ut, out userTokenId))
                                 {
-                                    User u = new User();
+                                    UserInfo u = new UserInfo();
                                     u.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
                                     u.UserToken = userTokenId;
 
-                                    if (SQLControls.doInsert(ut))
+                                    if (SQLControls.doInsert(u))
                                         continueReg = true;
                                 }
                             }
@@ -106,9 +106,6 @@ namespace OneScanWebApp
                                     outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
                                 }
                             }
-
-                            SQLControls.deleteEntryByColumn<RegistrationToken>(sData.regkey, "AuthKey");
-
                         }
                     }
                 }

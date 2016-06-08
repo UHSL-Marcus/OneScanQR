@@ -5,7 +5,7 @@ using System.Web;
 
 namespace OneScanWebApp.Database.Objects
 {
-    public class User
+    public class UserInfo
     {
         public int? Id;
         public string Name;
