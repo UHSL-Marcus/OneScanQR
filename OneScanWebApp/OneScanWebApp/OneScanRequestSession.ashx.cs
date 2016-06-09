@@ -62,8 +62,8 @@ namespace OneScanWebApp
             }
 
            
-            //if (!HMAC.ValidateHash(toHmac, secret, hmac))
-                //return;  
+            if (!HMAC.ValidateHash(toHmac, secret, hmac))
+                return;  
 
             BasePayload payload = new BasePayload();
             payload.SetLoginPayload(loginType, JsonUtils.GetJson(sData));
@@ -81,7 +81,7 @@ namespace OneScanWebApp
                 if (!Global.OneScanSessions.TryAdd(sessionKey, sessionID))
                     return;
 
-                if (QR_img == 1)
+                if (QR_img == 1 || QR_img == 2)
                 {
                     byte[] byteArray = new byte[0];
                     using (MemoryStream stream = new MemoryStream())
@@ -92,11 +92,17 @@ namespace OneScanWebApp
                         byteArray = stream.ToArray();
                     }
 
-                    QR = Convert.ToBase64String(byteArray);
-                    
-                }
+                    if (QR_img == 1)
+                    {
+                        context.Response.ContentType = "image/bmp";
+                        context.Response.OutputStream.Write(byteArray, 0, byteArray.Length);
+                    }
+                        
 
-                context.Response.Write(QR);
+                    if (QR_img == 2)
+                        context.Response.Write(Convert.ToBase64String(byteArray));
+                    
+                } else context.Response.Write(QR);
 
                 
 

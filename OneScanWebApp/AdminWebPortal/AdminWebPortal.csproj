@@ -65,6 +65,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
@@ -141,7 +142,7 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\Utils\HTTPRequest.js" />
-    <Content Include="Scripts\Views\AdminUserAdmin.js" />
+    <Content Include="Scripts\Views\AdminUserQR.js" />
     <Content Include="Scripts\Views\Login.js" />
     <Content Include="Scripts\Views\Master.js" />
     <Content Include="Scripts\WebForms\DetailsView.js" />
@@ -173,6 +174,8 @@
     <Content Include="Views\Login.aspx" />
     <Content Include="Views\Main\AdminUserAdmin.aspx" />
     <Content Include="Views\Main\DoorAdmin.aspx" />
+    <Content Include="Views\Main\QRPages\AdminUserQR.aspx" />
+    <Content Include="Views\Main\QRPages\UserQR.aspx" />
     <Content Include="Views\Main\UserAdmin.aspx" />
     <Content Include="Web.config" />
     <Content Include="Bundle.config" />
@@ -199,6 +202,7 @@
     <Compile Include="argumentTest.aspx.designer.cs">
       <DependentUpon>argumentTest.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Database\Objects\RegistrationToken.cs" />
     <Compile Include="Database\SQLControls.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -223,6 +227,7 @@
     <Compile Include="Site.Mobile.Master.designer.cs">
       <DependentUpon>Site.Mobile.Master</DependentUpon>
     </Compile>
+    <Compile Include="Utils\Extentions.cs" />
     <Compile Include="Utils\HMAC.cs" />
     <Compile Include="Utils\HTTPRequest.cs" />
     <Compile Include="Utils\JsonUtils.cs" />
@@ -254,12 +259,36 @@
     <Compile Include="Views\Main\DoorAdmin.aspx.designer.cs">
       <DependentUpon>DoorAdmin.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Views\Main\QRPages\AdminUserQR.aspx.cs">
+      <DependentUpon>AdminUserQR.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Main\QRPages\AdminUserQR.aspx.designer.cs">
+      <DependentUpon>AdminUserQR.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Main\QRPages\QRMethods.cs" />
+    <Compile Include="Views\Main\QRPages\UserQR.aspx.cs">
+      <DependentUpon>UserQR.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Main\QRPages\UserQR.aspx.designer.cs">
+      <DependentUpon>UserQR.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Views\Main\UserAdmin.aspx.cs">
       <DependentUpon>UserAdmin.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Views\Main\UserAdmin.aspx.designer.cs">
       <DependentUpon>UserAdmin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Main\UserAdminUtils\CommandArgumentObjects.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Main\UserAdminUtils\SQLQueryObjects.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Main\UserAdminUtils\TableFillMethods.cs">
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup />

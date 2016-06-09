@@ -15,15 +15,6 @@
                 </asp:TableHeaderRow>
             </asp:Table> 
         </div>
-        <asp:Button ID="registerNewAdminBtn" runat="server" Text="Register New Admin" OnClick="registerNewAdminBtn_Click"/>
-        <div runat="server" id="RegisterQRDiv" visible="false" ClientIDMode="Static">
-            <asp:Button ID="hiddenQRCompleteBtn" runat="server" Text="" Visible="true" ClientIDMode="Static" OnClick="hiddenQRCompleteBtn_Click" />
-            <asp:Image ID="qrImg" runat="server" />
-            <asp:UpdatePanel ID="hiddenPostBackUptPnl" runat="server">
-                <ContentTemplate>
-                    <asp:Button ID="hiddenStatusCheckBtn" runat="server" Text="" Visible="true" ClientIDMode="Static" OnClick="hiddenStatusCheckBtn_Click" />
-                </ContentTemplate>
-            </asp:UpdatePanel>
-        </div> 
+        <asp:Button ID="registerNewAdminBtn" runat="server" Text="Register New Admin" OnClick="registerNewAdminBtn_Click"/> 
     </div>
 </asp:Content>

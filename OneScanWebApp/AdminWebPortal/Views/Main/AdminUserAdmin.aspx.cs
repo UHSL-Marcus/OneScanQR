@@ -13,14 +13,11 @@ namespace AdminWebPortal.Views.Main
 {
     public partial class AdminUserAdmin : System.Web.UI.Page
     {
-        private readonly string GUID = "session_guid";
-        private readonly string KEY = "session_key";
-        private readonly string SECRET = "session_secret";
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!ScriptManager.GetCurrent(Page).IsInAsyncPostBack)
             {
-                RegisterQRDiv.Visible = false;
                 fillTable();
             }
         }
@@ -80,64 +77,21 @@ namespace AdminWebPortal.Views.Main
 
         protected void registerNewAdminBtn_Click(object sender, EventArgs e)
         {
-            RegisterQRDiv.Visible = true;
-            qrImg.ImageUrl = "";
-
-            Session[KEY] = Guid.NewGuid().ToString();
-            Session[SECRET] = Guid.NewGuid().ToString();
-            if (SQLControls.doNonQuery("INSERT INTO RegistrationToken VALUES('" + Session[KEY] + "', '" + Session[SECRET] + "')"))
+            string key = Guid.NewGuid().ToString();
+            string secret = Guid.NewGuid().ToString();
+            if (SQLControls.doNonQuery("INSERT INTO RegistrationToken VALUES('" + key + "', '" + secret + "')"))
             {
-                Session[GUID] = Guid.NewGuid().ToString();
-                string query = "mode=1&qr_img=1&guid=" + Session[GUID] + "&key=" + Session[KEY];
-                string hmac = HMAC.Hash(query, (string)Session[SECRET]);
+                string guid = Guid.NewGuid().ToString();
+                string query = "guid=" + guid + "&key=" + key;
+                string hmac = HMAC.Hash(query, secret);
                 query += "&data=" + hmac;
 
-                byte[] reply;
-                if (HTTPRequest.HTTPGetRequest("http://localhost:3469/OneScanAdminRequestSession.ashx?" + query, out reply))
-                {
-                    qrImg.ImageUrl = "data:image/bmp;base64," + System.Text.Encoding.Default.GetString(reply);
-
-                    ScriptManager.RegisterStartupScript(this, GetType(), "pollScript" + UniqueID, "pollTimeout();", true);
-                }
+                Response.Redirect("/Views/Main/QRPages/AdminUserQR?" + query);
             }
+
+            
         }
 
-        private string getPollUrl()
-        {
-            string query = "mode=1&guid=" + Session[GUID] + "&key=" + Session[KEY];
-            string hmac = HMAC.Hash(query, (string)Session[SECRET]);
-            query += "&data=" + hmac;
 
-            return "http://localhost:3469/OneScanAdminGetResult.ashx?" + query;
-        }
-
-        protected void hiddenStatusCheckBtn_Click(object sender, EventArgs e)
-        {
-            byte[] reply;
-            if (HTTPRequest.HTTPGetRequest(getPollUrl(), out reply))
-            {
-                int status;
-                if (int.TryParse(System.Text.Encoding.Default.GetString(reply), out status))
-                {
-                    if (status < 2)
-                    {
-                        ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "pollScript" + UniqueID, "pollTimeout();", true);
-                        if (status == 1)
-                        {
-                            // scanning
-                        }
-                    } 
-                    else if (status >= 2)
-                        ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "registrationFinishScript" + UniqueID, "RegistrationFinish();", true);
-
-                }
-            }
-        }
-
-        protected void hiddenQRCompleteBtn_Click(object sender, EventArgs e)
-        {
-            RegisterQRDiv.Visible = false;
-            fillTable();
-        }
     }
 }

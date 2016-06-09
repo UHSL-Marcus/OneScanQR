@@ -13,6 +13,24 @@ namespace AdminWebPortal.Views.Main {
     public partial class UserAdmin {
         
         /// <summary>
+        /// doorViewState control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputHidden doorViewState;
+        
+        /// <summary>
+        /// ViewStateTester control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ViewStateTester;
+        
+        /// <summary>
         /// usersTbl control.
         /// </summary>
         /// <remarks>

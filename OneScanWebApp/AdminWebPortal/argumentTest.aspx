@@ -10,6 +10,7 @@
     <form id="form1" runat="server">
     <div id="container" runat="server">
         <asp:Label runat="server" ID="showArgument" />
+        <asp:Button runat="server" ID="postbackBtn" OnClick="postbackBtn_Click" Text="Postback"/>
     </div>
     </form>
 </body>

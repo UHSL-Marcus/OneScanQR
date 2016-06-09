@@ -4,7 +4,9 @@
 </asp:Content>
 
 <asp:Content ID="Content" ContentPlaceHolderID="MainContentPlaceholder" runat="server">
+    <input type="hidden" runat="server" id="doorViewState" />
     <div class="content-padding">
+        <asp:Label runat="server" ID="ViewStateTester" ></asp:Label>
         <div class="panel panel-default">
             <asp:Table runat="server" ID="usersTbl" CssClass="table table-striped">
                 <asp:TableHeaderRow>

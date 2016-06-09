@@ -11,14 +11,15 @@ namespace AdminWebPortal
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            
-                Button btn = new Button();
-                btn.Text = "A button";
-                btn.ID = "btnUD";
-                btn.CommandArgument = "Argument";
-                btn.Click += Btn_Click;
+            showArgument.Text = "ViewState = " + ViewState["tester"];
 
-                container.Controls.Add(btn);
+            Button btn = new Button();
+            btn.Text = "A button";
+            btn.ID = "btnUD";
+            btn.CommandArgument = "Argument";
+            btn.Click += Btn_Click;
+
+            container.Controls.Add(btn);
             
         }
 
@@ -27,6 +28,12 @@ namespace AdminWebPortal
             Button btn = (Button)sender;
             showArgument.Text = btn.CommandArgument;
             btn.CommandArgument = "new argument";
+        }
+
+        protected void postbackBtn_Click(object sender, EventArgs e)
+        {
+            if (ViewState["tester"] == null)
+                ViewState["tester"] = "test";
         }
     }
 }

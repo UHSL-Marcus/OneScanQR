@@ -1,12 +1,15 @@
 Request mode: 0 = login, 1 = registration
+guid is a unique identifer of the requesting app/website/device so the correct onescan session can be polled for. 
 
 HMAC = SHA1
+
+
 Door QR request: 
 HMAC the door secret with "mode=0&qr_img=x&door_id=y" where x and y are the correct values. append this as "data=" to the get. 
 
-Door Registration: 
+Door User Registration: 
 generate a secret and a key pair. Store in database. 
-HMAC the generated secret with "mode=1&qr_img=x&door_id=y&key=z" where x and y are the correct values and z is the key for the secret. Append this as "data=" to the get link. The generated secret will be removed from the database once registration is complete. 
+HMAC the generated secret with "mode=1&qr_img=x&guid=y&key=z" where x and y are the correct values and z is the key for the secret. Append this as "data=" to the get link. The generated secret will be removed from the database once registration is complete. 
 
 this will validate the qr requests to stop anybody just linking to the webpage and recieving a QR code. Especially for registration.
 
@@ -18,7 +21,7 @@ HMAC the generated secret with "mode=1&door_id=x&key=y" where x is the correct v
 
 
 Admin:
-guid is a unique identifer of the requesting app/website/device so the correct onescan session can be polled for. 
+
 Login QR request:
 HMAC "mode=0&qr_img=x&guid=y" ,where x and y are the correct values, with the admin secret. append this as "data=" to the get.
 
@@ -34,4 +37,4 @@ HMAC the generated secret with "mode=1&guid=x&key=y" where x is the correct valu
 
 
 TODO: CANCEL
-possibly add a timeout, remove the session from the global store, if the callback cannot find the session, send a failed response to onescan
+possibly add a timeout between polling requests, remove the session from the global store, if the callback cannot find the session, send a failed response to onescan

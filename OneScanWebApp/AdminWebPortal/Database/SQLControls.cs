@@ -11,6 +11,12 @@ namespace AdminWebPortal.Database
 {
     public class SQLControls
     {
+        public static bool getEntryByColumn<TYPE>(object info, string column, out List<TYPE> output)
+        {
+            Type type = typeof(TYPE);
+            output = getData<TYPE>("SELECT * FROM " + type.Name + " WHERE " + column + " = '" + info + "'");
+            return (output.Count > 0);
+        }
         public static bool doInsert(string table, Dictionary<string, object> values)
         {
             string query = "INSERT INTO " + table + " (";
@@ -54,12 +60,17 @@ namespace AdminWebPortal.Database
 
         public static bool doDeleteByIDGetID(string id, string table, out int? output)
         {
+            return doDeleteByColumnGetID(id, "Id", table, out output);
+        }
+
+        public static bool doDeleteByColumnGetID(object info, string column, string table, out int? output)
+        {
             bool success = false;
             output = null;
 
             string query = "DECLARE @outputTable table(Id int NOT NULL) " +
                 "DELETE FROM " + table + " OUTPUT INSERTED.Id INTO @outputTable " +
-                "WHERE Id ='" + id + "'; " +
+                "WHERE " + column + "='" + info + "'; " +
                 "SELECT Id FROM @outputTable; ";
 
             object ID;
@@ -73,8 +84,6 @@ namespace AdminWebPortal.Database
             }
 
             return success;
-
-
         }
 
         public static bool doNonQuery(string sql)

@@ -7,45 +7,54 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AdminWebPortal {
+namespace AdminWebPortal.Views.Main.QRPages {
     
     
-    public partial class argumentTest {
+    public partial class AdminUserQR {
         
         /// <summary>
-        /// form1 control.
+        /// RegisterQRDiv control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl RegisterQRDiv;
         
         /// <summary>
-        /// container control.
+        /// hiddenQRCompleteBtn control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl container;
+        protected global::System.Web.UI.WebControls.Button hiddenQRCompleteBtn;
         
         /// <summary>
-        /// showArgument control.
+        /// qrImg control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label showArgument;
+        protected global::System.Web.UI.WebControls.Image qrImg;
         
         /// <summary>
-        /// postbackBtn control.
+        /// hiddenPostBackUptPnl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button postbackBtn;
+        protected global::System.Web.UI.UpdatePanel hiddenPostBackUptPnl;
+        
+        /// <summary>
+        /// hiddenStatusCheckBtn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button hiddenStatusCheckBtn;
     }
 }
