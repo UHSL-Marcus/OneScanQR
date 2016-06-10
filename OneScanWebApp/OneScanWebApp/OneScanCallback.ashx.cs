@@ -46,7 +46,7 @@ namespace OneScanWebApp
 
             string sessionKey = sData.doorID;
             if (sData.regkey != null)
-                sessionKey += sData.regkey;
+                sessionKey = sData.regkey;
 
             if (Global.OneScanSessions.ContainsKey(sessionKey))
             {
@@ -55,57 +55,47 @@ namespace OneScanWebApp
                     int? userTokenId;
                     SQLControls.getEntryIDByColumn<UserToken>(LoginReply.UserToken.UserToken, "Token", out userTokenId);
 
-                    int? doorId;
-                    if (SQLControls.getEntryIDByColumn<Door>(sData.doorID, "DoorID", out doorId))
+                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
                     {
-
-                        DoorUserTokenPair pair = new DoorUserTokenPair();
-                        pair.DoorID = doorId;
-
-                        if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
+                        int? doorId;
+                        if (SQLControls.getEntryIDByColumn<Door>(sData.doorID, "DoorID", out doorId))
                         {
+                            DoorUserTokenPair pair = new DoorUserTokenPair();
+                            pair.DoorID = doorId;
                             pair.UserToken = userTokenId;
+
                             if (SQLControls.getEntryExists(pair))
                             {
                                 outcome.Success = true;
                                 outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
                             }
                         }
+                    }
 
-                        if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
+                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
+                    {
+                        bool continueReg = false;
+
+                        if (userTokenId == null)
                         {
-                            bool continueReg = false;
-
-                            if (userTokenId == null)
+                            UserToken ut = new UserToken();
+                            ut.Token = LoginReply.UserToken.UserToken;
+                            if (SQLControls.doInsertReturnID(ut, out userTokenId))
                             {
-                                UserToken ut = new UserToken();
-                                ut.Token = LoginReply.UserToken.UserToken;
-                                if (SQLControls.doInsertReturnID(ut, out userTokenId))
-                                {
-                                    UserInfo u = new UserInfo();
-                                    u.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
-                                    u.UserToken = userTokenId;
+                                UserInfo u = new UserInfo();
+                                u.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
+                                u.UserToken = userTokenId;
 
-                                    if (SQLControls.doInsert(u))
-                                        continueReg = true;
-                                }
+                                if (SQLControls.doInsert(u))
+                                    continueReg = true;
                             }
-                            else continueReg = true;
+                        }
+                        else continueReg = true;
 
-                            if (continueReg)
-                            {
-                                pair.UserToken = userTokenId;
-
-                                int? id;
-                                if (!SQLControls.getEntryID(pair, out id))
-                                    SQLControls.doInsertReturnID(pair, out id);
-
-                                if (id != null)
-                                {
-                                    outcome.Success = true;
-                                    outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
-                                }
-                            }
+                        if (continueReg)
+                        {
+                            outcome.Success = true;
+                            outcome.MessageType = OutcomeTypes.ProcessComplete.ToString(); 
                         }
                     }
                 }

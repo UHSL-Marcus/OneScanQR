@@ -10,16 +10,16 @@
 namespace AdminWebPortal.Views.Main.QRPages {
     
     
-    public partial class AdminUserQR {
+    public partial class UserQR {
         
         /// <summary>
-        /// RegisterQRDiv control.
+        /// hiddenQRCompleteUptPnl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl RegisterQRDiv;
+        protected global::System.Web.UI.UpdatePanel hiddenQRCompleteUptPnl;
         
         /// <summary>
         /// hiddenQRCompleteBtn control.

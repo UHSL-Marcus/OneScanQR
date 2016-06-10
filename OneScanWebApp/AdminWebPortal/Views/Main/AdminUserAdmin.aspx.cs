@@ -86,7 +86,7 @@ namespace AdminWebPortal.Views.Main
                 string hmac = HMAC.Hash(query, secret);
                 query += "&data=" + hmac;
 
-                Response.Redirect("/Views/Main/QRPages/AdminUserQR?" + query);
+                Response.Redirect("~/Views/QRPages/AdminUserQR?" + query);
             }
 
             

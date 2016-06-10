@@ -47,13 +47,16 @@
         <div id="sidebar" class="sideNavBar" runat="server" ClientIDMode="Static">
             <ul id="navList" class="nav nav-pills nav-stacked">
                 <li>
-                    <a href="/Views/Main/UserAdmin"><span>Users</span></a>
+                    <asp:HyperLink runat="server" NavigateUrl="~/Views/Main/UserAdmin"><span>Users</span></asp:HyperLink>
+                    <!--<a href="/Views/Main/UserAdmin"><span>Users</span></a>-->
                 </li>
                 <li>
-                    <a href="/Views/Main/DoorAdmin"><span>Doors</span></a>
+                    <asp:HyperLink runat="server" NavigateUrl="~/Views/Main/DoorAdmin"><span>Doors</span></asp:HyperLink>
+                    <!--<a href="/Views/Main/DoorAdmin"><span>Doors</span></a>-->
                 </li>
                 <li>
-                    <a href="/Views/Main/AdminUserAdmin"><span>Admin Users</span></a>
+                    <asp:HyperLink runat="server" NavigateUrl="~/Views/Main/AdminUserAdmin"><span>Admin Users</span></asp:HyperLink>
+                    <!--<a href="/Views/Main/AdminUserAdmin"><span>Admin Users</span></a>-->
                 </li>
             </ul>
         </div>

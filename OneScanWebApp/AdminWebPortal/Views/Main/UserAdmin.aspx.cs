@@ -91,6 +91,17 @@ namespace AdminWebPortal.Views.Main
             }
         }
 
+        private void AddDoorBtn_Click(object sender, EventArgs e)
+        {
+            if (sender is Button)
+            {
+                Button btn = (Button)sender;
+                AddDoorBtnArguments args = JsonUtils.GetObject<AddDoorBtnArguments>(btn.CommandArgument);
+
+                TableCell recieveCell = usersTbl.Rows[args.RowIndex.Value].Cells[args.CellIndex.Value];
+            }
+
+        }
         private void DelBtn_Click(object sender, EventArgs e)
         {
             if (sender is Button)
@@ -111,6 +122,19 @@ namespace AdminWebPortal.Views.Main
             }
         }
 
-        
+        protected void registerNewUserBtn_Click(object sender, EventArgs e)
+        {
+            string key = Guid.NewGuid().ToString();
+            string secret = Guid.NewGuid().ToString();
+            if (SQLControls.doNonQuery("INSERT INTO RegistrationToken VALUES('" + key + "', '" + secret + "')"))
+            {
+                string guid = Guid.NewGuid().ToString();
+                string query = "guid=" + guid + "&key=" + key;
+                string hmac = HMAC.Hash(query, secret);
+                query += "&data=" + hmac;
+
+                Response.Redirect("~/Views/QRPages/UserQR?" + query);
+            }
+        }
     }
 }

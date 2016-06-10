@@ -15,6 +15,13 @@ namespace AdminWebPortal.Views.Main
             public int? DoorTableIndex;
             public bool showingDoors = false;
         }
+
+        private class AddDoorBtnArguments
+        {
+            public int? RowIndex;
+            public int? CellIndex;
+            public int? UserTokenID;
+        }
         private class DeleteBtnArguments
         {
             public int? UserTokenID;

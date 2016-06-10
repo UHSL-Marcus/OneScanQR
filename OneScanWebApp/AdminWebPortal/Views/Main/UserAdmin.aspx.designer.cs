@@ -22,15 +22,6 @@ namespace AdminWebPortal.Views.Main {
         protected global::System.Web.UI.HtmlControls.HtmlInputHidden doorViewState;
         
         /// <summary>
-        /// ViewStateTester control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ViewStateTester;
-        
-        /// <summary>
         /// usersTbl control.
         /// </summary>
         /// <remarks>
@@ -38,5 +29,14 @@ namespace AdminWebPortal.Views.Main {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Table usersTbl;
+        
+        /// <summary>
+        /// registerNewUserBtn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button registerNewUserBtn;
     }
 }

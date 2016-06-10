@@ -1,5 +1,4 @@
-﻿using AdminWebApp.Database.Objects;
-using AdminWebPortal.Database;
+﻿using AdminWebPortal.Database;
 using AdminWebPortal.Utils;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Web.UI.WebControls;
 
 namespace AdminWebPortal.Views.Main.QRPages
 {
-    public partial class AdminUserQR : System.Web.UI.Page
+    public partial class UserQR : System.Web.UI.Page
     {
         private readonly string QRObject = "ViewState_QR";
 
@@ -18,15 +17,14 @@ namespace AdminWebPortal.Views.Main.QRPages
         {
             if (!IsPostBack)
             {
-                QRMethods QR = new QRMethods(Request.QueryString["key"], Request.QueryString["guid"], true);
+                QRMethods QR = new QRMethods(Request.QueryString["key"], Request.QueryString["guid"]);
                 if (QR.GetRegistrationQR(ref qrImg, Request.QueryString["data"]))
                 {
-                    ScriptManager.RegisterStartupScript(this, GetType(), "pollScript" + UniqueID, "pollTimeout();", true);
-                    RegisterQRDiv.Visible = true;
+                    ScriptManager.RegisterStartupScript(this, GetType(), "pollScript" + UniqueID, "pollTimeout(false);", true);
+                    qrImg.Visible = true;
                     ViewState[QRObject] = QR.SerializeObject(true);
                 }
             }
- 
         }
 
         protected void hiddenStatusCheckBtn_Click(object sender, EventArgs e)
@@ -40,7 +38,7 @@ namespace AdminWebPortal.Views.Main.QRPages
 
         protected void hiddenQRCompleteBtn_Click(object sender, EventArgs e)
         {
-            RegisterQRDiv.Visible = false;
+            qrImg.Visible = false;
         }
     }
 }

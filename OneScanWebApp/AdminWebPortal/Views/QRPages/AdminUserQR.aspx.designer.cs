@@ -10,7 +10,7 @@
 namespace AdminWebPortal.Views.Main.QRPages {
     
     
-    public partial class UserQR {
+    public partial class AdminUserQR {
         
         /// <summary>
         /// RegisterQRDiv control.
@@ -20,6 +20,15 @@ namespace AdminWebPortal.Views.Main.QRPages {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl RegisterQRDiv;
+        
+        /// <summary>
+        /// hiddenQRCompleteUptPnl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel hiddenQRCompleteUptPnl;
         
         /// <summary>
         /// hiddenQRCompleteBtn control.

@@ -21,9 +21,9 @@ namespace AdminWebPortal.Views.Main.QRPages
         [DataMember(Name = "guid")]
         private string guid;
         [DataMember(Name = "sessionUrl")]
-        string sessionUrl = "http://localhost:3469/OneScan@RequestSession.ashx?";
+        string sessionUrl = "http://localhost/OneScanWebApp/OneScan@RequestSession.ashx?";
         [DataMember(Name = "resultUrl")]
-        string resultUrl = "http://localhost:3469/OneScan@GetResult.ashx?";
+        string resultUrl = "http://localhost/OneScanWebApp/OneScan@GetResult.ashx?";
 
         public QRMethods(string key, string guid, bool admin = false)
         {
@@ -56,7 +56,7 @@ namespace AdminWebPortal.Views.Main.QRPages
                 if (HMAC.ValidateHash(toHmac, secret, hmac))
                 {
                     
-                    string query = "mode=1&qr_img=1&guid=" + guid + "&key=" + key;
+                    string query = "mode=1&qr_img=2&guid=" + guid + "&key=" + key;
                     hmac = HMAC.Hash(query, secret);
                     query += "&data=" + hmac;
 
@@ -91,16 +91,17 @@ namespace AdminWebPortal.Views.Main.QRPages
                 int status;
                 if (int.TryParse(System.Text.Encoding.Default.GetString(reply), out status))
                 {
+                    string replace = "false";
                     if (status < 2)
                     {
-                        returnS += "pollTimeout();";
-                        if (status == 1)
-                        {
-                            // scanning
-                        }
+                        if (status == 1) replace = "true";
+                        returnS += ("pollTimeout(@scanned);").Replace("@scanned", replace);
                     }
                     else if (status >= 2)
-                        returnS += "RegistrationFinish();";
+                    {
+                        if (status == 2) replace = "true";
+                        returnS += ("RegistrationFinish(@value);").Replace("@value", replace); 
+                    }
 
                 }
             }

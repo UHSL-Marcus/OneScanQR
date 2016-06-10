@@ -58,7 +58,7 @@ namespace OneScanWebApp
                 //return;
 
             BasePayload payload = new BasePayload();
-            payload.SetLoginPayload(loginType, guid, "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanAdminCallback.ashx");
+            payload.SetLoginPayload(loginType, guid, "http://b8a08fc2.ngrok.io/onescanwebapp/OneScanAdminCallback.ashx");
 
             string QR, sessionID;
             if (OneScanRequests.GetQRData(JsonUtils.GetJson(payload), out QR, out sessionID))
@@ -69,7 +69,7 @@ namespace OneScanWebApp
                 if (!Global.OneScanAdminSessions.TryAdd(guid, sessionID))
                     return;
 
-                if (QR_img == 1)
+                if (QR_img == 1 || QR_img == 2)
                 {
                     byte[] byteArray = new byte[0];
                     using (MemoryStream stream = new MemoryStream())
@@ -80,11 +80,18 @@ namespace OneScanWebApp
                         byteArray = stream.ToArray();
                     }
 
-                    QR = Convert.ToBase64String(byteArray);
+                    if (QR_img == 1)
+                    {
+                        context.Response.ContentType = "image/bmp";
+                        context.Response.OutputStream.Write(byteArray, 0, byteArray.Length);
+                    }
+
+
+                    if (QR_img == 2)
+                        context.Response.Write(Convert.ToBase64String(byteArray));
 
                 }
-
-                context.Response.Write(QR);
+                else context.Response.Write(QR);
             }
         }
 

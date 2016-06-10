@@ -1,5 +1,4 @@
 ﻿function pollTimeout(scanned) {
-    alert("poll");
     var info = "";
     if (scanned) info = "Scanning";
 

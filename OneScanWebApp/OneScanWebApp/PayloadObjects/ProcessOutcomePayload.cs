@@ -15,7 +15,8 @@ namespace OneScanWebApp.PayloadObjects
     enum OutcomeTypes
     {
         ProcessComplete,
-        LoginProblem
+        LoginProblem,
+        RegisterUser
     }
 
     

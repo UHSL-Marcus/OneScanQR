@@ -17,7 +17,7 @@ Door QR Result:
 HMAC door secret with "mode=0&door_id=y", where y is the correct value. append this as "data=" to the get. 
 
 Door Registration Result:
-HMAC the generated secret with "mode=1&door_id=x&key=y" where x is the correct value and y is the key for the secret. append this as "data=" to the get. 
+HMAC the generated secret with "mode=1&guid=x&key=y" where x is the correct value and y is the key for the secret. append this as "data=" to the get. 
 
 
 Admin:

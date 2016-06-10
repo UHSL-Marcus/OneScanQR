@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneScanWebApp", "OneScanWebApp\OneScanWebApp.csproj", "{7D34CF8A-76C8-42ED-A118-2DF40953822D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminWebPortal1", "AdminWebPortal1\AdminWebPortal1.csproj", "{F7F091FF-96E1-4BF6-A138-1A43878F6351}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminWebPortal", "AdminWebPortal\AdminWebPortal.csproj", "{3ACCCF4E-D3BB-4053-893A-62A4F7EED1A1}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{7D34CF8A-76C8-42ED-A118-2DF40953822D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D34CF8A-76C8-42ED-A118-2DF40953822D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D34CF8A-76C8-42ED-A118-2DF40953822D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7F091FF-96E1-4BF6-A138-1A43878F6351}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7F091FF-96E1-4BF6-A138-1A43878F6351}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7F091FF-96E1-4BF6-A138-1A43878F6351}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7F091FF-96E1-4BF6-A138-1A43878F6351}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3ACCCF4E-D3BB-4053-893A-62A4F7EED1A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3ACCCF4E-D3BB-4053-893A-62A4F7EED1A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3ACCCF4E-D3BB-4053-893A-62A4F7EED1A1}.Release|Any CPU.ActiveCfg = Release|Any CPU

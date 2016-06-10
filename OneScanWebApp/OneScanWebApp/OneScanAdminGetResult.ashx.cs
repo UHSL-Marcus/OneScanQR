@@ -17,6 +17,7 @@ namespace OneScanWebApp
 
         public void ProcessRequest(HttpContext context)
         {
+ 
             int? status = 3;
 
             int mode;
@@ -48,8 +49,8 @@ namespace OneScanWebApp
                             break;
                     }
 
-                    if (HMAC.ValidateHash(toHmac, secret, hmac))
-                    {
+                    //if (HMAC.ValidateHash(toHmac, secret, hmac))
+                    //{
                         string sessionID;
                         if (Global.OneScanAdminSessions.TryGetValue(guid, out sessionID))
                         {
@@ -57,10 +58,11 @@ namespace OneScanWebApp
                             if (HTTPRequest.HTTPGetRequest(ConfigurationManager.AppSettings["OnescanStatusCheckURL"] + "?OnescanSessionID=" + sessionID, out reply))
                             {
                                 status = JsonUtils.GetObject<OneScanSessionStatus>(System.Text.Encoding.Default.GetString(reply)).Status;
-                                if (key != null && status > 1) SQLControls.deleteEntryByColumn<RegistrationToken>(key, "AuthKey");
+                                if (key != null && status > 1)
+                                    SQLControls.deleteEntryByColumn<RegistrationToken>(key, "AuthKey");
                             }
                         }
-                    }
+                    //}
                 }
 
             }

@@ -16,7 +16,7 @@
     <RootNamespace>AdminWebPortal</RootNamespace>
     <AssemblyName>AdminWebPortal</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -142,6 +142,7 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\Utils\HTTPRequest.js" />
+    <Content Include="Scripts\Views\UserQR.js" />
     <Content Include="Scripts\Views\AdminUserQR.js" />
     <Content Include="Scripts\Views\Login.js" />
     <Content Include="Scripts\Views\Master.js" />
@@ -174,8 +175,8 @@
     <Content Include="Views\Login.aspx" />
     <Content Include="Views\Main\AdminUserAdmin.aspx" />
     <Content Include="Views\Main\DoorAdmin.aspx" />
-    <Content Include="Views\Main\QRPages\AdminUserQR.aspx" />
-    <Content Include="Views\Main\QRPages\UserQR.aspx" />
+    <Content Include="Views\QRPages\AdminUserQR.aspx" />
+    <Content Include="Views\QRPages\UserQR.aspx" />
     <Content Include="Views\Main\UserAdmin.aspx" />
     <Content Include="Web.config" />
     <Content Include="Bundle.config" />
@@ -259,19 +260,19 @@
     <Compile Include="Views\Main\DoorAdmin.aspx.designer.cs">
       <DependentUpon>DoorAdmin.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Views\Main\QRPages\AdminUserQR.aspx.cs">
+    <Compile Include="Views\QRPages\AdminUserQR.aspx.cs">
       <DependentUpon>AdminUserQR.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Views\Main\QRPages\AdminUserQR.aspx.designer.cs">
+    <Compile Include="Views\QRPages\AdminUserQR.aspx.designer.cs">
       <DependentUpon>AdminUserQR.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Views\Main\QRPages\QRMethods.cs" />
-    <Compile Include="Views\Main\QRPages\UserQR.aspx.cs">
+    <Compile Include="Views\QRPages\QRMethods.cs" />
+    <Compile Include="Views\QRPages\UserQR.aspx.cs">
       <DependentUpon>UserQR.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Views\Main\QRPages\UserQR.aspx.designer.cs">
+    <Compile Include="Views\QRPages\UserQR.aspx.designer.cs">
       <DependentUpon>UserQR.aspx</DependentUpon>
     </Compile>
     <Compile Include="Views\Main\UserAdmin.aspx.cs">
@@ -307,7 +308,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>32083</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:32083/</IISUrl>
+          <IISUrl>http://localhost/AdminWebPortal</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

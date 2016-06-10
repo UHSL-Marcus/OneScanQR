@@ -33,15 +33,23 @@ namespace AdminWebPortal.Views.Main
 
                 tCell = new TableCell();
 
-                Button showDoorViewBtn = new Button();
-                showDoorViewBtn.Text = "Show Registered Doors";
-                showDoorViewBtn.ID = "ShowRegisteredDoors" + entry.UserTokenID;
-                showDoorViewBtn.Click += DoorViewBtn_Click;
+                Button doorViewBtn = new Button();
+                doorViewBtn.Text = "Show Registered Doors";
+                doorViewBtn.ID = "ShowRegisteredDoors" + entry.UserTokenID;
+                doorViewBtn.Click += DoorViewBtn_Click;
                 DoorViewBtnArguments doorViewBtnArgs = new DoorViewBtnArguments();
                 doorViewBtnArgs.UserTokenID = entry.UserTokenID;
 
-                tCell.Controls.Add(showDoorViewBtn);
+                tCell.Controls.Add(doorViewBtn);
 
+                Button addDoorBtn = new Button();
+                addDoorBtn.Text = "Register To Door";
+                addDoorBtn.ID = "RegisterToDoor" + entry.UserTokenID;
+                addDoorBtn.Click += AddDoorBtn_Click;
+                AddDoorBtnArguments addDoorBtnArgs = new AddDoorBtnArguments();
+                addDoorBtnArgs.UserTokenID = entry.UserTokenID;
+
+                tCell.Controls.Add(addDoorBtn);
 
                 Button delBtn = new Button();
                 delBtn.Text = "Delete User";
@@ -64,9 +72,13 @@ namespace AdminWebPortal.Views.Main
                 doorViewBtnArgs.CellIndex = tRow.Cells.GetCellIndex(tCell);
                 doorViewBtnArgs.RowIndex = usersTbl.Rows.GetRowIndex(tRow);
 
+                addDoorBtnArgs.CellIndex = tRow.Cells.GetCellIndex(tCell);
+                addDoorBtnArgs.RowIndex = usersTbl.Rows.GetRowIndex(tRow);
+
                 deletebtnArgs.RowIndex = usersTbl.Rows.GetRowIndex(tRow);
 
-                showDoorViewBtn.CommandArgument = JsonUtils.GetJson(doorViewBtnArgs);
+                doorViewBtn.CommandArgument = JsonUtils.GetJson(doorViewBtnArgs);
+                addDoorBtn.CommandArgument = JsonUtils.GetJson(addDoorBtnArgs);
                 delBtn.CommandArgument = JsonUtils.GetJson(deletebtnArgs);
 
             }

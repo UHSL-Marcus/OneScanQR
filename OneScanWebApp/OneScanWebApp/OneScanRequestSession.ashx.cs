@@ -26,13 +26,14 @@ namespace OneScanWebApp
                 return;
 
             string doorID = context.Request.QueryString["door_id"];
+            string guid = context.Request.QueryString["guid"];
             string hmac = context.Request.QueryString["data"];
 
             int QR_img;
-            if (!int.TryParse(context.Request.QueryString["qr_img"], out QR_img) || doorID == null || hmac == null)
+            if (!int.TryParse(context.Request.QueryString["qr_img"], out QR_img) || (mode == 1 && guid == null) || (mode == 0 && doorID == null) || hmac == null)
                 return;
 
-            string toHmac = "mode=" + mode + "&qr_img=" + QR_img + "&door_id=" + doorID;
+            string toHmac = "mode=" + mode + "&qr_img=" + QR_img;
 
             string secret = "";
             LoginTypes loginType;
@@ -42,6 +43,7 @@ namespace OneScanWebApp
             switch (mode)
             {
                 case 0:
+                    toHmac += "&door_id = " + doorID;
                     List<Door> doors;
                     if (!SQLControls.getEntryByColumn(doorID, "DoorID", out doors) || doors.Count > 1)
                         return;
@@ -50,7 +52,7 @@ namespace OneScanWebApp
                     break;
                 case 1:
                     string key = context.Request.QueryString["key"];
-                    toHmac += "&key=" + key;
+                    toHmac += "&guid=" + guid + "&key=" + key;
                     List<RegistrationToken> regtokns;
                     if (!SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
                         return;
@@ -73,7 +75,7 @@ namespace OneScanWebApp
             {
                 string sessionKey = doorID;
                 if (sData.regkey != null)
-                    sessionKey += sData.regkey;
+                    sessionKey = sData.regkey;
 
                 string t;
                 Global.OneScanSessions.TryRemove(sessionKey, out t);
@@ -103,8 +105,6 @@ namespace OneScanWebApp
                         context.Response.Write(Convert.ToBase64String(byteArray));
                     
                 } else context.Response.Write(QR);
-
-                
 
             }
         }
