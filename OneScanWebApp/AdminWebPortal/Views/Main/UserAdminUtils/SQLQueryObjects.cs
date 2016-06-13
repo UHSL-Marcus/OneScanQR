@@ -47,5 +47,28 @@ namespace AdminWebPortal.Views.Main
                 return SelectSQL.Replace("@UserTokenID", UserTokenID);
             }
         }
+
+        public class AddDoorInfo : SQLControls.DataObject
+        {
+            public int? Id;
+            public string DoorID;
+
+            [SQLControls.SQLIgnore]
+            private string UserTokenID;
+
+            [SQLControls.SQLIgnore]
+            static string SelectSQL = "SELECT Door.Id AS Id, Door.DoorID AS DoorID FROM Door WHERE NOT EXISTS (SELECT * FROM DoorUserTokenPair WHERE DoorUserTokenPair.DoorID=Door.Id AND DoorUserTokenPair.UserToken='@UserTokenID')";
+
+            public AddDoorInfo() { }
+
+            public AddDoorInfo(string UserTokenID)
+            {
+                this.UserTokenID = UserTokenID;
+            }
+            public string getSQL()
+            {
+                return SelectSQL.Replace("@UserTokenID", UserTokenID);
+            }
+        }
     }
 }

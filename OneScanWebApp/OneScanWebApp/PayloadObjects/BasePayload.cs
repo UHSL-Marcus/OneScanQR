@@ -42,6 +42,6 @@
 
     class MetaData
     {
-        public string EndpointURL = "http://b8a08fc2.ngrok.io/onescanwebapp//OneScanCallback.ashx";
+        public string EndpointURL = "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanCallback.ashx";
     }
 }

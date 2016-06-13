@@ -76,6 +76,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="bmpTest.ashx.cs">
+      <DependentUpon>bmpTest.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Database\Objects\AdminToken.cs" />
     <Compile Include="Database\Objects\AdminUser.cs" />
     <Compile Include="Database\Objects\Door.cs" />
@@ -118,6 +121,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Utils\BitmapConvert.cs" />
     <Compile Include="Utils\Consts.cs" />
     <Compile Include="Utils\HMAC.cs" />
     <Compile Include="Utils\HTTPRequest.cs" />
@@ -139,6 +143,7 @@
     <Content Include="OneScanAdminRequestSession.ashx" />
     <Content Include="OneScanAdminCallback.ashx" />
     <Content Include="OneScanAdminGetResult.ashx" />
+    <Content Include="bmpTest.ashx" />
     <None Include="Properties\PublishProfiles\FTP.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

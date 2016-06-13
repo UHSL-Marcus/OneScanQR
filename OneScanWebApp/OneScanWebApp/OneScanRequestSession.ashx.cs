@@ -9,6 +9,7 @@ using System.IO;
 using System.Web.SessionState;
 using OneScanWebApp.Database.Objects;
 using Newtonsoft.Json;
+using System.Drawing;
 
 namespace OneScanWebApp
 {
@@ -64,11 +65,11 @@ namespace OneScanWebApp
             }
 
            
-            if (!HMAC.ValidateHash(toHmac, secret, hmac))
-                return;  
+            //if (!HMAC.ValidateHash(toHmac, secret, hmac))
+                //return;  
 
             BasePayload payload = new BasePayload();
-            payload.SetLoginPayload(loginType, JsonUtils.GetJson(sData));
+            payload.SetLoginPayload(loginType, JsonUtils.GetJson(sData), "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanCallback.ashx");
 
             string QR, sessionID;
             if (OneScanRequests.GetQRData(JsonUtils.GetJson(payload), out QR, out sessionID))
@@ -88,7 +89,8 @@ namespace OneScanWebApp
                     byte[] byteArray = new byte[0];
                     using (MemoryStream stream = new MemoryStream())
                     {
-                        QRGen.GenerateQRCode(QR).Save(stream, System.Drawing.Imaging.ImageFormat.Bmp);
+
+                        BitmapConvert.CopyToBpp(QRGen.GenerateQRCode(QR), 8).Save(stream, System.Drawing.Imaging.ImageFormat.Bmp);
                         stream.Close();
 
                         byteArray = stream.ToArray();

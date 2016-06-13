@@ -5,6 +5,7 @@
 
 <asp:Content ID="Content" ContentPlaceHolderID="MainContentPlaceholder" runat="server">
     <input type="hidden" runat="server" id="doorViewState" />
+    <input type="hidden" runat="server" id="RegisterDoorCtlsViewState" />
     <div class="content-padding">
         <div class="panel panel-default">
             <asp:Table runat="server" ID="usersTbl" CssClass="table table-striped">

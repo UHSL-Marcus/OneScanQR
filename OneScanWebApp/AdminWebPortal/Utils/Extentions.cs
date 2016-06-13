@@ -13,31 +13,40 @@ namespace AdminWebPortal.Utils
 {
     public static class Extentions
     {
-        public static string SerializeObject<T>(this T toSerialize, bool base64 = false)
+        public static string SerializeObject<T>(this T toSerialize, bool base64 = false, bool Json = false)
         {
             StringBuilder builder = new StringBuilder();
-            using (XmlTextWriter textWriter = new XmlTextWriter(new StringWriter(builder)))
+            if (!Json)
             {
-                bool dataContractAttr = Attribute.IsDefined(typeof(T), typeof(DataContractAttribute));
+                using (XmlTextWriter textWriter = new XmlTextWriter(new StringWriter(builder)))
+                {
+                    bool dataContractAttr = Attribute.IsDefined(typeof(T), typeof(DataContractAttribute));
 
 
-                if (dataContractAttr)
-                {
-                    DataContractSerializer serializer = new DataContractSerializer(toSerialize.GetType());
-                    serializer.WriteObject(textWriter, toSerialize);
-                } else
-                {
-                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-                    xmlSerializer.Serialize(textWriter, toSerialize);
+                    if (dataContractAttr)
+                    {
+                        DataContractSerializer serializer = new DataContractSerializer(toSerialize.GetType());
+                        serializer.WriteObject(textWriter, toSerialize);
+                    }
+                    else
+                    {
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+                        xmlSerializer.Serialize(textWriter, toSerialize);
+                    }
                 }
-
-                string output = builder.ToString();
-                if (base64) output = Convert.ToBase64String(Encoding.Unicode.GetBytes(output));
-                return output;
             }
+            else
+            {
+                builder.Append(JsonUtils.GetJson(toSerialize));
+            }
+
+            string output = builder.ToString();
+            if (base64) output = Convert.ToBase64String(Encoding.Unicode.GetBytes(output));
+            return output;
+            
         }
 
-        public static bool TryDeserializeObject<T>(this string toDeserialize, out T output, bool base64 = false)
+        public static bool TryDeserializeObject<T>(this string toDeserialize, out T output, bool base64 = false, bool Json = false)
         {
             bool success = false;
             output = Activator.CreateInstance<T>();
@@ -46,18 +55,28 @@ namespace AdminWebPortal.Utils
             {
                 if (base64) toDeserialize = Encoding.Unicode.GetString(Convert.FromBase64String(toDeserialize));
 
-                using (XmlTextReader textReader = new XmlTextReader(new StringReader(toDeserialize)))
+                if (!Json)
                 {
-                    bool dataContractAttr = Attribute.IsDefined(typeof(T), typeof(DataContractAttribute));
-                    if (dataContractAttr)
+
+                    using (XmlTextReader textReader = new XmlTextReader(new StringReader(toDeserialize)))
                     {
-                        DataContractSerializer serializer = new DataContractSerializer(typeof(T));
-                        output = (T)serializer.ReadObject(textReader);
-                    } else
-                    {
-                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-                        output = (T)xmlSerializer.Deserialize(textReader);
+                        bool dataContractAttr = Attribute.IsDefined(typeof(T), typeof(DataContractAttribute));
+                        if (dataContractAttr)
+                        {
+                            DataContractSerializer serializer = new DataContractSerializer(typeof(T));
+                            output = (T)serializer.ReadObject(textReader);
+                        }
+                        else
+                        {
+                            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+                            output = (T)xmlSerializer.Deserialize(textReader);
+                        }
+                        success = true;
                     }
+                }
+                else
+                {
+                    output = JsonUtils.GetObject<T>(toDeserialize);
                     success = true;
                 }
             }
@@ -79,6 +98,40 @@ namespace AdminWebPortal.Utils
                 if (controlToReturn != null) return controlToReturn;
             }
             return null;
+        }
+
+        public static bool FindControlRecursive<T>(this Control rootControl, string controlID, out T control) where T : Control
+        {
+            bool success = true;
+            control = null;
+
+            if (rootControl.ID == controlID) control = rootControl as T;
+            if (control == null)
+            {
+                success = false;
+                foreach (Control controlToSearch in rootControl.Controls)
+                {
+                    success = controlToSearch.FindControlRecursive(controlID, out control);
+                    if (success) break;
+                }
+            }
+            return success;
+        }
+
+        public static bool FindParent<T>(this Control target, out T parent) where T : Control
+        {
+            bool success = false;
+            parent = null;
+
+            if (target.Parent != null)
+            {
+
+                parent = target.Parent as T;
+                if (parent != null)
+                    success = true;
+                else success = target.Parent.FindParent(out parent);
+            }
+            return success;
         }
 
     }

@@ -58,7 +58,7 @@ namespace OneScanWebApp
                 //return;
 
             BasePayload payload = new BasePayload();
-            payload.SetLoginPayload(loginType, guid, "http://b8a08fc2.ngrok.io/onescanwebapp/OneScanAdminCallback.ashx");
+            payload.SetLoginPayload(loginType, guid, "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanAdminCallback.ashx");
 
             string QR, sessionID;
             if (OneScanRequests.GetQRData(JsonUtils.GetJson(payload), out QR, out sessionID))

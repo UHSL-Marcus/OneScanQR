@@ -9,31 +9,32 @@ namespace AdminWebPortal.Views.Main
     {
         private class DoorViewBtnArguments
         {
-            public int? RowIndex;
-            public int? CellIndex;
             public int? UserTokenID;
-            public int? DoorTableIndex;
             public bool showingDoors = false;
         }
 
-        private class AddDoorBtnArguments
+        private class AddRegDoorCtlsBtnArguments
         {
-            public int? RowIndex;
-            public int? CellIndex;
             public int? UserTokenID;
+            public int? delBtnIndex;
+            public bool showingInput = false;
+        }
+        private class AddDoorRegBtnArguments
+        {
+            public int? UserTokenID;
+            public string DropDownID;
         }
         private class DeleteBtnArguments
         {
             public int? UserTokenID;
             public int? UserInfoID;
-            public int? RowIndex;
+            public string RowID;
         }
 
         private class RemoveAuthBtnArguments
         {
             public int? UserTokenID;
-            public string DoorTableID;
-            public string DoorTableRowID;
+            public int? DoorID;
         }
     }
 }

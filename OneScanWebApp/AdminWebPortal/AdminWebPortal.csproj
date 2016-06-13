@@ -129,6 +129,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="Properties\PublishProfiles\FTP.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -259,6 +260,9 @@
     </Compile>
     <Compile Include="Views\Main\DoorAdmin.aspx.designer.cs">
       <DependentUpon>DoorAdmin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Main\UserAdminUtils\Const.cs">
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Views\QRPages\AdminUserQR.aspx.cs">
       <DependentUpon>AdminUserQR.aspx</DependentUpon>

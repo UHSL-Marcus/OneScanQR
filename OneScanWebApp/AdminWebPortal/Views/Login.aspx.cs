@@ -27,8 +27,8 @@ namespace AdminWebPortal.Views.Login
             query += "&data=" + hmac;
 
             byte[] reply;
-            //HTTPRequest.HTTPGetRequest("http://localhost:3469/OneScanAdminRequestSession.ashx?" + query, out reply);
-            HTTPRequest.HTTPGetRequest("http://localhost/onescanwebapp/OneScanAdminRequestSession.ashx?" + query, out reply);
+            HTTPRequest.HTTPGetRequest("http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanAdminRequestSession.ashx?" + query, out reply);
+            //HTTPRequest.HTTPGetRequest("http://localhost/onescanwebapp/OneScanAdminRequestSession.ashx?" + query, out reply);
 
             qrImg.ImageUrl = "data:image/bmp;base64," + System.Text.Encoding.Default.GetString(reply);
 
@@ -41,8 +41,8 @@ namespace AdminWebPortal.Views.Login
             string hmac = HMAC.Hash(query, ConfigurationManager.AppSettings["AdminSecret"]);
             query += "&data=" + hmac;
 
-            //return "http://localhost:3469/OneScanAdminGetResult.ashx?" + query;
-            return "http://localhost/onescanwebapp/OneScanAdminGetResult.ashx?" + query;
+            return "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanAdminGetResult.ashx?" + query;
+            //return "http://localhost/onescanwebapp/OneScanAdminGetResult.ashx?" + query;
         }
 
         protected void hiddenNewQRBtn_Click(object sender, EventArgs e)
@@ -55,9 +55,9 @@ namespace AdminWebPortal.Views.Login
             byte[] reply;
             if (HTTPRequest.HTTPGetRequest(getPollUrl(), out reply))
             {
-                //FormsAuthentication.RedirectFromLoginPage("", false);
+                FormsAuthentication.RedirectFromLoginPage("", false);
 
-                int status;
+                /*int status;
                 if (int.TryParse(System.Text.Encoding.Default.GetString(reply), out status))
                 {
                     if (status < 2)
@@ -73,7 +73,7 @@ namespace AdminWebPortal.Views.Login
                     else if (status == 3)
                         ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "scanFailedScript" + UniqueID, "ScanFailed();", true);
 
-                }
+                }*/
             }
         }
     }
