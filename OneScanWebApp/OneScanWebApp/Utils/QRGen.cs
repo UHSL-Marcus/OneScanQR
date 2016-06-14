@@ -11,7 +11,7 @@ namespace OneScanWebApp.Utils
             QRCodeGenerator qrGen = new QRCodeGenerator();
             QRCodeData qrData = qrGen.CreateQrCode(info, QRCodeGenerator.ECCLevel.H);
             QRCode qrCode = new QRCode(qrData);
-            return qrCode.GetGraphic(20);
+            return qrCode.GetGraphic(4);
         }
     }
 }
