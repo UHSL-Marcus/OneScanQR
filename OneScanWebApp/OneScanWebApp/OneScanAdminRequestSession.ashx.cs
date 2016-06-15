@@ -58,7 +58,7 @@ namespace OneScanWebApp
                 //return;
 
             BasePayload payload = new BasePayload();
-            payload.SetLoginPayload(loginType, guid, "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanAdminCallback.ashx");
+            payload.SetLoginPayload(loginType, guid, Consts.URL_BASE + "OneScanAdminCallback.ashx");
 
             string QR, sessionID;
             if (OneScanRequests.GetQRData(JsonUtils.GetJson(payload), out QR, out sessionID))
@@ -71,24 +71,19 @@ namespace OneScanWebApp
 
                 if (QR_img == 1 || QR_img == 2)
                 {
-                    byte[] byteArray = new byte[0];
-                    using (MemoryStream stream = new MemoryStream())
-                    {
-                        QRGen.GenerateQRCode(QR).Save(stream, System.Drawing.Imaging.ImageFormat.Bmp);
-                        stream.Close();
 
-                        byteArray = stream.ToArray();
-                    }
+                    QRGen qrgen = new QRGen(QR, QRCoder.QRCodeGenerator.ECCLevel.H);
 
                     if (QR_img == 1)
                     {
                         context.Response.ContentType = "image/bmp";
-                        context.Response.OutputStream.Write(byteArray, 0, byteArray.Length);
+                        byte[] qrArr = qrgen.getBitmapArray(256, 256, false);
+                        context.Response.OutputStream.Write(qrArr, 0, qrArr.Length);
                     }
 
 
                     if (QR_img == 2)
-                        context.Response.Write(Convert.ToBase64String(byteArray));
+                        context.Response.Write(Convert.ToBase64String(qrgen.getBitmapArray(256, 256)));
 
                 }
                 else context.Response.Write(QR);

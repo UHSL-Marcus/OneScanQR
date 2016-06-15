@@ -121,6 +121,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="qrgenTest.ashx.cs">
+      <DependentUpon>qrgenTest.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Utils\BitmapConvert.cs" />
     <Compile Include="Utils\Consts.cs" />
     <Compile Include="Utils\HMAC.cs" />
@@ -149,6 +152,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Content Include="qrgenTest.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

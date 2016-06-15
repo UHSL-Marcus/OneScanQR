@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Web;
 
@@ -30,38 +31,49 @@ namespace OneScanWebApp
 
 
 
-            Bitmap bmp = QRGen.GenerateQRCode("http://ensygnia.com/?pn0gENH/cWIC+AXqLEII5Q==");
-            
-            
+            /*Bitmap bmp = QRGen.GenerateQRCode("http://ensygnia.com/?pn0gENH/cWIC+AXqLEII5Q==");
+            Bitmap bmp = null
 
-            int rowLength = (int)calculateRowSize(bmp.Width);
+            //97
+
+            int rowLength = (int)calculateRowSize(128);
             List<BitArray> rows = new List<BitArray>();
-            byte[] pixelBytes = new byte[rowLength * Math.Abs(bmp.Height)];
+            byte[] pixelBytes = new byte[rowLength * Math.Abs(128)];
             int currIdx = 0;
- 
+
+            string output = "";
             try
             {
 
-                for (int i = 0; i < bmp.Height; i++)
+                for (int i = bmp.Height-1; i > -1; i--)
+                //for (int i = 0; i < bmp.Height; i++)
                 {
                     BitArray row = new BitArray(rowLength*8);
                     row.SetAll(false);
-
+                    //System.Diagnostics.Debug.WriteLine("new row");
+                    //for (int j = bmp.Width - 1; j > -1; j--)
                     for (int j = 0; j < bmp.Width; j++)
-                    {
+                    {                   
                         Color pixel = bmp.GetPixel(j, i);
-                        string output = j + "," + i + " -> R: " + pixel.R + " G: " + pixel.G + " B: " + pixel.B + " Ave: " + (pixel.R + pixel.G + pixel.B) / 3;
+                        output = "(" + j + "," + i + ")";
                         //System.Diagnostics.Debug.WriteLine(output);
 
-                        if (((pixel.R + pixel.G + pixel.B) / 3) >= 128)
-                            row.Set(j, true);
+                        if (((pixel.R + pixel.G + pixel.B) / 3) > 128)
+                            row.Set(j+15, true);
                     }
 
+                    System.Diagnostics.Debug.WriteLine(output + ", " + currIdx);
                     currIdx = addBitArrayToByteArray(row, ref pixelBytes, currIdx);
+
+                    //if (i < bmp.Height-10 ) break; 
+                    //if (i > 1) break;
                     
                 }
             }
-            catch (Exception e) { }
+            catch (Exception e) {
+                System.Diagnostics.Debug.WriteLine(output + ", " + currIdx);
+                string s = e.Message;
+            }
 
 
 
@@ -101,11 +113,22 @@ namespace OneScanWebApp
 
             byte[] fullBmp = new byte[fullHeader.Length + pixelBytes.Length];
             fullHeader.CopyTo(fullBmp, 0);
-            //pixelBytes.CopyTo(fullBmp, fullHeader.Length);
+            pixelBytes.CopyTo(fullBmp, fullHeader.Length);
 
             File.WriteAllBytes(@"c:\byteHeaderFile", fullHeader);
             File.WriteAllBytes(@"c:\byteFile", pixelBytes);
-            File.WriteAllBytes(@"c:\bmpFile", fullBmp);
+            File.WriteAllBytes(@"c:\bmpFile.bmp", fullBmp);
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("{");
+            foreach (byte b in pixelBytes)
+            {
+                sb.Append("0x" + b.ToString("X2") + ",");
+            }
+            sb.Remove(sb.Length-1, 1);
+            sb.Append("}");
+
+            File.WriteAllText(@"c:\bmpHexArray.c", sb.ToString());
 
 
 
@@ -124,10 +147,10 @@ namespace OneScanWebApp
             }
 
             context.Response.ContentType = "image/bmp";
-            context.Response.OutputStream.Write(byteArray, 0, byteArray.Length);
-            //context.Response.OutputStream.Write(fullBmp, 0, fullBmp.Length);
+            //context.Response.OutputStream.Write(byteArray, 0, byteArray.Length);
+            context.Response.OutputStream.Write(fullBmp, 0, fullBmp.Length);
 
-            File.WriteAllBytes(@"c:\byte32File", byteArray);
+            File.WriteAllBytes(@"c:\byteRefFile", byteArray);*/
 
         }
 
@@ -153,24 +176,29 @@ namespace OneScanWebApp
         {
             byte currentByte = 0;
             int count = 0;
+            int diff = off;
 
             foreach (bool bit in bits)
             {
-                if (bit) currentByte |= (byte)(1 << count);
+                if (bit) currentByte |= (byte)(1 << 8-(count+1));
                 if (++count == 8)
                 {
                     bytes[off++] = currentByte;
                     currentByte = 0; count = 0;
                 }
             }
-            if (count < 8) bytes[off++] = currentByte;
+            if (count < 8 && count > 0)
+                bytes[off++] = currentByte;
+
+            //System.Diagnostics.Debug.WriteLine("bytes Added: " + (off - diff));
 
             return off;
         }
 
         private double calculateRowSize(int imgWidth)
         {
-            return Math.Floor((double)(1 * imgWidth + 31) / 32) * 4;
+            int x = (1 * imgWidth + 31) / 32;
+            return Math.Floor((double)x) * 4;
         }
 
 

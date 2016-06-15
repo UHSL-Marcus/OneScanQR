@@ -42,6 +42,6 @@
 
     class MetaData
     {
-        public string EndpointURL = "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanCallback.ashx";
+        public string EndpointURL = Utils.Consts.URL_BASE + "OneScanCallback.ashx";
     }
 }

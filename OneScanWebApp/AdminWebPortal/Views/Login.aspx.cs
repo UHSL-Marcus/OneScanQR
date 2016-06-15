@@ -27,8 +27,7 @@ namespace AdminWebPortal.Views.Login
             query += "&data=" + hmac;
 
             byte[] reply;
-            HTTPRequest.HTTPGetRequest("http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanAdminRequestSession.ashx?" + query, out reply);
-            //HTTPRequest.HTTPGetRequest("http://localhost/onescanwebapp/OneScanAdminRequestSession.ashx?" + query, out reply);
+            HTTPRequest.HTTPGetRequest(Consts.URL_BASE + "OneScanAdminRequestSession.ashx?" + query, out reply);
 
             qrImg.ImageUrl = "data:image/bmp;base64," + System.Text.Encoding.Default.GetString(reply);
 
@@ -41,8 +40,7 @@ namespace AdminWebPortal.Views.Login
             string hmac = HMAC.Hash(query, ConfigurationManager.AppSettings["AdminSecret"]);
             query += "&data=" + hmac;
 
-            return "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScanAdminGetResult.ashx?" + query;
-            //return "http://localhost/onescanwebapp/OneScanAdminGetResult.ashx?" + query;
+            return Consts.URL_BASE + "OneScanAdminGetResult.ashx?" + query;
         }
 
         protected void hiddenNewQRBtn_Click(object sender, EventArgs e)

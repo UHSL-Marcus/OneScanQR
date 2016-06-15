@@ -21,11 +21,9 @@ namespace AdminWebPortal.Views.Main.QRPages
         [DataMember(Name = "guid")]
         private string guid;
         [DataMember(Name = "sessionUrl")]
-        private string sessionUrl = "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScan@RequestSession.ashx?";
-        //string sessionUrl = "http://localhost/OneScanWebApp/OneScan@RequestSession.ashx?";
+        private string sessionUrl = Consts.URL_BASE + "OneScan@RequestSession.ashx?";
         [DataMember(Name = "resultUrl")]
-        private string resultUrl = "http://mmtsnap.mmt.herts.ac.uk/onescan/OneScan@GetResult.ashx?";
-        //string resultUrl = "http://localhost/OneScanWebApp/OneScan@GetResult.ashx?";
+        private string resultUrl = Consts.URL_BASE + "OneScan@GetResult.ashx?";
         
         public QRMethods(string key, string guid, bool admin = false)
         {
