@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="AdminUserAdmin.aspx.cs" Inherits="AdminWebPortal.Views.Main.AdminUserAdmin" %>
+﻿<%@ Page Title="Admin Users" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="AdminUserAdmin.aspx.cs" Inherits="AdminWebPortal.Views.Main.AdminUserAdmin" %>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ScriptContent" runat="server">
     <script type="text/javascript" src="/Scripts/Views/AdminUserAdmin.js"></script>

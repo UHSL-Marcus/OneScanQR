@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="DoorAdmin.aspx.cs" Inherits="AdminWebPortal.Views.Main.DoorAdmin" %>
+﻿<%@ Page Title="Doors" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="DoorAdmin.aspx.cs" Inherits="AdminWebPortal.Views.Main.DoorAdmin" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ScriptContent" runat="server">
 </asp:Content>

@@ -11,37 +11,25 @@ namespace OneScanWebApp.Database
     public class SQLControls
     {
 
-        public static bool getSingleColumnByColumn(object checkInfo, string table, string inColumn, string outColumn, out object output)
+        public static bool getSingleColumnByColumn<outT, inT>(inT checkInfo, string table, string inColumn, string outColumn, out outT output)
         {
             return getSingleEntry("SELECT * FROM " + table + " WHERE " + inColumn + " = '" + checkInfo + "'", outColumn, out output);
         }
 
-        public static bool getEntryByColumn<TYPE>(object info, string column, out List<TYPE> output)
+        public static bool getEntryByColumn<TYPE, inT>(inT info, string column, out List<TYPE> output)
         {
             Type type = typeof(TYPE);
             output = getData<TYPE>("SELECT * FROM " + type.Name + " WHERE " + column + " = '" + info + "'");
             return (output.Count > 0);
         }
 
-        public static bool getEntryIDByColumn<TYPE>(object info, string column, out int? output)
+        public static bool getEntryIDByColumn<TYPE, inT>(inT info, string column, out int? output)
         {
             Type type = typeof(TYPE);
-            output = null;
-            bool success = false;
-
-            object id;
-            if (getSingleEntry("SELECT Id FROM " + type.Name + " WHERE " + column + " = '" + info + "'", "Id", out id))
-            {
-                if (id is int)
-                {
-                    output = (int)id;
-                    success = true; ;
-                }
-            }
-            return success;
+            return getSingleEntry("SELECT Id FROM " + type.Name + " WHERE " + column + " = '" + info + "'", "Id", out output);
         }
 
-        public static bool deleteEntryByColumn<TYPE>(object info, string column)
+        public static bool deleteEntryByColumn<TYPE, inT>(inT info, string column)
         {
             Type type = typeof(TYPE);
             string query = "DELETE FROM " + type.Name + " WHERE " + column + "='" + info + "'";
@@ -49,7 +37,7 @@ namespace OneScanWebApp.Database
 
         }
 
-        public static bool getEntryExistsByColumn<TYPE>(object info, string column)
+        public static bool getEntryExistsByColumn<TYPE, inT>(inT info, string column)
         {
             List<TYPE> l = new List<TYPE>();
             return getEntryByColumn(info, column, out l);
@@ -72,13 +60,13 @@ namespace OneScanWebApp.Database
 
         }
 
-        private static bool getSingleEntry(string sql, string columnName, out object output)
+        private static bool getSingleEntry<T>(string sql, string columnName, out T output)
         {
             DataTableReader reader = getDataReader(sql);
 
             bool success = false;
 
-            output = null;
+            output = default(T);
 
             while (reader.Read())
             {
@@ -86,8 +74,11 @@ namespace OneScanWebApp.Database
                 {
                     if (reader.GetName(i).Equals(columnName))
                     {
-                        output = reader[i];
-                        success = true;
+                        if (reader[i] is T)
+                        {
+                            output = (T)reader[i];
+                            success = true;
+                        }
                         
                     }
                 }
@@ -101,7 +92,7 @@ namespace OneScanWebApp.Database
         private static object formatValue(object value)
         {
             if (value is DateTime)
-                return ((DateTime)value).ToString("yyyy-MM-dd");
+                return ((DateTime)value).ToString("yyyy/MM/dd HH:mm:ss.fK");
             else if (value is int || value is string)
                 return value;
             else if (value is string[])
@@ -195,6 +186,36 @@ namespace OneScanWebApp.Database
             return queryName + queryNameExtra + queryValues + queryValuesExtra;
         }
 
+        private static string getUpdateQuery<TYPE>(TYPE ob, string[] testColumns)
+        {
+            Type type = typeof(TYPE);
+            string query = "UPDATE " + type.Name + " SET ";
+            string where = "WHERE ";
+
+            FieldInfo[] fields = type.GetFields();
+            for (int i = 0; i < fields.Length; i++)
+            {
+                string fName = fields[i].Name;
+                if (!fName.Equals("Id"))
+                {
+                    string entry = fName + "='" + formatValue(fields[i].GetValue(ob)) + "'";
+                    query += entry;
+
+                    if (testColumns.Contains(fName))
+                        where += entry;
+
+                    if (i + 1 < fields.Length)
+                    {
+                        query += ",";
+                        if (testColumns.Length > 1)
+                            where += " AND ";
+                    }
+                }
+            }
+
+            return query + where;
+        }
+
         public static bool doInsert<TYPE>(TYPE ob)
         {
             string query = getInsertQuery(ob);
@@ -223,6 +244,30 @@ namespace OneScanWebApp.Database
                     success = true;
                 }
             }
+            return success;
+
+        }
+
+
+        public static bool doUpdateOrInsert<TYPE>(TYPE ob, string testColumn)
+        {
+            return doUpdateOrInsert(ob, new string[] { testColumn });
+        }
+        public static bool doUpdateOrInsert<TYPE>(TYPE ob, string[] testColumns)
+        {
+            Type type = typeof(Type);
+
+            bool success = false;
+
+            string query = string.Format(@" SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+                                            BEGIN TRANSACTION;
+                                                {0};
+                                                IF @@ROWCOUNT = 0
+                                                BEGIN
+                                                {1};
+                                                END
+                                            COMMIT TRANSACTION;", getUpdateQuery(ob, testColumns), getInsertQuery(ob));
+
             return success;
 
         }

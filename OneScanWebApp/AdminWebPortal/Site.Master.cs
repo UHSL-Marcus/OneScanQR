@@ -17,7 +17,14 @@ namespace AdminWebPortal
             if(!loggedIn)
             {
                 sidebar.Visible = false;
+                logoutBtn.Visible = false;
             }
+        }
+
+        protected void logoutBtn_Click(object sender, EventArgs e)
+        {
+            FormsAuthentication.SignOut();
+            FormsAuthentication.RedirectToLoginPage();
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Drawing;
 using System.Threading;
+using System.Web;
 
 namespace OneScanWebApp.Utils
 {
@@ -29,13 +30,15 @@ namespace OneScanWebApp.Utils
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: " + e);
+                success = false;
+                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog(e.Message);
+                //throw new HttpException(500, "(SendOneScanPayload) " + e.Message); 
             }
 
             return success;
         }
 
-        public static bool GetQRData(string data, out string QR, out string sessionID)
+        public static  bool GetQRData(string data, out string QR, out string sessionID)
         {
             bool success = false;
             QR = null;
@@ -58,10 +61,17 @@ namespace OneScanWebApp.Utils
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: " + e);
+                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog(e.Message);
+                success = false;
+                //throw new HttpException(500, "(GetQRData) " + e.Message);
             }
 
             return success;
+        }
+
+        public static void Logtest()
+        {
+            ((Global)HttpContext.Current.ApplicationInstance).UpdateLog("this is some info");
         }
 
     }

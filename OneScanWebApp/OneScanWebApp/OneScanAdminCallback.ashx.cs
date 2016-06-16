@@ -50,7 +50,7 @@ namespace OneScanWebApp
                 {
 
                     int? userTokenId;
-                    SQLControls.getEntryIDByColumn<AdminToken>(LoginReply.UserToken.UserToken, "UserToken", out userTokenId);
+                    SQLControls.getEntryIDByColumn<AdminToken, string>(LoginReply.UserToken.UserToken, "UserToken", out userTokenId);
 
                     if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
                     {

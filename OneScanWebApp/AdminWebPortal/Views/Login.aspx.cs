@@ -53,25 +53,27 @@ namespace AdminWebPortal.Views.Login
             byte[] reply;
             if (HTTPRequest.HTTPGetRequest(getPollUrl(), out reply))
             {
-                FormsAuthentication.RedirectFromLoginPage("", false);
+                //FormsAuthentication.RedirectFromLoginPage("", false);
 
-                /*int status;
+                int status;
                 if (int.TryParse(System.Text.Encoding.Default.GetString(reply), out status))
                 {
+                    string returnS = "";
+                    string replace = "false";
                     if (status < 2)
                     {
-                        ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "pollScript" + UniqueID, "pollTimeout();", true);
-                        if (status == 1)
-                        {
-                            // scanning
-                        }
-                    }   
+                        if (status == 1) replace = "true";
+                        returnS += ("pollTimeout(@scanned);").Replace("@scanned", replace);
+                    }
                     else if (status == 2)
                         FormsAuthentication.RedirectFromLoginPage("", false);
                     else if (status == 3)
-                        ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "scanFailedScript" + UniqueID, "ScanFailed();", true);
+                        returnS += "ScanFailed();";
+                    
 
-                }*/
+                    ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "scanFailedScript" + UniqueID, returnS, true);
+
+                }
             }
         }
     }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Web;
 
 namespace AdminWebPortal.Utils
 {
@@ -67,8 +68,6 @@ namespace AdminWebPortal.Utils
 
             try
             {
-                //using (WebClient client = GetWebClient(headers, parameters))
-                //success = DecodeReply(client.UploadString(url, data), client, ref reply);
 
                 reqSt = new RequestStruct();
 
@@ -89,14 +88,15 @@ namespace AdminWebPortal.Utils
             }
             catch (Exception e)
             {
-                Console.WriteLine("HTTP Exception: " + e.ToString() + " (" + e.Message + ")");
                 success = false;
+                //throw new HttpException(500, "(HTTPBuildPostRequest) " + e.Message); // change to logging
+                throw e;
             }
-            
+
             return success;
         }
 
-        
+
         public static bool HTTPGetRequestAsync(string url, HTTPAsyncCallback callback, NameValueCollection headers = null, NameValueCollection parameters = null)
         {
             bool success = false;
@@ -147,39 +147,15 @@ namespace AdminWebPortal.Utils
             }
             catch (Exception e)
             {
-                Console.WriteLine("HTTP Exception: " + e.ToString() + " (" + e.Message + ")");
+
                 success = false;
+                //throw new HttpException(500, "(HTTPBuildGetRequest) " + e.Message); // change to logging
+                throw e;
+
             }
 
             return success;
         }
-
-        /*private static WebClient GetWebClient(NameValueCollection headers, NameValueCollection parameters)
-        {
-            WebClient client = new WebClient();
-
-            
-
-            if (headers != null)
-            {
-                if (headers.Count > 0)
-                {
-                    foreach (string header in headers.AllKeys)
-                        client.Headers.Add(header, headers[header]);
-                }
-            }
-
-            if (parameters != null)
-            {
-                if (parameters.Count > 0)
-                {
-                    foreach (string param in parameters.AllKeys)
-                        client.QueryString.Add(param, parameters[param]);
-                }
-            }
-
-            return client;
-        }*/
 
         private static string GetUrl(string url, NameValueCollection parameters)
         {
@@ -222,18 +198,31 @@ namespace AdminWebPortal.Utils
         {
             bool success = false;
 
-            requestStruct.response = requestStruct.request.GetResponse();
-            requestStruct.responseStream = requestStruct.response.GetResponseStream();
-            if (DecodeResponseStream(ref requestStruct))
+            try
             {
-                reply = requestStruct.responsedata;
-                success = true;
+                requestStruct.response = requestStruct.request.GetResponse();
+                requestStruct.responseStream = requestStruct.response.GetResponseStream();
+                if (DecodeResponseStream(ref requestStruct))
+                {
+                    reply = requestStruct.responsedata;
+                    success = true;
+                }
+            }
+            catch (WebException we)
+            {
+                throw new Exception(Encoding.Default.GetString(StreamToArray(we.Response.GetResponseStream()))); 
+            }
+            catch (Exception e)
+            {
+                success = false;
+                //throw new HttpException(500, "(DoRequest) " + e.Message); // change to logging
+                throw e;
             }
 
             return success;
         }
 
-        
+
         private static void RequestCallback(IAsyncResult ar)
         {
             RequestStruct requestStruct = (RequestStruct)ar.AsyncState;
@@ -248,20 +237,29 @@ namespace AdminWebPortal.Utils
         private static bool DecodeResponseStream(ref RequestStruct rs)
         {
             bool success = false;
-
-            using (Stream responseStream = rs.responseStream)
+            try
             {
-                string encoding = "";
-                if (rs.response.Headers.TryGetValue("Content-Encoding", out encoding) && encoding.Equals("gzip"))
-                {
-                    using (GZipStream decompressStream = new GZipStream(responseStream, CompressionMode.Decompress))
-                    {
-                        rs.responsedata = StreamToArray(decompressStream);
-                        success = true;
-                    }
 
+                using (Stream responseStream = rs.responseStream)
+                {
+                    string encoding = "";
+                    if (rs.response.Headers.TryGetValue("Content-Encoding", out encoding) && encoding.Equals("gzip"))
+                    {
+                        using (GZipStream decompressStream = new GZipStream(responseStream, CompressionMode.Decompress))
+                        {
+                            rs.responsedata = StreamToArray(decompressStream);
+                            success = true;
+                        }
+
+                    }
+                    else { rs.responsedata = StreamToArray(responseStream); success = true; }
                 }
-                else { rs.responsedata = StreamToArray(responseStream); success = true; }
+            }
+            catch (Exception e)
+            {
+                success = false;
+                //throw new HttpException(500, "(DecodeResponseStream) " + e.Message); // change to logging
+                throw e;
             }
 
             return success;

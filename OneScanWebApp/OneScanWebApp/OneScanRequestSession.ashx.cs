@@ -21,10 +21,10 @@ namespace OneScanWebApp
 
         public void ProcessRequest(HttpContext context)
         {
-
+            
             int mode;
             if (!int.TryParse(context.Request.QueryString["mode"], out mode))
-                return;
+                throw new HttpException(400, "Query Incomplete");
 
             string doorID = context.Request.QueryString["door_id"];
             string guid = context.Request.QueryString["guid"];
@@ -32,7 +32,7 @@ namespace OneScanWebApp
 
             int QR_img;
             if (!int.TryParse(context.Request.QueryString["qr_img"], out QR_img) || (mode == 1 && guid == null) || (mode == 0 && doorID == null) || hmac == null)
-                return;
+                throw new HttpException(400, "Query Incomplete");
 
             string toHmac = "mode=" + mode + "&qr_img=" + QR_img;
 
@@ -47,7 +47,7 @@ namespace OneScanWebApp
                     toHmac += "&door_id = " + doorID;
                     List<Door> doors;
                     if (!SQLControls.getEntryByColumn(doorID, "DoorID", out doors) || doors.Count > 1)
-                        return;
+                        throw new HttpException(400, "Query Incomplete");
                     secret = doors[0].DoorSecret;
                     loginType = LoginTypes.UserToken;
                     break;
@@ -56,17 +56,17 @@ namespace OneScanWebApp
                     toHmac += "&guid=" + guid + "&key=" + key;
                     List<RegistrationToken> regtokns;
                     if (!SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
-                        return;
+                        throw new HttpException(400, "Query Incomplete");
                     secret = regtokns[0].Secret;
                     loginType = LoginTypes.Register;
                     sData.regkey = key;
                     break;
-                default: return;
+                default: throw new HttpException(400, "Query Incomplete");
             }
 
-           
+
             //if (!HMAC.ValidateHash(toHmac, secret, hmac))
-                //return;  
+            //throw new HttpException(403, "Unauthorised");
 
             BasePayload payload = new BasePayload();
             payload.SetLoginPayload(loginType, JsonUtils.GetJson(sData), Consts.URL_BASE + "OneScanCallback.ashx");
@@ -80,9 +80,9 @@ namespace OneScanWebApp
 
                 string t;
                 Global.OneScanSessions.TryRemove(sessionKey, out t);
-                
+
                 if (!Global.OneScanSessions.TryAdd(sessionKey, sessionID))
-                    return;
+                    throw new HttpException(500, "Session error");
 
                 if (QR_img == 1 || QR_img == 2)
                 {
@@ -99,9 +99,11 @@ namespace OneScanWebApp
                     if (QR_img == 2)
                         context.Response.Write(Convert.ToBase64String(qrgen.getBitmapArray(256, 256)));
 
-                } else context.Response.Write(QR);
+                }
+                else context.Response.Write(QR);
 
             }
+            else throw new Exception("Requesting QR from Onescan failed. errorID: '" + context.Session[Consts.ERROR_ID] + "'");
         }
 
         public bool IsReusable

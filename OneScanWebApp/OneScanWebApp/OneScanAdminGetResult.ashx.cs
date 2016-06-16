@@ -59,7 +59,7 @@ namespace OneScanWebApp
                             {
                                 status = JsonUtils.GetObject<OneScanSessionStatus>(System.Text.Encoding.Default.GetString(reply)).Status;
                                 if (key != null && status > 1)
-                                    SQLControls.deleteEntryByColumn<RegistrationToken>(key, "AuthKey");
+                                    SQLControls.deleteEntryByColumn<RegistrationToken, string>(key, "AuthKey");
                             }
                         }
                     //}

@@ -70,28 +70,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DoorControl.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\DoorControl.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="bmpTest.ashx.cs">
-      <DependentUpon>bmpTest.ashx</DependentUpon>
-    </Compile>
     <Compile Include="Database\Objects\AdminToken.cs" />
     <Compile Include="Database\Objects\AdminUser.cs" />
     <Compile Include="Database\Objects\Door.cs" />
     <Compile Include="Database\Objects\DoorUserTokenPair.cs" />
+    <Compile Include="Database\Objects\Log.cs" />
     <Compile Include="Database\Objects\RegistrationToken.cs" />
     <Compile Include="Database\Objects\UserInfo.cs" />
     <Compile Include="Database\Objects\UserToken.cs" />
-    <Compile Include="DoorControl.aspx.cs">
-      <DependentUpon>DoorControl.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
+    <Compile Include="ErrorPage.ashx.cs">
+      <DependentUpon>ErrorPage.ashx</DependentUpon>
     </Compile>
-    <Compile Include="DoorControl.aspx.designer.cs">
-      <DependentUpon>DoorControl.aspx</DependentUpon>
+    <Compile Include="errortest.ashx.cs">
+      <DependentUpon>errortest.ashx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -121,10 +117,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="qrgenTest.ashx.cs">
-      <DependentUpon>qrgenTest.ashx</DependentUpon>
-    </Compile>
-    <Compile Include="Utils\BitmapConvert.cs" />
     <Compile Include="Utils\Consts.cs" />
     <Compile Include="Utils\HMAC.cs" />
     <Compile Include="Utils\HTTPRequest.cs" />
@@ -146,13 +138,13 @@
     <Content Include="OneScanAdminRequestSession.ashx" />
     <Content Include="OneScanAdminCallback.ashx" />
     <Content Include="OneScanAdminGetResult.ashx" />
-    <Content Include="bmpTest.ashx" />
+    <Content Include="ErrorPage.ashx" />
+    <Content Include="errortest.ashx" />
     <None Include="Properties\PublishProfiles\FTP.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="qrgenTest.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

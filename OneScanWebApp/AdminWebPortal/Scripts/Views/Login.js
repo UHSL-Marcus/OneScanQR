@@ -1,10 +1,14 @@
-﻿function pollTimeout() {
-    alert("timout");
-    setTimeout($("#hiddenStatusCheckBtn").click(), 1000);
+﻿function pollTimeout(scanned) {
+    var info = "";
+    if (scanned) info = "Scanning";
+
+    $("#resultlabel").html(info);
+
+    setTimeout($("#hiddenStatusCheckBtn").click(), 500);
 }
 
 function ScanFailed() {
-    alert("failed");
+    $("#resultlabel").html("Login Failed");
     $("#hiddenNewQRBtn").click();
 }
 

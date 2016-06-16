@@ -52,12 +52,12 @@ namespace OneScanWebApp
                 if (LoginReply.Success)
                 {
                     int? userTokenId;
-                    SQLControls.getEntryIDByColumn<UserToken>(LoginReply.UserToken.UserToken, "Token", out userTokenId);
+                    SQLControls.getEntryIDByColumn<UserToken, string>(LoginReply.UserToken.UserToken, "Token", out userTokenId);
 
                     if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
                     {
                         int? doorId;
-                        if (SQLControls.getEntryIDByColumn<Door>(sData.doorID, "DoorID", out doorId))
+                        if (SQLControls.getEntryIDByColumn<Door, string>(sData.doorID, "DoorID", out doorId))
                         {
                             DoorUserTokenPair pair = new DoorUserTokenPair();
                             pair.DoorID = doorId;

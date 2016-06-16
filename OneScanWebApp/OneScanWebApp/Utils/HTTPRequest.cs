@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Text;
+using System.Web;
 
 namespace OneScanWebApp.Utils
 {
@@ -54,7 +53,8 @@ namespace OneScanWebApp.Utils
             RequestStruct requestStruct;
             if (HTTPBuildPostRequest(url, data, out requestStruct, headers, parameters))
             {
-                success = DoRequest(ref requestStruct, ref reply);
+                int count = 0;
+                while (!(success = DoRequest(ref requestStruct, ref reply)) && ++count < 3) ;
             }
 
             return success;
@@ -67,9 +67,7 @@ namespace OneScanWebApp.Utils
 
             try
             {
-                //using (WebClient client = GetWebClient(headers, parameters))
-                //success = DecodeReply(client.UploadString(url, data), client, ref reply);
-
+                
                 reqSt = new RequestStruct();
 
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(GetUrl(url, parameters));
@@ -89,8 +87,9 @@ namespace OneScanWebApp.Utils
             }
             catch (Exception e)
             {
-                Console.WriteLine("HTTP Exception: " + e.ToString() + " (" + e.Message + ")");
+                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog(e.Message);
                 success = false;
+                //throw new HttpException(500, "(HTTPBuildPostRequest) " + e.Message); // change to logging
             }
             
             return success;
@@ -119,7 +118,8 @@ namespace OneScanWebApp.Utils
             RequestStruct requestStruct;
             if (HTTPBuildGetRequest(url, out requestStruct, headers, parameters))
             {
-                success = DoRequest(ref requestStruct, ref reply);
+                int count = 0;
+                while (!(success = DoRequest(ref requestStruct, ref reply)) && ++count < 3) ;
             }
 
             return success;
@@ -147,39 +147,14 @@ namespace OneScanWebApp.Utils
             }
             catch (Exception e)
             {
-                Console.WriteLine("HTTP Exception: " + e.ToString() + " (" + e.Message + ")");
+                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog(e.Message);
                 success = false;
+                //throw new HttpException(500, "(HTTPBuildGetRequest) " + e.Message); // change to logging
+
             }
 
             return success;
         }
-
-        /*private static WebClient GetWebClient(NameValueCollection headers, NameValueCollection parameters)
-        {
-            WebClient client = new WebClient();
-
-            
-
-            if (headers != null)
-            {
-                if (headers.Count > 0)
-                {
-                    foreach (string header in headers.AllKeys)
-                        client.Headers.Add(header, headers[header]);
-                }
-            }
-
-            if (parameters != null)
-            {
-                if (parameters.Count > 0)
-                {
-                    foreach (string param in parameters.AllKeys)
-                        client.QueryString.Add(param, parameters[param]);
-                }
-            }
-
-            return client;
-        }*/
 
         private static string GetUrl(string url, NameValueCollection parameters)
         {
@@ -222,12 +197,20 @@ namespace OneScanWebApp.Utils
         {
             bool success = false;
 
-            requestStruct.response = requestStruct.request.GetResponse();
-            requestStruct.responseStream = requestStruct.response.GetResponseStream();
-            if (DecodeResponseStream(ref requestStruct))
+            try {
+                requestStruct.response = requestStruct.request.GetResponse();
+                requestStruct.responseStream = requestStruct.response.GetResponseStream();
+                if (DecodeResponseStream(ref requestStruct))
+                {
+                    reply = requestStruct.responsedata;
+                    success = true;
+                }
+            }
+            catch (Exception e)
             {
-                reply = requestStruct.responsedata;
-                success = true;
+                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog(e.Message);
+                success = false;
+                //throw new HttpException(500, "(DoRequest) " + e.Message); // change to logging
             }
 
             return success;
@@ -248,20 +231,30 @@ namespace OneScanWebApp.Utils
         private static bool DecodeResponseStream(ref RequestStruct rs)
         {
             bool success = false;
-
-            using (Stream responseStream = rs.responseStream)
+            try
             {
-                string encoding = "";
-                if (rs.response.Headers.TryGetValue("Content-Encoding", out encoding) && encoding.Equals("gzip"))
-                {
-                    using (GZipStream decompressStream = new GZipStream(responseStream, CompressionMode.Decompress))
-                    {
-                        rs.responsedata = StreamToArray(decompressStream);
-                        success = true;
-                    }
 
+                using (Stream responseStream = rs.responseStream)
+                {
+                    string encoding = "";
+                    if (rs.response.Headers.TryGetValue("Content-Encoding", out encoding) && encoding.Equals("gzip"))
+                    {
+                        using (GZipStream decompressStream = new GZipStream(responseStream, CompressionMode.Decompress))
+                        {
+                            rs.responsedata = StreamToArray(decompressStream);
+                            success = true;
+                        }
+
+                    }
+                    else { rs.responsedata = StreamToArray(responseStream); success = true; }
                 }
-                else { rs.responsedata = StreamToArray(responseStream); success = true; }
+            }
+            catch (Exception e)
+            {
+                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog(e.Message);
+                success = false;
+                //throw new HttpException(500, "(DecodeResponseStream) " + e.Message); // change to logging
+                throw e;
             }
 
             return success;
