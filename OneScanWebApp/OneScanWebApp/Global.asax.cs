@@ -1,13 +1,8 @@
-﻿using OneScanWebApp.Database;
-using OneScanWebApp.Database.Objects;
+﻿using OneScanWebApp.Database.Objects;
 using OneScanWebApp.Utils;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
-using System.Web.Security;
-using System.Web.SessionState;
 
 namespace OneScanWebApp
 {
@@ -42,7 +37,7 @@ namespace OneScanWebApp
 
         protected void Application_Start(object sender, EventArgs e)
         {
-
+            SQLControls.Settings.SetConnectionString(Properties.Settings.Default.Database.ToString());
         }
 
         protected void Session_Start(object sender, EventArgs e)
@@ -60,13 +55,13 @@ namespace OneScanWebApp
 
         }
 
-        protected void Application_Error(object sender, EventArgs e)
+        protected void Application_Error(object sender, EventArgs e) // can also send an email to admins here too.
         {
             Context.Items.Add("ex", Server.GetLastError());
             Server.ClearError();
-            var handler = new ErrorPage();
-            handler.ProcessRequest(Context);
-            Response.End();  
+            (new ErrorPage()).ProcessRequest(Context);
+            Response.TrySkipIisCustomErrors = true;
+            Context.ApplicationInstance.CompleteRequest(); 
         }
 
         protected void Session_End(object sender, EventArgs e)
@@ -84,7 +79,7 @@ namespace OneScanWebApp
             string entry = "";
             string guid = (string)Session[Consts.ERROR_ID];
 
-            SQLControls.getSingleColumnByColumn(guid, "Log", "Guid", "Error", out entry);
+            SQLControls.Get.getSingleColumnByColumn(guid, "Log", "Guid", "Error", out entry);
 
             entry += "\n\n" + _info;
 
@@ -93,7 +88,7 @@ namespace OneScanWebApp
             log.Timestamp = DateTime.UtcNow;
             log.Error = entry;
 
-            SQLControls.doUpdateOrInsert(log, "Guid");
+            SQLControls.Update.doUpdateOrInsert(log, "Guid");
  
         }
 

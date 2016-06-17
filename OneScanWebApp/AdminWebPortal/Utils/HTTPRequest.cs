@@ -210,7 +210,7 @@ namespace AdminWebPortal.Utils
             }
             catch (WebException we)
             {
-                throw new Exception(Encoding.Default.GetString(StreamToArray(we.Response.GetResponseStream()))); 
+                throw new Exception("HTTP Request returned code: " + we.Status + " -> " + Encoding.Default.GetString(StreamToArray(we.Response.GetResponseStream())));
             }
             catch (Exception e)
             {

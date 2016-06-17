@@ -69,10 +69,5 @@ namespace OneScanWebApp.Utils
             return success;
         }
 
-        public static void Logtest()
-        {
-            ((Global)HttpContext.Current.ApplicationInstance).UpdateLog("this is some info");
-        }
-
     }
 }

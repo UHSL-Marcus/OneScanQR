@@ -15,8 +15,14 @@ namespace AdminWebPortal.Views.Login
         private readonly string GUID = "session_guid";
         protected void Page_Load(object sender, EventArgs e)
         {
+            bool loggedIn = (HttpContext.Current.User != null) && HttpContext.Current.User.Identity.IsAuthenticated;
+            if (loggedIn)
+                FormsAuthentication.RedirectFromLoginPage("", false);
+
             if (!IsPostBack)
                 getQR();
+
+            FormsAuthentication.RedirectFromLoginPage("", false);
         }
 
         private void getQR()
@@ -53,9 +59,9 @@ namespace AdminWebPortal.Views.Login
             byte[] reply;
             if (HTTPRequest.HTTPGetRequest(getPollUrl(), out reply))
             {
-                //FormsAuthentication.RedirectFromLoginPage("", false);
+                FormsAuthentication.RedirectFromLoginPage("", false);
 
-                int status;
+                /*int status;
                 if (int.TryParse(System.Text.Encoding.Default.GetString(reply), out status))
                 {
                     string returnS = "";
@@ -73,7 +79,7 @@ namespace AdminWebPortal.Views.Login
 
                     ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "scanFailedScript" + UniqueID, returnS, true);
 
-                }
+                }*/
             }
         }
     }

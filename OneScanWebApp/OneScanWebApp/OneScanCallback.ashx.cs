@@ -6,99 +6,103 @@ using System;
 using System.Configuration;
 using System.IO;
 using System.Web;
+using System.Web.SessionState;
 
 namespace OneScanWebApp
 {
     /// <summary>
     /// Summary description for OneScanCallback
     /// </summary>
-    public class OneScanCallback : IHttpHandler
+    public class OneScanCallback : IHttpHandler, IRequiresSessionState
     {
 
         public void ProcessRequest(HttpContext context)
         {
 
-           
-            if (context.Request.HttpMethod != "POST")
-                return;
-
-            Stream jsonStream = context.Request.InputStream;
-            if (jsonStream.Length > int.MaxValue)
-                return;
-
-            int jsonLen = Convert.ToInt32(jsonStream.Length);
-            jsonStream.Position = 0;
-            RecievedLoginData LoginReply;
-
-            using (StreamReader sr = new StreamReader(jsonStream))
-            {
-                string json = sr.ReadToEnd();
-                string hmac = context.Request.Headers["x-onescan-signature"];
-                //if (!HMAC.ValidateHash(json, ConfigurationManager.AppSettings["AuthSecret"], hmac))
-                   // return;
-
-                LoginReply = JsonUtils.GetObject<RecievedLoginData>(json);
-            }
-
             ProcessOutcomePayload outcome = new ProcessOutcomePayload();
-            SessionData sData = JsonUtils.GetObject<SessionData>(LoginReply.SessionData);
-
-            string sessionKey = sData.doorID;
-            if (sData.regkey != null)
-                sessionKey = sData.regkey;
-
-            if (Global.OneScanSessions.ContainsKey(sessionKey))
+           
+            if (context.Request.HttpMethod == "POST")
             {
-                if (LoginReply.Success)
+
+                Stream jsonStream = context.Request.InputStream;
+                if (jsonStream.Length < int.MaxValue)
                 {
-                    int? userTokenId;
-                    SQLControls.getEntryIDByColumn<UserToken, string>(LoginReply.UserToken.UserToken, "Token", out userTokenId);
 
-                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
+
+                    int jsonLen = Convert.ToInt32(jsonStream.Length);
+                    jsonStream.Position = 0;
+                    string json = "";
+
+                    using (StreamReader sr = new StreamReader(jsonStream))
+                        json = sr.ReadToEnd();
+
+                    string hmac;
+                    if (context.Request.Headers.TryGetValue("x-onescan-signature", out hmac) && 
+                        HMAC.ValidateHash(json, ConfigurationManager.AppSettings["AuthSecret"], hmac))
                     {
-                        int? doorId;
-                        if (SQLControls.getEntryIDByColumn<Door, string>(sData.doorID, "DoorID", out doorId))
-                        {
-                            DoorUserTokenPair pair = new DoorUserTokenPair();
-                            pair.DoorID = doorId;
-                            pair.UserToken = userTokenId;
+                        RecievedLoginData LoginReply = JsonUtils.GetObject<RecievedLoginData>(json);
+                        SessionData sData = JsonUtils.GetObject<SessionData>(LoginReply.SessionData);
 
-                            if (SQLControls.getEntryExists(pair))
+                        string sessionKey = sData.doorID;
+                        if (sData.regkey != null)
+                            sessionKey = sData.regkey;
+
+                        if (Global.OneScanSessions.ContainsKey(sessionKey))
+                        {
+                            if (LoginReply.Success)
                             {
-                                outcome.Success = true;
-                                outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
-                            }
-                        }
-                    }
+                                int? userTokenId;
+                                SQLControls.getEntryIDByColumn<UserToken, string>(LoginReply.UserToken.UserToken, "Token", out userTokenId);
 
-                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
-                    {
-                        bool continueReg = false;
+                                if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
+                                {
+                                    int? doorId;
+                                    if (SQLControls.getEntryIDByColumn<Door, string>(sData.doorID, "DoorID", out doorId))
+                                    {
+                                        DoorUserTokenPair pair = new DoorUserTokenPair();
+                                        pair.DoorID = doorId;
+                                        pair.UserToken = userTokenId;
 
-                        if (userTokenId == null)
-                        {
-                            UserToken ut = new UserToken();
-                            ut.Token = LoginReply.UserToken.UserToken;
-                            if (SQLControls.doInsertReturnID(ut, out userTokenId))
-                            {
-                                UserInfo u = new UserInfo();
-                                u.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
-                                u.UserToken = userTokenId;
+                                        if (SQLControls.getEntryExists(pair))
+                                        {
+                                            outcome.Success = true;
+                                            outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
+                                        }
+                                    }
+                                }
 
-                                if (SQLControls.doInsert(u))
-                                    continueReg = true;
-                            }
-                        }
-                        else continueReg = true;
+                                if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
+                                {
+                                    bool continueReg = false;
 
-                        if (continueReg)
-                        {
-                            outcome.Success = true;
-                            outcome.MessageType = OutcomeTypes.ProcessComplete.ToString(); 
-                        }
-                    }
-                }
-            }
+                                    if (userTokenId == null)
+                                    {
+                                        UserToken ut = new UserToken();
+                                        ut.Token = LoginReply.UserToken.UserToken;
+                                        if (SQLControls.doInsertReturnID(ut, out userTokenId))
+                                        {
+                                            UserInfo u = new UserInfo();
+                                            u.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
+                                            u.UserToken = userTokenId;
+
+                                            if (SQLControls.doInsert(u))
+                                                continueReg = true;
+                                        }
+                                    }
+                                    else continueReg = true;
+
+                                    if (continueReg)
+                                    {
+                                        outcome.Success = true;
+                                        outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
+                                    }
+                                }
+
+                            } // not success
+                        } // not in session
+                    } // bad HMAC
+                } // too long
+            } // not post
 
             string jsonResponse = JsonUtils.GetJson(outcome);
 

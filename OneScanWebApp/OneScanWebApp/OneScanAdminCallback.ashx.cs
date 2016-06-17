@@ -8,85 +8,86 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
+using System.Web.SessionState;
 
 namespace OneScanWebApp
 {
     /// <summary>
     /// Summary description for OneScanAdminCallback
     /// </summary>
-    public class OneScanAdminCallback : IHttpHandler
+    public class OneScanAdminCallback : IHttpHandler, IRequiresSessionState
     {
 
         public void ProcessRequest(HttpContext context)
         {
-            if (context.Request.HttpMethod != "POST")
-                return;
-
-            Stream jsonStream = context.Request.InputStream;
-            if (jsonStream.Length > int.MaxValue)
-                return;
-
-            int jsonLen = Convert.ToInt32(jsonStream.Length);
-            jsonStream.Position = 0;
-            RecievedLoginData LoginReply;
-
-            using (StreamReader sr = new StreamReader(jsonStream))
-            {
-                string json = sr.ReadToEnd();
-                string hmac = context.Request.Headers["x-onescan-signature"];
-                //if (!HMAC.ValidateHash(json, ConfigurationManager.AppSettings["AuthSecret"], hmac))
-                // return;
-
-
-                LoginReply = JsonUtils.GetObject<RecievedLoginData>(json);
-
-            }
-
             ProcessOutcomePayload outcome = new ProcessOutcomePayload();
 
-            if (Global.OneScanAdminSessions.ContainsKey(LoginReply.SessionData))
+            if (context.Request.HttpMethod == "POST")
             {
-                if (LoginReply.Success)
+
+                Stream jsonStream = context.Request.InputStream;
+                if (jsonStream.Length < int.MaxValue)
                 {
 
-                    int? userTokenId;
-                    SQLControls.getEntryIDByColumn<AdminToken, string>(LoginReply.UserToken.UserToken, "UserToken", out userTokenId);
+                    int jsonLen = Convert.ToInt32(jsonStream.Length);
+                    jsonStream.Position = 0;
+                    string json = "";
 
-                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
+                    using (StreamReader sr = new StreamReader(jsonStream))
+                        json = sr.ReadToEnd();
+
+                    string hmac;
+                    if (context.Request.Headers.TryGetValue("x-onescan-signature", out hmac) &&
+                        HMAC.ValidateHash(json, ConfigurationManager.AppSettings["AuthSecret"], hmac))
                     {
-                        outcome.Success = true;
-                        outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
-                    }
-                    if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
-                    {
-                        bool continueReg = false;
-
-                        if (userTokenId == null)
-                        {
-                            AdminToken at = new AdminToken();
-                            at.UserToken = LoginReply.UserToken.UserToken;
-                            if (SQLControls.doInsertReturnID(at, out userTokenId))
-                            {
-                                AdminUser au = new AdminUser();
-                                au.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
-                                au.AdminToken = userTokenId;
-
-                                if (SQLControls.doInsert(au))
-                                    continueReg = true;
-                            }
-                        }
-                        else continueReg = true;
-
-                        if (continueReg)
-                        {
-                            outcome.Success = true;
-                            outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
-                        }
-
+                        RecievedLoginData LoginReply = JsonUtils.GetObject<RecievedLoginData>(json);
                         
-                    }
-                }
-            }
+                        if (Global.OneScanAdminSessions.ContainsKey(LoginReply.SessionData))
+                        {
+                            if (LoginReply.Success)
+                            {
+
+                                int? userTokenId;
+                                SQLControls.getEntryIDByColumn<AdminToken, string>(LoginReply.UserToken.UserToken, "UserToken", out userTokenId);
+
+                                if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
+                                {
+                                    outcome.Success = true;
+                                    outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
+                                }
+                                if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.Register.ToString()))
+                                {
+                                    bool continueReg = false;
+
+                                    if (userTokenId == null)
+                                    {
+                                        AdminToken at = new AdminToken();
+                                        at.UserToken = LoginReply.UserToken.UserToken;
+                                        if (SQLControls.doInsertReturnID(at, out userTokenId))
+                                        {
+                                            AdminUser au = new AdminUser();
+                                            au.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
+                                            au.AdminToken = userTokenId;
+
+                                            if (SQLControls.doInsert(au))
+                                                continueReg = true;
+                                        }
+                                    }
+                                    else continueReg = true;
+
+                                    if (continueReg)
+                                    {
+                                        outcome.Success = true;
+                                        outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
+                                    }
+
+
+                                }
+                            } // not success
+                        } // not in session
+                    } // bad HMAC
+                } // too long
+            } // not post
 
             string jsonResponse = JsonUtils.GetJson(outcome);
 

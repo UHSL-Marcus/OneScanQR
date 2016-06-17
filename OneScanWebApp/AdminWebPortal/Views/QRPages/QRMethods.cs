@@ -1,12 +1,7 @@
 ﻿using AdminWebApp.Database.Objects;
-using AdminWebPortal.Database;
 using AdminWebPortal.Utils;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace AdminWebPortal.Views.Main.QRPages
@@ -48,7 +43,7 @@ namespace AdminWebPortal.Views.Main.QRPages
             string toHmac = "guid=" + guid + "&key=" + key;
 
             List<RegistrationToken> regtokns;
-            if (SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
+            if (SQLControls.Get.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
             {
 
                 secret = regtokns[0].Secret;

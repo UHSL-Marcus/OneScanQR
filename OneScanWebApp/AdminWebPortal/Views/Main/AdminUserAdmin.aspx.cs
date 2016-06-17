@@ -29,7 +29,7 @@ namespace AdminWebPortal.Views.Main
             AdminUsersTbl.Rows.Add(headings);
             
 
-            DataTableReader reader = SQLControls.getDataReader("SELECT AdminUser.Id, AdminToken.Id, AdminUser.Name, AdminToken.UserToken FROM AdminUser JOIN AdminToken ON AdminToken.Id=AdminUser.AdminToken");
+            DataTableReader reader = SQLControls.Get.getDataReader("SELECT AdminUser.Id, AdminToken.Id, AdminUser.Name, AdminToken.UserToken FROM AdminUser JOIN AdminToken ON AdminToken.Id=AdminUser.AdminToken");
 
             while (reader.Read())
             {

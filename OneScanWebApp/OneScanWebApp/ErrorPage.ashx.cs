@@ -18,9 +18,9 @@ namespace OneScanWebApp
 
             string err = "No Error";
             if (ex != null)
-                err = ex.Message;
+                err = ex.ToString();
 
-            context.Response.StatusCode = 300;
+            context.Response.StatusCode = 500;
             context.Response.ContentType = "text/plain";
             context.Response.Write(err);
         }

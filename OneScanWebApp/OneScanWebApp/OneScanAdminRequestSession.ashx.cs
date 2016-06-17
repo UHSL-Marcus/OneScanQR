@@ -8,13 +8,14 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
+using System.Web.SessionState;
 
 namespace OneScanWebApp
 {
     /// <summary>
     /// Summary description for OneScanAdminRequestSession
     /// </summary>
-    public class OneScanAdminRequestSession : IHttpHandler
+    public class OneScanAdminRequestSession : IHttpHandler, IRequiresSessionState
     {
 
         public void ProcessRequest(HttpContext context)
@@ -88,6 +89,7 @@ namespace OneScanWebApp
                 }
                 else context.Response.Write(QR);
             }
+            else throw new Exception("Requesting QR from Onescan failed. errorID: '" + context.Session[Consts.ERROR_ID] + "'");
         }
 
         public bool IsReusable

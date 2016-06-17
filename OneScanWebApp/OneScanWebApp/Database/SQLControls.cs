@@ -4,10 +4,14 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Web;
 
-namespace OneScanWebApp.Database
+namespace OneScanWebAppTT.Database
 {
+    public class SQLIgnoreAttribute : Attribute
+    {
+    }
     public class SQLControls
     {
 
@@ -43,26 +47,32 @@ namespace OneScanWebApp.Database
             return getEntryByColumn(info, column, out l);
         }
 
-        private static bool doNonQuery(string sql)
+        public static bool doNonQuery(string sql)
+        {
+            SqlCommand cmd = new SqlCommand(sql);
+            return doNonQuery(cmd);
+
+        }
+
+        public static bool doNonQuery(SqlCommand cmd)
         {
             bool success = false;
 
             using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.Database.ToString()))
             {
                 conn.Open();
-                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.Connection = conn;
 
                 if (cmd.ExecuteNonQuery() != 0)
                     success = true;
             }
 
             return success;
-
         }
 
-        private static bool getSingleEntry<T>(string sql, string columnName, out T output)
+        private static bool getSingleEntry<T>(SqlCommand cmd, string columnName, out T output)
         {
-            DataTableReader reader = getDataReader(sql);
+            DataTableReader reader = getDataReader(cmd);
 
             bool success = false;
 
@@ -79,20 +89,24 @@ namespace OneScanWebApp.Database
                             output = (T)reader[i];
                             success = true;
                         }
-                        
+
                     }
                 }
             }
 
 
             return success;
+        }
 
+        private static bool getSingleEntry<T>(string sql, string columnName, out T output)
+        {
+            return getSingleEntry(new SqlCommand(sql), columnName, out output);
         }
 
         private static object formatValue(object value)
         {
             if (value is DateTime)
-                return ((DateTime)value).ToString("yyyy/MM/dd HH:mm:ss.fK");
+                return ((DateTime)value).ToString("yyyy/MM/dd HH:mm:ss");
             else if (value is int || value is string)
                 return value;
             else if (value is string[])
@@ -143,7 +157,7 @@ namespace OneScanWebApp.Database
             return success;
         }
 
-        private static string getInsertQuery<TYPE>(TYPE ob, string queryNameExtra = "", string queryValuesExtra = "")
+        public static string getInsertQuery<TYPE>(TYPE ob, ref SqlCommand cmd, string queryNameExtra = "", string queryValuesExtra = "")
         {
             Type type = typeof(TYPE);
             string queryName = "INSERT INTO " + type.Name;
@@ -166,7 +180,17 @@ namespace OneScanWebApp.Database
                     Type valueType = fields[i].GetType();
                     object value = fields[i].GetValue(ob);
 
-                    queryValues += "'" + formatValue(value) + "'";
+                    SqlParameter tempParam = new SqlParameter();
+                    tempParam.ParameterName = "@INS_" + Regex.Replace(fields[i].Name, "[^A-Za-z0-9 _]", "");
+
+                    if (value is string)
+                        tempParam.Value = ((string)value).Trim();
+                    else tempParam.Value = value;
+
+                    cmd.Parameters.Add(tempParam);
+
+                    queryValues += tempParam.ParameterName;
+
 
                     if (i + 1 < fields.Length)
                     {
@@ -174,8 +198,8 @@ namespace OneScanWebApp.Database
                         queryValues += ",";
                     }
                 }
-
             }
+
             if (queryValues.Length > 0)
             {
                 queryName += ")";
@@ -186,11 +210,11 @@ namespace OneScanWebApp.Database
             return queryName + queryNameExtra + queryValues + queryValuesExtra;
         }
 
-        private static string getUpdateQuery<TYPE>(TYPE ob, string[] testColumns)
+        private static string getUpdateQuery<TYPE>(TYPE ob, ref SqlCommand cmd, string[] testColumns)
         {
             Type type = typeof(TYPE);
             string query = "UPDATE " + type.Name + " SET ";
-            string where = "WHERE ";
+            string where = " WHERE ";
 
             FieldInfo[] fields = type.GetFields();
             for (int i = 0; i < fields.Length; i++)
@@ -198,7 +222,18 @@ namespace OneScanWebApp.Database
                 string fName = fields[i].Name;
                 if (!fName.Equals("Id"))
                 {
-                    string entry = fName + "='" + formatValue(fields[i].GetValue(ob)) + "'";
+                    SqlParameter tempParam = new SqlParameter();
+                    tempParam.ParameterName = "@UPD_" + Regex.Replace(fields[i].Name, "[^A-Za-z0-9 _]", "");
+
+                    var value = formatValue(fields[i].GetValue(ob));
+
+                    if (value is string)
+                        tempParam.Value = ((string)value).Trim();
+                    else tempParam.Value = value;
+
+                    cmd.Parameters.Add(tempParam);
+
+                    string entry = fName + "=" + tempParam.ParameterName;
                     query += entry;
 
                     if (testColumns.Contains(fName))
@@ -218,8 +253,10 @@ namespace OneScanWebApp.Database
 
         public static bool doInsert<TYPE>(TYPE ob)
         {
-            string query = getInsertQuery(ob);
-            return doNonQuery(query);
+            SqlCommand cmd = new SqlCommand();
+            string query = getInsertQuery(ob, ref cmd);
+            cmd.CommandText = query;
+            return doNonQuery(cmd);
         }
 
         public static bool doInsertReturnID<TYPE>(TYPE ob, out int? output)
@@ -227,24 +264,16 @@ namespace OneScanWebApp.Database
             output = null;
             Type type = typeof(TYPE);
            
-            bool success = false;
-
             string declaration = "DECLARE @outputTable table(Id int NOT NULL) ";
             string outputExtra = " OUTPUT INSERTED.Id INTO @outputTable";
             string select = "; SELECT Id FROM @outputTable;";
 
-            string query = getInsertQuery(ob, outputExtra, select);
+            SqlCommand cmd = new SqlCommand();
+            string query = getInsertQuery(ob, ref cmd, outputExtra, select);
+            cmd.CommandText = declaration + query;
 
-            object id;
-            if(getSingleEntry(declaration + query, "Id", out id))
-            {
-                if (id is int)
-                {
-                    output = (int)id;
-                    success = true;
-                }
-            }
-            return success;
+
+            return getSingleEntry(cmd, "Id", out output);
 
         }
 
@@ -258,7 +287,7 @@ namespace OneScanWebApp.Database
             Type type = typeof(Type);
 
             bool success = false;
-
+            SqlCommand cmd = new SqlCommand();
             string query = string.Format(@" SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
                                             BEGIN TRANSACTION;
                                                 {0};
@@ -266,7 +295,9 @@ namespace OneScanWebApp.Database
                                                 BEGIN
                                                 {1};
                                                 END
-                                            COMMIT TRANSACTION;", getUpdateQuery(ob, testColumns), getInsertQuery(ob));
+                                            COMMIT TRANSACTION;", getUpdateQuery(ob, ref cmd, testColumns), getInsertQuery(ob, ref cmd));
+            cmd.CommandText = query;
+            success = doNonQuery(cmd);
 
             return success;
 
@@ -300,25 +331,27 @@ namespace OneScanWebApp.Database
             return returnList;
         }
 
-        private static DataTableReader getDataReader(string sql)
+
+        private static DataTableReader getDataReader(SqlCommand cmd)
         {
             DataSet dataSet = new DataSet();
             SqlDataAdapter adapter = new SqlDataAdapter();
 
             using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.Database.ToString()))
             {
-
-                SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = sql;
+                cmd.Connection = conn;
                 adapter.SelectCommand = cmd;
-
-
                 conn.Open();
                 adapter.Fill(dataSet);
 
             }
 
             return dataSet.CreateDataReader();
+        }
+
+        private static DataTableReader getDataReader(string sql)
+        {
+            return getDataReader(new SqlCommand(sql));
         }
     }
 }

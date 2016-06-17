@@ -6,13 +6,14 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web;
+using System.Web.SessionState;
 
 namespace OneScanWebApp
 {
     /// <summary>
     /// Summary description for OneScanAdminGetResult
     /// </summary>
-    public class OneScanAdminGetResult : IHttpHandler
+    public class OneScanAdminGetResult : IHttpHandler, IRequiresSessionState
     {
 
         public void ProcessRequest(HttpContext context)

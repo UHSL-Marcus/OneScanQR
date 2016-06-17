@@ -6,6 +6,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContentPlaceholder" runat="server">
     <span ID="resultlabel"></span>
+
     <div runat="server" id="RegisterQRDiv" visible="false" ClientIDMode="Static">
         <asp:UpdatePanel ID="hiddenQRCompleteUptPnl" runat="server">
             <ContentTemplate>

@@ -14,9 +14,18 @@ namespace OneScanWebApp
 
         public void ProcessRequest(HttpContext context)
         {
-            Utils.OneScanRequests.Logtest();
-            context.Response.ContentType = "text/plain";
-            context.Response.Write("Hello World");
+            ((Global)context.ApplicationInstance).UpdateLog("this is some info.com,'hello';");
+
+            Database.Objects.Log log = new Database.Objects.Log();
+            log.Guid = Guid.NewGuid().ToString();
+            log.Timestamp = DateTime.UtcNow;
+            log.Error = "test entry.com 'info;'@";
+
+            int? output;
+            SQLControls.Set.doInsertReturnID(log, out output);
+
+            throw new HttpException(500, "inserted: " + output);
+
         }
 
         public bool IsReusable
