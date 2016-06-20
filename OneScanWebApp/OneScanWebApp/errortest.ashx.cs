@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OneScanWebApp.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -22,7 +23,7 @@ namespace OneScanWebApp
             log.Error = "test entry.com 'info;'@";
 
             int? output;
-            SQLControls.Set.doInsertReturnID(log, out output);
+            SQLControls.doInsertReturnID(log, out output);
 
             throw new HttpException(500, "inserted: " + output);
 

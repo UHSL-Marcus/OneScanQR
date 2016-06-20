@@ -11,15 +11,19 @@ namespace SQLControls
 {
     public class Set
     {
-        public static bool doInsert<TYPE>(TYPE ob)
+        public static bool doInsert(string table, Dictionary<string, object> values)
+        {
+            return doInsert(SharedUtils.buildDatabaseObject(table, values), true);
+        }
+        public static bool doInsert<TYPE>(TYPE ob, bool includeNulls = false)
         {
             SqlCommand cmd = new SqlCommand();
-            string query = getInsertQuery(ob, ref cmd);
+            string query = getInsertQuery(ob, ref cmd, "", "", includeNulls);
             cmd.CommandText = query;
             return SharedUtils.doNonQuery(cmd);
         }
 
-        public static bool doInsertReturnID<TYPE>(TYPE ob, out int? output)
+        public static bool doInsertReturnID<TYPE>(TYPE ob, out int? output, bool includeNulls = false)
         {
             output = null;
             Type type = typeof(TYPE);
@@ -29,7 +33,7 @@ namespace SQLControls
             string select = "; SELECT Id FROM @outputTable;";
 
             SqlCommand cmd = new SqlCommand();
-            string query = getInsertQuery(ob, ref cmd, outputExtra, select);
+            string query = getInsertQuery(ob, ref cmd, outputExtra, select, includeNulls);
             cmd.CommandText = declaration + query;
 
 
@@ -37,7 +41,7 @@ namespace SQLControls
 
         }
 
-        internal static string getInsertQuery<TYPE>(TYPE ob, ref SqlCommand cmd, string queryNameExtra = "", string queryValuesExtra = "")
+        internal static string getInsertQuery<TYPE>(TYPE ob, ref SqlCommand cmd, string queryNameExtra, string queryValuesExtra, bool includeNulls)
         {
             Type type = typeof(TYPE);
             string queryName = "INSERT INTO " + type.Name;
@@ -49,33 +53,36 @@ namespace SQLControls
 
                 if (!fields[i].Name.Equals("Id"))
                 {
-                    if (queryValues.Length < 1)
-                    {
-                        queryName += "(";
-                        queryValues += " VALUES(";
-                    }
-
-                    queryName += fields[i].Name;
-
-                    Type valueType = fields[i].GetType();
                     var value = SharedUtils.formatValue(fields[i].GetValue(ob));
 
-                    SqlParameter tempParam = new SqlParameter();
-                    tempParam.ParameterName = "@INS_" + Regex.Replace(fields[i].Name, "[^A-Za-z0-9 _]", "");
-
-                    if (value is string)
-                        tempParam.Value = ((string)value).Trim();
-                    else tempParam.Value = value;
-
-                    cmd.Parameters.Add(tempParam);
-
-                    queryValues += tempParam.ParameterName;
-
-
-                    if (i + 1 < fields.Length)
+                    if (value != null || includeNulls)
                     {
-                        queryName += ",";
-                        queryValues += ",";
+
+                        if (queryValues.Length < 1)
+                        {
+                            queryName += "(";
+                            queryValues += " VALUES(";
+                        }
+
+                        queryName += type.Name + "." + fields[i].Name;
+
+                        SqlParameter tempParam = new SqlParameter();
+                        tempParam.ParameterName = "@INS_" + Regex.Replace(fields[i].Name, "[^A-Za-z0-9 _]", "");
+
+                        if (value is string)
+                            tempParam.Value = ((string)value).Trim();
+                        else tempParam.Value = value;
+
+                        cmd.Parameters.Add(tempParam);
+
+                        queryValues += tempParam.ParameterName;
+
+
+                        if (i + 1 < fields.Length)
+                        {
+                            queryName += ",";
+                            queryValues += ",";
+                        }
                     }
                 }
             }
@@ -90,9 +97,6 @@ namespace SQLControls
             return queryName + queryNameExtra + queryValues + queryValuesExtra;
         }
 
-        public static bool doInsert(string table, Dictionary<string, object> values)
-        {
-            return doInsert(SharedUtils.buildDatabaseObject(table, values));
-        }
+        
     }
 }

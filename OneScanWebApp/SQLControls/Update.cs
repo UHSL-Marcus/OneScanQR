@@ -12,7 +12,7 @@ namespace SQLControls
     public class Update
     {
 
-        internal static string getUpdateQuery<TYPE>(TYPE ob, ref SqlCommand cmd, string[] testColumns)
+        internal static string getUpdateQuery<TYPE>(TYPE ob, ref SqlCommand cmd, string[] testColumns, bool includeNulls)
         {
             Type type = typeof(TYPE);
             string query = "UPDATE " + type.Name + " SET ";
@@ -22,12 +22,14 @@ namespace SQLControls
             for (int i = 0; i < fields.Length; i++)
             {
                 string fName = fields[i].Name;
-                if (!fName.Equals("Id"))
+
+                var value = SharedUtils.formatValue(fields[i].GetValue(ob));
+
+                if (value != null || includeNulls)
                 {
+
                     SqlParameter tempParam = new SqlParameter();
                     tempParam.ParameterName = "@UPD_" + Regex.Replace(fName, "[^A-Za-z0-9 _]", "");
-
-                    var value = SharedUtils.formatValue(fields[i].GetValue(ob));
 
                     if (value is string)
                         tempParam.Value = ((string)value).Trim();
@@ -35,8 +37,9 @@ namespace SQLControls
 
                     cmd.Parameters.Add(tempParam);
 
-                    string entry = fName + "=" + tempParam.ParameterName;
-                    query += entry;
+                    string entry = type.Name + "." + fName + "=" + tempParam.ParameterName;
+                    if (!fName.Equals("Id")) // never update the ID column
+                        query += entry;
 
                     if (testColumns.Contains(fName))
                         where += entry;
@@ -48,16 +51,17 @@ namespace SQLControls
                             where += " AND ";
                     }
                 }
+                
             }
 
             return query + (testColumns.Length > 0 ? where : "");
         }
 
-        public static bool doUpdateOrInsert<TYPE>(TYPE ob, string testColumn)
+        public static bool doUpdateOrInsert<TYPE>(TYPE ob, string testColumn, bool includeNulls = false)
         {
-            return doUpdateOrInsert(ob, new string[] { testColumn });
+            return doUpdateOrInsert(ob, new string[] { testColumn }, includeNulls);
         }
-        public static bool doUpdateOrInsert<TYPE>(TYPE ob, string[] testColumns)
+        public static bool doUpdateOrInsert<TYPE>(TYPE ob, string[] testColumns, bool includeNulls = false)
         {
             Type type = typeof(Type);
 
@@ -70,7 +74,7 @@ namespace SQLControls
                                                 BEGIN
                                                 {1};
                                                 END
-                                            COMMIT TRANSACTION;", getUpdateQuery(ob, ref cmd, testColumns), Set.getInsertQuery(ob, ref cmd));
+                                            COMMIT TRANSACTION;", getUpdateQuery(ob, ref cmd, testColumns, includeNulls), Set.getInsertQuery(ob, ref cmd, "", "", includeNulls));
             cmd.CommandText = query;
             success = SharedUtils.doNonQuery(cmd);
 

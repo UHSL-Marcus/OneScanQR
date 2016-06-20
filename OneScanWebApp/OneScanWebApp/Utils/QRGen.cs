@@ -30,6 +30,63 @@ namespace OneScanWebApp.Utils
             }
         }
 
+        public byte[] get8BitBitmapArray(int width, int height, bool headers = true)
+        {
+
+            Bitmap QR = getBitmap(width, height);
+
+            int qrWidth = QR.Width;
+            int qrheight = QR.Height;
+
+            if (qrWidth <= width && qrheight <= height)
+            {
+                int widthOffset = (width - qrWidth) / 2;
+                int heightOffset = (height - qrheight) / 2;
+
+                int rowLength = (int)calculateRowSize(width, 8);
+                List<BitArray> rows = new List<BitArray>();
+                byte[] pixelBytes = new byte[rowLength * Math.Abs(height)];
+                for (int i = 0; i < pixelBytes.Length; i++)
+                    pixelBytes[i] = 0xff;
+
+                int currIdx = rowLength * heightOffset;
+
+                for (int y = qrheight - 1; y > -1; y--)
+                {
+                    byte[] row = new byte[rowLength * 8];
+                    for (int i = 0; i < row.Length; i++)
+                        row[i] = 0xFF;
+                        
+
+                    for (int x = 0; x < qrWidth; x++)
+                    {
+
+                        Color pixel = QR.GetPixel(x, y);
+
+                        if (((pixel.R + pixel.G + pixel.B) / 3) < 128)
+                            row[x + widthOffset] = 0x00;
+                    }
+
+
+                    currIdx = addArrayToArray(pixelBytes, row, currIdx);
+                }
+
+                byte[] returnArray;
+                if (headers)
+                {
+                    byte[] headerArray = buildHeader(width, height, pixelBytes.Length);
+                    returnArray = new byte[headerArray.Length + pixelBytes.Length];
+                    headerArray.CopyTo(returnArray, 0);
+                    pixelBytes.CopyTo(returnArray, headerArray.Length);
+                }
+                else returnArray = pixelBytes;
+
+                return returnArray;
+            }
+
+            return null;
+        }
+
         public byte[] getBitmapArray(int width, int height, bool headers = true)
         {
 
@@ -43,7 +100,7 @@ namespace OneScanWebApp.Utils
                 int widthOffset = (width - qrWidth)/2;
                 int heightOffset = (height - qrheight)/2;
 
-                int rowLength = (int)calculateRowSize(width);
+                int rowLength = (int)calculateRowSize(width, 1);
                 List<BitArray> rows = new List<BitArray>();
                 byte[] pixelBytes = new byte[rowLength * Math.Abs(height)];
                 for (int i = 0; i < pixelBytes.Length; i++)
@@ -124,9 +181,9 @@ namespace OneScanWebApp.Utils
             return fullHeader;
         }
 
-        private double calculateRowSize(int imgWidth)
+        private double calculateRowSize(int imgWidth, int bits)
         {
-            int x = (1 * imgWidth + 31) / 32;
+            int x = (bits * imgWidth + 31) / 32;
             return Math.Floor((double)x) * 4;
         }
 

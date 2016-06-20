@@ -20,7 +20,7 @@ namespace SQLControls
         {
             return doDeleteByGetID(SharedUtils.buildDatabaseObjectSingleField(table, info, column), out output);
         }
-        public static bool doDeleteByGetID<TYPE>(TYPE ob, out int? output)
+        public static bool doDeleteByGetID<TYPE>(TYPE ob, out int? output, bool includeNulls = false)
         {
             output = null;
 
@@ -29,21 +29,28 @@ namespace SQLControls
             string select = ";SELECT Id FROM @outputTable; ";
 
             SqlCommand cmd = new SqlCommand();
-            string query = getDeleteQuery(ob, ref cmd, extra);
+            string query = getDeleteQuery(ob, ref cmd, extra, includeNulls);
             cmd.CommandText = declaration + query + select;
 
-            return SharedUtils.getSingleEntry(query, "Id", out output);
+            return SharedUtils.getSingleEntry(cmd, "Id", out output);
         }
 
-        public static bool deleteEntryByColumn<TYPE, inT>(inT info, string column)
+        public static bool doDeleteEntryByColumn<TYPE, inT>(inT info, string column)
         {
             Type type = typeof(TYPE);
             Dictionary<string, object> conditions = new Dictionary<string, object>();
             conditions.Add(column, info);
-            return SharedUtils.buildDatabaseObject(type.Name, conditions);
+            return doDelete(type.Name, conditions);
         }
 
-        internal static string getDeleteQuery<TYPE>(TYPE ob, ref SqlCommand cmd, string preWhereExtra = "")
+        public static bool doDeleteEntryByColumn<inT>(string table, inT info, string column)
+        {
+            Dictionary<string, object> conditions = new Dictionary<string, object>();
+            conditions.Add(column, info);
+            return doDelete(table, conditions);
+        }
+
+        internal static string getDeleteQuery<TYPE>(TYPE ob, ref SqlCommand cmd, string preWhereExtra, bool includeNulls)
         {
             Type type = typeof(TYPE);
             string query = "";
@@ -54,32 +61,36 @@ namespace SQLControls
                 query = "DELETE FROM " + type.Name + " " + preWhereExtra + " WHERE ";
                 for (int i = 0; i < fields.Length; i++)
                 {
-
-                    SqlParameter tempParam = new SqlParameter();
-                    tempParam.ParameterName = "@DEL_" + Regex.Replace(fields[i].Name, "[^A-Za-z0-9 _]", "");
-
                     var value = SharedUtils.formatValue(fields[i].GetValue(ob));
 
-                    if (value is string)
-                        tempParam.Value = ((string)value).Trim();
-                    else tempParam.Value = value;
+                    if (value != null || includeNulls)
+                    {
 
-                    cmd.Parameters.Add(tempParam);
+                        SqlParameter tempParam = new SqlParameter();
+                        tempParam.ParameterName = "@DEL_" + Regex.Replace(fields[i].Name, "[^A-Za-z0-9 _]", "");
 
-                    query += fields[i].Name + "=" + tempParam.ParameterName;
+                        if (value is string)
+                            tempParam.Value = ((string)value).Trim();
+                        else tempParam.Value = value;
+
+                        cmd.Parameters.Add(tempParam);
+
+                        query += type.Name + "." + fields[i].Name + "=" + tempParam.ParameterName;
 
 
-                    if (i + 1 < fields.Length)
-                        query += " AND ";
+                        if (i + 1 < fields.Length)
+                            query += " AND ";
+
+                    }
                 }
             }
 
             return query;
         }
-        public static bool doDelete<TYPE>(TYPE ob)
+        public static bool doDelete<TYPE>(TYPE ob, bool includeNulls = false)
         {
             SqlCommand cmd = new SqlCommand();
-            string query = getDeleteQuery(ob, ref cmd);
+            string query = getDeleteQuery(ob, ref cmd, "", includeNulls);
             cmd.CommandText = query;
             return SharedUtils.doNonQuery(cmd);
         }

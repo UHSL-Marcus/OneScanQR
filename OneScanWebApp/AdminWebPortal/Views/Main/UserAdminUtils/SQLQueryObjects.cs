@@ -1,68 +1,62 @@
-﻿namespace AdminWebPortal.Views.Main
+﻿using SQLControls;
+
+namespace AdminWebPortal.Views.Main
 {
     public partial class UserAdmin : System.Web.UI.Page
     {
-        public class TableInfo : SQLControls.DataObject
+        public class TableInfo : DatabaseOutputObject
         {
+            [DatabaseOutput(columnName = "UserInfo.Id")]
             public int? UserInfoID;
+            [DatabaseOutput(columnName = "UserToken.Id")]
             public int? UserTokenID;
+            [DatabaseOutput(columnName = "UserInfo.Name")]
             public string UserInfoName;
+            [DatabaseOutput(columnName = "UserToken.Token")]
             public string UserTokenToken;
 
-            [SQLControls.SQLIgnore]
-            static string SelectSQL = "SELECT UserInfo.Id AS UserInfoID, UserToken.Id AS UserTokenID, UserInfo.Name AS UserInfoName, UserToken.Token AS UserTokenToken FROM UserInfo JOIN UserToken ON UserToken.Id=UserInfo.UserToken";
-
-            public string getSQL()
+            public TableInfo()
             {
-                return SelectSQL;
+                FROM = "UserInfo";
+                joinObjects.Add(new DatabaseOutputObjectJoin(JoinTypes.JOIN, "UserInfo", "UserToken", "UserToken", "Id", JoinOperators.EQUALS));
+                joinStrings.Add("JOIN UserToken ON UserInfo.UserToken=UserToken.Id");
             }
         }
 
-        public class DoorViewInfo : SQLControls.DataObject
+        public class DoorViewInfo : DatabaseOutputObject
         {
+            [DatabaseOutput(columnName = "Door.Id")]
             public int? Id;
+            [DatabaseOutput(columnName = "Door.DoorID")]
             public string DoorID;
-
-            [SQLControls.SQLIgnore]
-            private string UserTokenID;
-
-            [SQLControls.SQLIgnore]
-            static string SelectSQL = "SELECT Door.DoorID AS DoorID, Door.Id AS Id FROM Door JOIN DoorUserTokenPair ON Door.Id = DoorUserTokenPair.DoorID WHERE DoorUserTokenPair.UserToken = '@UserTokenID'";
 
             public DoorViewInfo() { }
 
             public DoorViewInfo(string UserTokenID)
             {
-                this.UserTokenID = UserTokenID;
-            }
-
-            public string getSQL()
-            {
-                return SelectSQL.Replace("@UserTokenID", UserTokenID);
+                whereObjects.Add(createWhereObject("DoorUserTokenPair", "UserToken", UserTokenID));
+                FROM = "Door";
+                joinStrings.Add("JOIN DoorUserTokenPair ON DoorUserTokenPair.DoorID=Door.Id");
             }
         }
 
-        public class AddDoorInfo : SQLControls.DataObject
+        public class AddDoorInfo : DatabaseOutputObject
         {
+            [DatabaseOutput(columnName = "Door.Id")]
             public int? Id;
+            [DatabaseOutput(columnName = "Door.DoorID")]
             public string DoorID;
 
-            [SQLControls.SQLIgnore]
-            private string UserTokenID;
-
-            [SQLControls.SQLIgnore]
             static string SelectSQL = "SELECT Door.Id AS Id, Door.DoorID AS DoorID FROM Door WHERE NOT EXISTS (SELECT * FROM DoorUserTokenPair WHERE DoorUserTokenPair.DoorID=Door.Id AND DoorUserTokenPair.UserToken='@UserTokenID')";
 
             public AddDoorInfo() { }
 
             public AddDoorInfo(string UserTokenID)
             {
-                this.UserTokenID = UserTokenID;
+                FROM = "Door";
+                  
             }
-            public string getSQL()
-            {
-                return SelectSQL.Replace("@UserTokenID", UserTokenID);
-            }
+           
         }
     }
 }

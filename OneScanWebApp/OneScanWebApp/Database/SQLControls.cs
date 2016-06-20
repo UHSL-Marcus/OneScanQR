@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace OneScanWebAppTT.Database
+namespace OneScanWebApp.Database
 {
     public class SQLIgnoreAttribute : Attribute
     {

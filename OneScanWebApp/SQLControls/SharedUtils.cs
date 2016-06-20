@@ -4,22 +4,65 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SQLControls
 {
-    public class DatabaseObject
+    public class DatabaseTableObject
     {
         public int? Id;
     }
-    public interface DataObject
+
+    public enum JoinTypes
     {
-        string getSQL();
+        JOIN
     }
-    public class SQLIgnoreAttribute : Attribute
+
+    
+
+    public class JoinOperators
     {
+        public readonly static string EQUALS = "=";
     }
+    public class DatabaseOutputObjectJoin
+    {
+        public JoinTypes join;
+        public string left;
+        public string right;
+        public string leftColumn;
+        public string rightColumn;
+        public string op;
+
+        public DatabaseOutputObjectJoin(JoinTypes join, string leftTable, string leftColumn, string rightTable, string rightColumn, string op)
+        {
+            this.join = join;
+            left = leftTable;
+            this.leftColumn = leftColumn;
+            right = rightTable;
+            this.rightColumn = rightColumn;
+        }
+
+    }
+    
+    public abstract class DatabaseOutputObject
+    {
+        protected List<DatabaseTableObject> whereObjects = new List<DatabaseTableObject>();
+        protected List<DatabaseOutputObjectJoin> joinObjects = new List<DatabaseOutputObjectJoin>();
+        protected string FROM;
+        protected static DatabaseTableObject createWhereObject(string table, string column, string info)
+        {
+           return SharedUtils.buildDatabaseObjectSingleField(table, info, column);
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Method)]
+    public class DatabaseOutputAttribute : Attribute
+    {
+        public bool SQLIgnore = false;
+        public string columnName;
+    }
+
+    
+    
 
     internal class SharedUtils
     {
@@ -48,28 +91,15 @@ namespace SQLControls
 
         internal static bool getSingleEntry<T>(SqlCommand cmd, string columnName, out T output)
         {
-            DataTableReader reader = getDataReader(cmd);
-
             bool success = false;
-
             output = default(T);
 
-            while (reader.Read())
+            List<T> entries = getData<T>(cmd, columnName);
+            if (entries.Count > 0)
             {
-                for (int i = 0; i < reader.FieldCount; i++)
-                {
-                    if (reader.GetName(i).Equals(columnName))
-                    {
-                        if (reader[i] is T)
-                        {
-                            output = (T)reader[i];
-                            success = true;
-                        }
-
-                    }
-                }
+                output = entries[0];
+                success = true;
             }
-
 
             return success;
         }
@@ -79,22 +109,45 @@ namespace SQLControls
             return getSingleEntry(new SqlCommand(sql), columnName, out output);
         }
 
-        public static List<TYPE> getData<TYPE>(DataObject ob)
+        internal static List getData(SqlCommand cmd, string column)
         {
-            return getData<TYPE>(ob.getSQL());
-        }
+            DataTableReader reader = SharedUtils.getDataReader(cmd);
 
-        internal static List<TYPE> getData<TYPE>(string sql)
-        {
-
-            DataTableReader reader = getDataReader(sql);
-
-            List<TYPE> returnList = new List<TYPE>();
+            List returnList = new List();
 
             while (reader.Read())
             {
 
-                TYPE ob = Activator.CreateInstance<TYPE>();
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    if (reader.GetName(i).Equals(column))
+                    {
+                        var entry = reader[i];
+                        if (entry is TYPE)
+                            returnList.Add((TYPE)reader[i]);
+                    }
+                }
+            }
+
+            return returnList;
+        }
+        
+        internal static List getData(string sql)
+        {
+
+            return getData(new SqlCommand(sql));
+        }
+
+        internal static List getData(SqlCommand cmd)
+        {
+            DataTableReader reader = SharedUtils.getDataReader(cmd);
+
+            List returnList = new List();
+
+            while (reader.Read())
+            {
+
+                DatabaseTableObject ob = Activator.CreateInstance();
 
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
@@ -111,6 +164,7 @@ namespace SQLControls
 
             return returnList;
         }
+
 
         internal static DataTableReader getDataReader(SqlCommand cmd)
         {
@@ -133,6 +187,8 @@ namespace SQLControls
         {
             return getDataReader(new SqlCommand(sql));
         }
+
+
 
         internal static object formatValue(object value)
         {

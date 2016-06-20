@@ -50,9 +50,6 @@
       <HintPath>..\packages\QRCoder.1.1.7\lib\net40\QRCoder.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SQLControls">
-      <HintPath>..\SQLControls\bin\Debug\SQLControls.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -78,6 +75,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="bytearraytest.ashx.cs">
+      <DependentUpon>bytearraytest.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Database\Objects\AdminToken.cs" />
     <Compile Include="Database\Objects\AdminUser.cs" />
     <Compile Include="Database\Objects\Door.cs" />
@@ -144,6 +144,7 @@
     <Content Include="OneScanAdminGetResult.ashx" />
     <Content Include="ErrorPage.ashx" />
     <Content Include="errortest.ashx" />
+    <Content Include="bytearraytest.ashx" />
     <None Include="Properties\PublishProfiles\FTP.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
