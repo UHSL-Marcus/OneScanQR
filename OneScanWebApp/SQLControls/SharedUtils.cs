@@ -12,46 +12,37 @@ namespace SQLControls
         public int? Id;
     }
 
-    public enum JoinTypes
+    public struct JoinPair
     {
-        JOIN
+        public Type leftTable;
+        public Type rightTable;
+        public JoinOnPair[] ons;
+        public JoinPair(Type leftTable, Type rightTable, JoinOnPair[] ons)
+        {
+            this.leftTable = leftTable;
+            this.rightTable = rightTable;
+            this.ons = ons;
+        }
     }
 
-    
-
-    public class JoinOperators
+    public struct JoinOnPair
     {
-        public readonly static string EQUALS = "=";
-    }
-    public class DatabaseOutputObjectJoin
-    {
-        public JoinTypes join;
-        public string left;
-        public string right;
-        public string leftColumn;
-        public string rightColumn;
+        public string leftTableCol;
+        public string rightTableCol;
         public string op;
-
-        public DatabaseOutputObjectJoin(JoinTypes join, string leftTable, string leftColumn, string rightTable, string rightColumn, string op)
+        public string conjunc;
+        public JoinOnPair(string leftTableColumn, string rightTableColumn, string op = "=", string conjuction = "AND")
         {
-            this.join = join;
-            left = leftTable;
-            this.leftColumn = leftColumn;
-            right = rightTable;
-            this.rightColumn = rightColumn;
+            leftTableCol = leftTableColumn;
+            rightTableCol = rightTableColumn;
+            this.op = op;
+            conjunc = conjuction;
         }
-
     }
-    
-    public abstract class DatabaseOutputObject
+
+    public interface IDatabaseOutputObject
     {
-        protected List<DatabaseTableObject> whereObjects = new List<DatabaseTableObject>();
-        protected List<DatabaseOutputObjectJoin> joinObjects = new List<DatabaseOutputObjectJoin>();
-        protected string FROM;
-        protected static DatabaseTableObject createWhereObject(string table, string column, string info)
-        {
-           return SharedUtils.buildDatabaseObjectSingleField(table, info, column);
-        }
+        
     }
 
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Method)]
@@ -60,8 +51,6 @@ namespace SQLControls
         public bool SQLIgnore = false;
         public string columnName;
     }
-
-    
     
 
     internal class SharedUtils
@@ -109,11 +98,11 @@ namespace SQLControls
             return getSingleEntry(new SqlCommand(sql), columnName, out output);
         }
 
-        internal static List getData(SqlCommand cmd, string column)
+        internal static List<TYPE> getData<TYPE>(SqlCommand cmd, string column)
         {
             DataTableReader reader = SharedUtils.getDataReader(cmd);
 
-            List returnList = new List();
+            List<TYPE> returnList = new List<TYPE>();
 
             while (reader.Read())
             {
@@ -131,23 +120,41 @@ namespace SQLControls
 
             return returnList;
         }
-        
-        internal static List getData(string sql)
-        {
 
-            return getData(new SqlCommand(sql));
-        }
 
-        internal static List getData(SqlCommand cmd)
+        internal static List<Dictionary<string, object>> getData(SqlCommand cmd)
         {
             DataTableReader reader = SharedUtils.getDataReader(cmd);
 
-            List returnList = new List();
+            List<Dictionary<string, object>> returnList = new List<Dictionary<string, object>>();
+            while (reader.Read())
+            {
+                Dictionary<string, object> row = new Dictionary<string, object>();
+
+                for (int i = 0; i < reader.FieldCount; i++)
+                    row.Add(reader.GetName(i), reader[i]);
+            }
+
+            return returnList;
+        }
+
+        internal static List<TYPE> getData<TYPE>(string sql)
+        {
+
+            return getData<TYPE>(new SqlCommand(sql));
+        }
+
+
+        internal static List<TYPE> getData<TYPE>(SqlCommand cmd)
+        {
+            DataTableReader reader = getDataReader(cmd);
+
+            List<TYPE> returnList = new List<TYPE>();
 
             while (reader.Read())
             {
 
-                DatabaseTableObject ob = Activator.CreateInstance();
+                TYPE ob = (TYPE)Activator.CreateInstance(typeof(TYPE));
 
                 for (int i = 0; i < reader.FieldCount; i++)
                 {

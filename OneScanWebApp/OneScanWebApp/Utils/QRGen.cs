@@ -30,10 +30,29 @@ namespace OneScanWebApp.Utils
             }
         }
 
-        public byte[] get8BitBitmapArray(int width, int height, bool headers = true)
+        private byte[] buildPixelArray(Bitmap img, int width, int height, int rowLen)
+        {
+            
+
+            return null;
+        }
+
+        public byte[] get1BitBitmapByteArray(int width, int height)
+        {
+            return buildByteArrayFromQR(width, height);
+        }
+
+        public byte[] getLSbOrderedPixels(int width, int height)
+        {
+            return buildByteArrayFromQR(width, height, false, false);
+        }
+
+        private byte[] buildByteArrayFromQR(int width, int height, bool headers = true, bool pixelMSB = true)
         {
 
             Bitmap QR = getBitmap(width, height);
+
+            int rowLen = calculateRowSize(width, 1);
 
             int qrWidth = QR.Width;
             int qrheight = QR.Height;
@@ -43,86 +62,27 @@ namespace OneScanWebApp.Utils
                 int widthOffset = (width - qrWidth) / 2;
                 int heightOffset = (height - qrheight) / 2;
 
-                int rowLength = (int)calculateRowSize(width, 8);
-                List<BitArray> rows = new List<BitArray>();
-                byte[] pixelBytes = new byte[rowLength * Math.Abs(height)];
+                byte[] pixelBytes = new byte[rowLen * Math.Abs(height)];
                 for (int i = 0; i < pixelBytes.Length; i++)
                     pixelBytes[i] = 0xff;
 
-                int currIdx = rowLength * heightOffset;
+                int currIdx = rowLen * heightOffset;
 
-                for (int y = qrheight - 1; y > -1; y--)
+                for (int y = 0; y < qrheight; y++)
                 {
-                    byte[] row = new byte[rowLength * 8];
-                    for (int i = 0; i < row.Length; i++)
-                        row[i] = 0xFF;
-                        
-
-                    for (int x = 0; x < qrWidth; x++)
-                    {
-
-                        Color pixel = QR.GetPixel(x, y);
-
-                        if (((pixel.R + pixel.G + pixel.B) / 3) < 128)
-                            row[x + widthOffset] = 0x00;
-                    }
-
-
-                    currIdx = addArrayToArray(pixelBytes, row, currIdx);
-                }
-
-                byte[] returnArray;
-                if (headers)
-                {
-                    byte[] headerArray = buildHeader(width, height, pixelBytes.Length);
-                    returnArray = new byte[headerArray.Length + pixelBytes.Length];
-                    headerArray.CopyTo(returnArray, 0);
-                    pixelBytes.CopyTo(returnArray, headerArray.Length);
-                }
-                else returnArray = pixelBytes;
-
-                return returnArray;
-            }
-
-            return null;
-        }
-
-        public byte[] getBitmapArray(int width, int height, bool headers = true)
-        {
-
-            Bitmap QR = getBitmap(width, height);
-
-            int qrWidth = QR.Width;
-            int qrheight = QR.Height;
-
-            if (qrWidth <= width && qrheight <= height)
-            {
-                int widthOffset = (width - qrWidth)/2;
-                int heightOffset = (height - qrheight)/2;
-
-                int rowLength = (int)calculateRowSize(width, 1);
-                List<BitArray> rows = new List<BitArray>();
-                byte[] pixelBytes = new byte[rowLength * Math.Abs(height)];
-                for (int i = 0; i < pixelBytes.Length; i++)
-                    pixelBytes[i] = 0xff;
-
-                int currIdx = rowLength*heightOffset;
-
-                for (int y = qrheight - 1; y > -1; y--)
-                {
-                    BitArray row = new BitArray(rowLength * 8);
+                    BitArray row = new BitArray(rowLen * 8);
                     row.SetAll(true);
 
                     for (int x = 0; x < qrWidth; x++)
                     {
-                        
                         Color pixel = QR.GetPixel(x, y);
 
                         if (((pixel.R + pixel.G + pixel.B) / 3) < 128)
-                            row.Set(x + widthOffset , false);
+                            row.Set(x + widthOffset, false);
                     }
 
-                    currIdx = addBitArrayToByteArray(row, ref pixelBytes, currIdx);
+                    currIdx = addBitArrayToByteArray(row, ref pixelBytes, currIdx, pixelMSB);
+
                 }
 
                 byte[] returnArray;
@@ -134,7 +94,7 @@ namespace OneScanWebApp.Utils
                     pixelBytes.CopyTo(returnArray, headerArray.Length);
                 }
                 else returnArray = pixelBytes;
-                
+
                 return returnArray;
             }
 
@@ -152,7 +112,7 @@ namespace OneScanWebApp.Utils
 
             currIdx = addArrayToArray(DIBHeader, intToByteArray(40), currIdx);
             currIdx = addArrayToArray(DIBHeader, intToByteArray(width), currIdx);
-            currIdx = addArrayToArray(DIBHeader, intToByteArray(height), currIdx);
+            currIdx = addArrayToArray(DIBHeader, intToByteArray(-height), currIdx);
             currIdx = addArrayToArray(DIBHeader, int16ToByteArray(1), currIdx);
             currIdx = addArrayToArray(DIBHeader, int16ToByteArray(1), currIdx);
             currIdx = addArrayToArray(DIBHeader, intToByteArray(0), currIdx);
@@ -181,13 +141,13 @@ namespace OneScanWebApp.Utils
             return fullHeader;
         }
 
-        private double calculateRowSize(int imgWidth, int bits)
+        private int calculateRowSize(int imgWidth, int bits)
         {
             int x = (bits * imgWidth + 31) / 32;
-            return Math.Floor((double)x) * 4;
+            return (int)Math.Floor((double)x) * 4;
         }
 
-        private int addBitArrayToByteArray(BitArray bits, ref byte[] bytes, int off)
+        private int addBitArrayToByteArray(BitArray bits, ref byte[] bytes, int off, bool MSB)
         {
             byte currentByte = 0;
             int count = 0;
@@ -195,7 +155,11 @@ namespace OneScanWebApp.Utils
 
             foreach (bool bit in bits)
             {
-                if (bit) currentByte |= (byte)(1 << 8 - (count + 1));
+                int shift = count;
+                if (MSB) shift = 8 - shift - 1; 
+
+                if (bit) currentByte |= (byte)(1 << shift);
+
                 if (++count == 8)
                 {
                     bytes[off++] = currentByte;

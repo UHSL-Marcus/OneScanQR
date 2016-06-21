@@ -78,7 +78,7 @@ namespace AdminWebPortal.Views.Main
             entry.Add("Door.DoorID", newDoorIdTxtBx.Text);
             entry.Add("Door.DoorSecret",newDoorSecretTxtBx.Text);
 
-            if (SQLControls.Set.doInsert("Door", entry))
+            if (SQLControls.doInsert("Door", entry))
             {
                 fillTable();
                 newDoorIdTxtBx.Text = "";

@@ -85,36 +85,18 @@ namespace OneScanWebApp
                 if (!Global.OneScanSessions.TryAdd(sessionKey, sessionID))
                     throw new HttpException(500, "Session error");
 
-                if (QR_img == 1 || QR_img == 2 || QR_img == 3)
+                if (QR_img == 1 || QR_img == 2)
                 {
                     QRGen qrgen = new QRGen(QR, QRCoder.QRCodeGenerator.ECCLevel.H);
 
-                    if (QR_img == 1 || QR_img == 3)
+                    if (QR_img == 1)
                     {
-                        //context.Response.ContentType = "image/bmp";
-                        byte[] qrArr = qrgen.getBitmapArray(128, 128, false);
-                        byte[] qrArr8 = qrgen.get8BitBitmapArray(128, 128, false);
-
-                        if (QR_img == 1)
-                            context.Response.OutputStream.Write(qrArr8, 0, qrArr.Length);
-
-                        if (QR_img == 3)
-                            context.Response.Write(Encoding.UTF8.GetString(qrArr));
-
-                        StringBuilder sb = new StringBuilder();
-                        foreach (byte b in qrArr8)
-                            sb.Append("0x" + b.ToString("X2") + ",");
-
-                        string hexString = sb.ToString();
-
-                        File.WriteAllText("c:/qrBytes.c", hexString);
-
-
+                        byte[] qrArr = qrgen.getLSbOrderedPixels(128, 128);
+                        context.Response.OutputStream.Write(qrArr, 0, qrArr.Length);
                     }
 
-
                     if (QR_img == 2)
-                        context.Response.Write(Convert.ToBase64String(qrgen.getBitmapArray(256, 256)));
+                        context.Response.Write(Convert.ToBase64String(qrgen.get1BitBitmapByteArray(256, 256)));
 
                     
 

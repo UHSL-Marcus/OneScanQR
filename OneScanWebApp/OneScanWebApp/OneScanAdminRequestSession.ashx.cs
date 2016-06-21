@@ -78,13 +78,13 @@ namespace OneScanWebApp
                     if (QR_img == 1)
                     {
                         context.Response.ContentType = "image/bmp";
-                        byte[] qrArr = qrgen.getBitmapArray(256, 256, false);
+                        byte[] qrArr = qrgen.getLSbOrderedPixels(256, 256);
                         context.Response.OutputStream.Write(qrArr, 0, qrArr.Length);
                     }
 
 
                     if (QR_img == 2)
-                        context.Response.Write(Convert.ToBase64String(qrgen.getBitmapArray(256, 256)));
+                        context.Response.Write(Convert.ToBase64String(qrgen.get1BitBitmapByteArray(256, 256)));
 
                 }
                 else context.Response.Write(QR);

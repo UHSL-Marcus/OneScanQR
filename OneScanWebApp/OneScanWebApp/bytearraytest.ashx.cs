@@ -1,9 +1,7 @@
 ﻿using OneScanWebApp.Utils;
-using System;
-using System.Collections.Generic;
+using System.Collections;
+using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.SessionState;
@@ -18,27 +16,98 @@ namespace OneScanWebApp
 
         public void ProcessRequest(HttpContext context)
         {
-            byte[] bytes;
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create("http://localhost/OneScanWebApp/onescanrequestsession.ashx?mode=0&qr_img=1&door_id=34&data=dfg");
-            req.Method = "GET";
 
-            WebResponse response = req.GetResponse();
-            Stream responseStream = response.GetResponseStream();
+            QRGen qrG = new QRGen("http://ensygnia.com/?0yaou8WurWUJecjgyslzFQ==", QRCoder.QRCodeGenerator.ECCLevel.H);
+            byte[] qr = qrG.getLSbOrderedPixels(128, 128);
 
-            using (MemoryStream ms = new MemoryStream())
-            {
-                responseStream.CopyTo(ms);
-                bytes = ms.ToArray();
-            }
+            File.WriteAllBytes("c:/qrhexBytes", qr);
 
             StringBuilder sb = new StringBuilder();
-            foreach (byte b in bytes) 
-                sb.Append("0x" + b.ToString("X2") + ",");
+            int count = 0;
+            sb.Append("{");
+            foreach (byte b in qr)
+            {
+                bool final = ++count % 16 == 0;
+                sb.Append("0x" + b.ToString("X2"));
+                if (!final) sb.Append(",");
 
-            string hexString = sb.ToString();
+                if (final)
+                {
+                    sb.Append("}");
+                    if (count % (128 * 16) != 0)
+                        sb.Append("\n{");
+                }
+               
+            }
+
+            string qrhexLines = sb.ToString();
+            File.WriteAllText("c:/qrHexLines.txt", qrhexLines);
+
+            sb = new StringBuilder();
+            sb.Append("{");
+            foreach (byte b in qr)
+            {
+                sb.Append("0x" + b.ToString("X2") + ",");
+            }
+            sb.Remove(sb.Length - 1, 1);
+            sb.Append("}");
+
+            string qrhex = sb.ToString();
+            File.WriteAllText("c:/qrHex.txt", qrhex);
+
+            byte[] stripes = new byte[128 * 16];
+            bool white = true;
+            int rowCount = 0;
+            for(int i = 0; i < stripes.Length; i++)
+            {
+                if (white) stripes[i] = 0xff;
+                else stripes[i] = 0x00;
+
+                if (++rowCount % (8*16) == 0)
+                    white = !white;
+            }
+           
+            sb = new StringBuilder();
+            count = 0;
+            BitArray ba = new BitArray(qr);
+            foreach (bool b in ba)
+            {
+                bool final = ++count % 128 == 0;
+                if (b) sb.Append("1");
+                else sb.Append("0");
+
+                if (final)
+                    sb.Append("\n");
+
+            }
+
+            sb = new StringBuilder();
+            count = 0;
+            foreach (byte b in qr)
+            {
+                BitArray bits = new BitArray(new byte[] { b });
+                bool final = ++count % 16 == 0;
+                foreach(bool bit in bits)
+                {
+                    if (bit) sb.Append("1");
+                    else sb.Append("0");
+                }
+                if (final)
+                    sb.Append("\n");
+
+            }
+
+            string binaryDrawing = sb.ToString();
 
             context.Response.ContentType = "text/plain";
-            context.Response.Write(hexString);
+            context.Response.Write(binaryDrawing);
+
+            //context.Response.ContentType = "image/bmp";
+
+            byte[] bmp = qrG.get1BitBitmapByteArray(128, 128);
+
+            //context.Response.OutputStream.Write(bmp, 0, bmp.Length);
+            
             
         }
 
