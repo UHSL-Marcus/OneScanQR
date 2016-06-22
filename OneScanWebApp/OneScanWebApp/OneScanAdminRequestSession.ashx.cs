@@ -22,7 +22,7 @@ namespace OneScanWebApp
         {
             int mode;
             if (!int.TryParse(context.Request.QueryString["mode"], out mode))
-                throw new HttpException(400, "Query Incomplete");
+                throw new HttpException(400, "Query Incomplete (Invalid Mode)");
 
             string guid = context.Request.QueryString["guid"];
             string hmac = context.Request.QueryString["data"];
@@ -48,11 +48,11 @@ namespace OneScanWebApp
                     toHmac += "&key=" + key;
                     List<RegistrationToken> regtokns;
                     if (!SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
-                        throw new HttpException(400, "Query Incomplete");
+                        throw new HttpException(400, "Query Incomplete (Invalid AuthKey)");
                     secret = regtokns[0].Secret;
                     loginType = LoginTypes.Register;
                     break;
-                default: throw new HttpException(400, "Query Incomplete");
+                default: throw new HttpException(400, "Query Incomplete (Mode out of range)");
             }
 
             //if (!HMAC.ValidateHash(toHmac, secret, hmac))
@@ -78,7 +78,7 @@ namespace OneScanWebApp
                     if (QR_img == 1)
                     {
                         context.Response.ContentType = "image/bmp";
-                        byte[] qrArr = qrgen.getLSbOrderedPixels(256, 256);
+                        byte[] qrArr = qrgen.getLSBOrderedPixels(256, 256);
                         context.Response.OutputStream.Write(qrArr, 0, qrArr.Length);
                     }
 

@@ -11,16 +11,17 @@ namespace SQLControls
 {
     public class Delete
     {
-        public static bool doDeleteByIDGetID(string id, string table, out int? output)
+        /*public static bool doDeleteByIDGetID(string id, string table, out int? output)
         {
             return doDeleteByGetID(SharedUtils.buildDatabaseObjectSingleField(table, id, "Id"), out output);
-        }
+        }*/
 
-        public static bool doDeleteByColumnGetID(string table, object info, string column, out int? output)
+        /*public static bool doDeleteByColumnGetID(string table, object info, string column, out int? output)
         {
             return doDeleteByGetID(SharedUtils.buildDatabaseObjectSingleField(table, info, column), out output);
-        }
-        public static bool doDeleteByGetID<TYPE>(TYPE ob, out int? output, bool includeNulls = false)
+        }*/
+
+        /*public static bool doDeleteByGetID<TYPE>(TYPE ob, out int? output, bool includeNulls = false)
         {
             output = null;
 
@@ -33,7 +34,7 @@ namespace SQLControls
             cmd.CommandText = declaration + query + select;
 
             return SharedUtils.getSingleEntry(cmd, "Id", out output);
-        }
+        }*/
 
         public static bool doDeleteEntryByColumn<TYPE, inT>(inT info, string column)
         {
@@ -50,47 +51,16 @@ namespace SQLControls
             return doDelete(table, conditions);
         }
 
-        internal static string getDeleteQuery<TYPE>(TYPE ob, ref SqlCommand cmd, string preWhereExtra, bool includeNulls)
+        internal static string getDeleteQuery(Tuple<DatabaseTableObject, SQLWhereConjuctions, bool>[] obs, string table, ref SqlCommand cmd, string preWhereExtra)
         {
-            Type type = typeof(TYPE);
-            string query = "";
-
-            FieldInfo[] fields = type.GetFields();
-            if (fields.Length > 0)
-            {
-                query = "DELETE FROM " + type.Name + " " + preWhereExtra + " WHERE ";
-                for (int i = 0; i < fields.Length; i++)
-                {
-                    var value = SharedUtils.formatValue(fields[i].GetValue(ob));
-
-                    if (value != null || includeNulls)
-                    {
-
-                        SqlParameter tempParam = new SqlParameter();
-                        tempParam.ParameterName = "@DEL_" + Regex.Replace(fields[i].Name, "[^A-Za-z0-9 _]", "");
-
-                        if (value is string)
-                            tempParam.Value = ((string)value).Trim();
-                        else tempParam.Value = value;
-
-                        cmd.Parameters.Add(tempParam);
-
-                        query += type.Name + "." + fields[i].Name + "=" + tempParam.ParameterName;
-
-
-                        if (i + 1 < fields.Length)
-                            query += " AND ";
-
-                    }
-                }
-            }
-
-            return query;
+            return "DELETE FROM " + table + " " + preWhereExtra + " WHERE " +
+                    SharedUtils.getWhere(obs, ref cmd, "DEL_");
         }
-        public static bool doDelete<TYPE>(TYPE ob, bool includeNulls = false)
+
+        public static bool doDelete<TYPE>(TYPE ob, bool includeNulls = false) where TYPE:DatabaseTableObject
         {
             SqlCommand cmd = new SqlCommand();
-            string query = getDeleteQuery(ob, ref cmd, "", includeNulls);
+            string query = getDeleteQuery(new Tuple<DatabaseTableObject, SQLWhereConjuctions, bool>[] { Tuple.Create((DatabaseTableObject)ob, SQLWhereConjuctions.AND, includeNulls) }, typeof(TYPE).Name, ref cmd, ""); 
             cmd.CommandText = query;
             return SharedUtils.doNonQuery(cmd);
         }

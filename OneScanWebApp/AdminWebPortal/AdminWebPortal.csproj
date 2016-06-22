@@ -60,6 +60,10 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SQLControls, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\SQLControls\bin\Debug\SQLControls.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -197,6 +201,8 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Database\Objects\Door.cs" />
+    <Compile Include="Database\Objects\DoorUserTokenPair.cs" />
     <Compile Include="Database\Objects\RegistrationToken.cs" />
     <Compile Include="Database\SQLControls.cs" />
     <Compile Include="Global.asax.cs">
@@ -247,6 +253,9 @@
     </Compile>
     <Compile Include="Views\Main\AdminUserAdmin.aspx.designer.cs">
       <DependentUpon>AdminUserAdmin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Main\AdminUserAdminUtils\SQLQueryObjects.cs">
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Views\Main\DoorAdmin.aspx.cs">
       <DependentUpon>DoorAdmin.aspx</DependentUpon>

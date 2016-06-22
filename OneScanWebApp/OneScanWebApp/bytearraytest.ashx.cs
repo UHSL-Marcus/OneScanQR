@@ -18,7 +18,7 @@ namespace OneScanWebApp
         {
 
             QRGen qrG = new QRGen("http://ensygnia.com/?0yaou8WurWUJecjgyslzFQ==", QRCoder.QRCodeGenerator.ECCLevel.H);
-            byte[] qr = qrG.getLSbOrderedPixels(128, 128);
+            byte[] qr = qrG.getLSBOrderedPixels(128, 128);
 
             File.WriteAllBytes("c:/qrhexBytes", qr);
 

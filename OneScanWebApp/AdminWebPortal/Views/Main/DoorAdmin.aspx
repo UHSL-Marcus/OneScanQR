@@ -15,7 +15,7 @@
             </asp:Table> 
         </div>
         <asp:TextBox runat="server" ID="newDoorIdTxtBx" placeholder="Door ID" />
-        <asp:TextBox runat="server" ID="newDoorSecretTxtBx" placeholder="Door Seret" />
+        <asp:TextBox runat="server" ID="newDoorSecretTxtBx" placeholder="Door Secret" />
         <asp:Button ID="addDoorBtn" runat="server" Text="Add New Door" OnClick="addDoorBtn_Click"/>
     </div>
 </asp:Content>

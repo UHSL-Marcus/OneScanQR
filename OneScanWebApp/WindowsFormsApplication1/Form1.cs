@@ -15,11 +15,7 @@ namespace WindowsFormsApplication1
         public Form1()
         {
             InitializeComponent();
-            Dictionary<string, object> insert = new Dictionary<string, object>();
-            insert.Add("astring", "something");
-            insert.Add("anumber", 22);
-
-            SQLControls.Set.doInsert("newType", insert);
+            
         }
     }
 }

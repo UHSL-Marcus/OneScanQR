@@ -1,8 +1,10 @@
-﻿using AdminWebPortal.Utils;
+﻿using AdminWebApp.Database.Objects;
+using AdminWebPortal.Database.Objects;
+using AdminWebPortal.Utils;
 using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
-using AdminWebPortal.Database;
+
 
 namespace AdminWebPortal.Views.Main
 {
@@ -72,8 +74,10 @@ namespace AdminWebPortal.Views.Main
                     Table DoorTable;
                     if (RowToRemove.FindParent(out DoorTable))
                     {
-                        string queryUTP = "DELETE FROM DoorUserTokenPair WHERE UserToken='" + args.UserTokenID.Value + "' AND DoorID='" + args.DoorID + "'";
-                        SQLControls.doNonQuery(queryUTP);
+                        DoorUserTokenPair dtp = new DoorUserTokenPair();
+                        dtp.DoorID = args.DoorID;
+                        dtp.UserToken = args.UserTokenID;
+                        SQLControls.Delete.doDelete(dtp);
 
                         TableCell parentCell;
                         if (DoorTable.FindParent(out parentCell))
@@ -148,8 +152,10 @@ namespace AdminWebPortal.Views.Main
                     {
                         string doorID = DropDown.SelectedValue;
 
-                        string query = "INSERT INTO DoorUserTokenPair (UserToken, DoorID) VALUES('" + args.UserTokenID.Value + "','" + doorID + "')";
-                        SQLControls.doNonQuery(query);
+                        DoorUserTokenPair dtp = new DoorUserTokenPair();
+                        dtp.DoorID = int.Parse(doorID);
+                        dtp.UserToken = args.UserTokenID;
+                        SQLControls.Set.doInsert(dtp);
 
                         foreach (string id in OpenDoorRegisterCtls[args.UserTokenID.Value].Item2)
                             parentCell.Controls.Remove(parentCell.FindControlRecursive(id));
@@ -177,13 +183,9 @@ namespace AdminWebPortal.Views.Main
                 Button btn = (Button)sender;
                 DeleteBtnArguments args = JsonUtils.GetObject<DeleteBtnArguments>(btn.CommandArgument);
 
-                string queryUTP = "DELETE FROM DoorUserTokenPair WHERE UserToken='" + args.UserTokenID.Value + "'";
-                string queryU = "DELETE FROM UserInfo WHERE Id='" + args.UserInfoID.Value + "'";
-                string queryT = "DELETE FROM UserToken WHERE Id='" + args.UserTokenID.Value + "'";
-
-                SQLControls.doNonQuery(queryUTP);
-                SQLControls.doNonQuery(queryU);
-                SQLControls.doNonQuery(queryT);
+                SQLControls.Delete.doDeleteEntryByColumn("DoorUserTokenPair", args.UserTokenID.Value, "UserToken");
+                SQLControls.Delete.doDeleteEntryByColumn("UserInfo", args.UserInfoID.Value, "Id");
+                SQLControls.Delete.doDeleteEntryByColumn("UserToken", args.UserTokenID.Value, "Id");
 
                 usersTbl.Rows.Remove((TableRow)usersTbl.FindControlRecursive(args.RowID));
 
@@ -194,7 +196,10 @@ namespace AdminWebPortal.Views.Main
         {
             string key = Guid.NewGuid().ToString();
             string secret = Guid.NewGuid().ToString();
-            if (SQLControls.doNonQuery("INSERT INTO RegistrationToken VALUES('" + key + "', '" + secret + "')"))
+
+            RegistrationToken rt = new RegistrationToken();
+            rt.AuthKey = key; rt.Secret = secret;
+            if (SQLControls.Set.doInsert(rt))
             {
                 string guid = Guid.NewGuid().ToString();
                 string query = "guid=" + guid + "&key=" + key;

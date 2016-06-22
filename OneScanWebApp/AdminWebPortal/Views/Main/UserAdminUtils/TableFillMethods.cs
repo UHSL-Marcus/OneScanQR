@@ -1,5 +1,4 @@
-﻿using AdminWebPortal.Database;
-using AdminWebPortal.Utils;
+﻿using AdminWebPortal.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,73 +16,74 @@ namespace AdminWebPortal.Views.Main
             usersTbl.Rows.Clear();
             usersTbl.Rows.Add(headings);
 
-
-            List<TableInfo> info = SQLControls.getData<TableInfo>(new TableInfo());
-
-            foreach (TableInfo entry in info)
+            List<TableInfo> info;
+            if (SQLControls.Get.doJoinSelect(new TableInfo(), out info))
             {
-                TableRow tRow = new TableRow();
-                tRow.ID = "UsersTableRow" + entry.UserTokenID.Value;
+                foreach (TableInfo entry in info)
+                {
+                    TableRow tRow = new TableRow();
+                    tRow.ID = "UsersTableRow" + entry.UserTokenID.Value;
 
-                TableCell tCell = new TableCell();
-                tCell.Text = entry.UserInfoName;
-                tRow.Cells.Add(tCell);
+                    TableCell tCell = new TableCell();
+                    tCell.Text = entry.UserInfoName;
+                    tRow.Cells.Add(tCell);
 
-                tCell = new TableCell();
-                tCell.Text = entry.UserTokenToken;
-                tRow.Cells.Add(tCell);
+                    tCell = new TableCell();
+                    tCell.Text = entry.UserTokenToken;
+                    tRow.Cells.Add(tCell);
 
-                tCell = new TableCell();
-                tCell.ID = "UsersTableActionsCell" + entry.UserTokenID.Value;
+                    tCell = new TableCell();
+                    tCell.ID = "UsersTableActionsCell" + entry.UserTokenID.Value;
 
-                Button doorViewBtn = new Button();
-                doorViewBtn.Text = "Show Registered Doors";
-                doorViewBtn.ID = "ShowRegisteredDoors" + entry.UserTokenID;
-                doorViewBtn.Click += DoorViewBtn_Click;
-                DoorViewBtnArguments doorViewBtnArgs = new DoorViewBtnArguments();
-                doorViewBtnArgs.UserTokenID = entry.UserTokenID;
+                    Button doorViewBtn = new Button();
+                    doorViewBtn.Text = "Show Registered Doors";
+                    doorViewBtn.ID = "ShowRegisteredDoors" + entry.UserTokenID;
+                    doorViewBtn.Click += DoorViewBtn_Click;
+                    DoorViewBtnArguments doorViewBtnArgs = new DoorViewBtnArguments();
+                    doorViewBtnArgs.UserTokenID = entry.UserTokenID;
 
-                tCell.Controls.Add(doorViewBtn);
+                    tCell.Controls.Add(doorViewBtn);
 
-                Button addDoorBtn = new Button();
-                addDoorBtn.Text = "Register To Door";
-                addDoorBtn.ID = "RegisterToDoor" + entry.UserTokenID;
-                addDoorBtn.Click += AddRegDoorCtlsBtn_Click;
-                AddRegDoorCtlsBtnArguments addDoorBtnArgs = new AddRegDoorCtlsBtnArguments();
-                addDoorBtnArgs.UserTokenID = entry.UserTokenID;
+                    Button addDoorBtn = new Button();
+                    addDoorBtn.Text = "Register To Door";
+                    addDoorBtn.ID = "RegisterToDoor" + entry.UserTokenID;
+                    addDoorBtn.Click += AddRegDoorCtlsBtn_Click;
+                    AddRegDoorCtlsBtnArguments addDoorBtnArgs = new AddRegDoorCtlsBtnArguments();
+                    addDoorBtnArgs.UserTokenID = entry.UserTokenID;
 
-                tCell.Controls.Add(addDoorBtn);
+                    tCell.Controls.Add(addDoorBtn);
 
-                Button delBtn = new Button();
-                delBtn.Text = "Delete User";
-                delBtn.ID = "deleteUser" + entry.UserTokenID;
-                delBtn.Click += DelBtn_Click;
-                DeleteBtnArguments deletebtnArgs = new DeleteBtnArguments();
-                deletebtnArgs.UserInfoID = entry.UserInfoID;
-                deletebtnArgs.UserTokenID = entry.UserTokenID;
+                    Button delBtn = new Button();
+                    delBtn.Text = "Delete User";
+                    delBtn.ID = "deleteUser" + entry.UserTokenID;
+                    delBtn.Click += DelBtn_Click;
+                    DeleteBtnArguments deletebtnArgs = new DeleteBtnArguments();
+                    deletebtnArgs.UserInfoID = entry.UserInfoID;
+                    deletebtnArgs.UserTokenID = entry.UserTokenID;
 
-                tCell.Controls.Add(delBtn);
+                    tCell.Controls.Add(delBtn);
 
-                if (OpenDoorRegisterCtls.ContainsKey(entry.UserTokenID.Value))
-                   addDoorRegisterControls(tCell.Controls, entry.UserTokenID.Value, OpenDoorRegisterCtls[entry.UserTokenID.Value].Item1);
-                
-
-                if (OpenDoorTables.ContainsKey(entry.UserTokenID.Value))
-                   addDoorViewTable(tCell.Controls, entry.UserTokenID.Value);
+                    if (OpenDoorRegisterCtls.ContainsKey(entry.UserTokenID.Value))
+                        addDoorRegisterControls(tCell.Controls, entry.UserTokenID.Value, OpenDoorRegisterCtls[entry.UserTokenID.Value].Item1);
 
 
-                tRow.Cells.Add(tCell);
+                    if (OpenDoorTables.ContainsKey(entry.UserTokenID.Value))
+                        addDoorViewTable(tCell.Controls, entry.UserTokenID.Value);
 
-                usersTbl.Rows.Add(tRow);
 
-                addDoorBtnArgs.delBtnIndex = tCell.Controls.IndexOf(delBtn);
+                    tRow.Cells.Add(tCell);
 
-                deletebtnArgs.RowID = tRow.ID;
+                    usersTbl.Rows.Add(tRow);
 
-                doorViewBtn.CommandArgument = JsonUtils.GetJson(doorViewBtnArgs);
-                addDoorBtn.CommandArgument = JsonUtils.GetJson(addDoorBtnArgs);
-                delBtn.CommandArgument = JsonUtils.GetJson(deletebtnArgs);
+                    addDoorBtnArgs.delBtnIndex = tCell.Controls.IndexOf(delBtn);
 
+                    deletebtnArgs.RowID = tRow.ID;
+
+                    doorViewBtn.CommandArgument = JsonUtils.GetJson(doorViewBtnArgs);
+                    addDoorBtn.CommandArgument = JsonUtils.GetJson(addDoorBtnArgs);
+                    delBtn.CommandArgument = JsonUtils.GetJson(deletebtnArgs);
+
+                }
             }
         }
 
@@ -103,36 +103,38 @@ namespace AdminWebPortal.Views.Main
 
             DoorTable.Rows.Add(headRow);
 
-            List<DoorViewInfo> info = SQLControls.getData<DoorViewInfo>(new DoorViewInfo(userTknID.ToString()));
-
-            foreach (DoorViewInfo entry in info)
+            List<DoorViewInfo> info;
+            if (SQLControls.Get.doJoinSelect(new DoorViewInfo(userTknID.ToString()), out info))
             {
-                TableRow tRow = new TableRow();
-                tRow.ID = "DoorViewTableRow" + userTknID + "Door" + entry.DoorID;
+                foreach (DoorViewInfo entry in info)
+                {
+                    TableRow tRow = new TableRow();
+                    tRow.ID = "DoorViewTableRow" + userTknID + "Door" + entry.DoorID;
 
-                TableCell tCell = new TableCell();
-                tCell.Text = entry.DoorID;
-                tRow.Cells.Add(tCell);
+                    TableCell tCell = new TableCell();
+                    tCell.Text = entry.DoorID;
+                    tRow.Cells.Add(tCell);
 
-                tCell = new TableCell();
+                    tCell = new TableCell();
 
-                Button removeDoorAuthBtn = new Button();
-                removeDoorAuthBtn.Text = "Remove Authorisation";
-                removeDoorAuthBtn.ID = "RemoveAuthorisation" + userTknID + "Door" + entry.Id;
-                removeDoorAuthBtn.Click += RemoveDoorAuthBtn_Click;
+                    Button removeDoorAuthBtn = new Button();
+                    removeDoorAuthBtn.Text = "Remove Authorisation";
+                    removeDoorAuthBtn.ID = "RemoveAuthorisation" + userTknID + "Door" + entry.Id;
+                    removeDoorAuthBtn.Click += RemoveDoorAuthBtn_Click;
 
-                RemoveAuthBtnArguments removeAuthArgs = new RemoveAuthBtnArguments();
-                removeAuthArgs.UserTokenID = userTknID;
-                removeAuthArgs.DoorID = entry.Id;
+                    RemoveAuthBtnArguments removeAuthArgs = new RemoveAuthBtnArguments();
+                    removeAuthArgs.UserTokenID = userTknID;
+                    removeAuthArgs.DoorID = entry.Id;
 
-                removeDoorAuthBtn.CommandArgument = JsonUtils.GetJson(removeAuthArgs);
+                    removeDoorAuthBtn.CommandArgument = JsonUtils.GetJson(removeAuthArgs);
 
-                tCell.Controls.Add(removeDoorAuthBtn);
+                    tCell.Controls.Add(removeDoorAuthBtn);
 
 
-                tRow.Cells.Add(tCell);
+                    tRow.Cells.Add(tCell);
 
-                DoorTable.Rows.Add(tRow);
+                    DoorTable.Rows.Add(tRow);
+                }
             }
 
             col.Add(DoorTable);

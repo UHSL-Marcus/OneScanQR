@@ -1,15 +1,49 @@
-﻿using System;
+﻿using StringEnum;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace SQLControls
 {
+    
+    public enum SQLWhereConjuctions
+    {
+        [StringValue("AND")]
+        AND,
+        [StringValue("OR")]
+        OR,
+        [StringValue("NOT")]
+        NOT
+    }
+    public enum SQLEqualityOperations
+    {
+        [StringValue("=")]
+        EQUALS,
+        [StringValue("<>")]
+        NOTEQUALS,
+        [StringValue("IS NULL")]
+        ISNULL,
+        [StringValue("IS NOT NULL")]
+        NOTNULL
+    }
     public class DatabaseTableObject
     {
         public int? Id;
+
+        [DatabaseColumn(SQLIgnore = true)]
+        public SQLEqualityOperations Equality = SQLEqualityOperations.EQUALS;
+        [DatabaseColumn(SQLIgnore = true)]
+        public bool TreatAsNull = false;
+
+        
+            
     }
 
     public struct JoinPair
@@ -29,9 +63,9 @@ namespace SQLControls
     {
         public string leftTableCol;
         public string rightTableCol;
-        public string op;
-        public string conjunc;
-        public JoinOnPair(string leftTableColumn, string rightTableColumn, string op = "=", string conjuction = "AND")
+        public SQLEqualityOperations op;
+        public SQLWhereConjuctions conjunc;
+        public JoinOnPair(string leftTableColumn, string rightTableColumn, SQLEqualityOperations op = SQLEqualityOperations.EQUALS, SQLWhereConjuctions conjuction = SQLWhereConjuctions.AND)
         {
             leftTableCol = leftTableColumn;
             rightTableCol = rightTableColumn;
@@ -40,16 +74,29 @@ namespace SQLControls
         }
     }
 
-    public interface IDatabaseOutputObject
+    public abstract class DatabaseOutputObject
     {
-        
+        public List<JoinPair> joins = new List<JoinPair>();
+        public List<Tuple<DatabaseTableObject, SQLWhereConjuctions, bool>> whereobs = new List<Tuple<DatabaseTableObject, SQLWhereConjuctions, bool>>();
+
+        protected void buildSingleJoin(string left, string right, string leftcol, string rightcol)
+        {
+            JoinOnPair[] ons = new JoinOnPair[] { new JoinOnPair(leftcol, rightcol) };
+            joins.Add(new JoinPair(SharedUtils.buildDatabaseObjectNoFields(left).getType(), SharedUtils.buildDatabaseObjectNoFields(right).getType(), ons));
+        }
+        protected void buildSingleWhere(string table, string column, object info)
+        {
+            whereobs.Add(Tuple.Create(SharedUtils.buildDatabaseObjectSingleField(table, info, column), SQLWhereConjuctions.AND, false));
+        }
     }
 
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Method)]
-    public class DatabaseOutputAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Field)]
+    public class DatabaseColumnAttribute : Attribute
     {
         public bool SQLIgnore = false;
         public string columnName;
+        public SQLEqualityOperations equality = SQLEqualityOperations.EQUALS;
+        public bool forceUse = false;
     }
     
 
@@ -124,7 +171,7 @@ namespace SQLControls
 
         internal static List<Dictionary<string, object>> getData(SqlCommand cmd)
         {
-            DataTableReader reader = SharedUtils.getDataReader(cmd);
+            DataTableReader reader = getDataReader(cmd);
 
             List<Dictionary<string, object>> returnList = new List<Dictionary<string, object>>();
             while (reader.Read())
@@ -239,6 +286,85 @@ namespace SQLControls
             Dictionary<string, object> conditions = new Dictionary<string, object>();
             conditions.Add(column, info);
             return SharedUtils.buildDatabaseObject(table, conditions);
+        }
+
+        internal static dynamic buildDatabaseObjectNoFields(string table)
+        {
+            Dictionary<string, object> conditions = new Dictionary<string, object>();
+            return SharedUtils.buildDatabaseObject(table, conditions);
+        }
+
+        internal static string getWhere(Tuple<DatabaseTableObject, SQLWhereConjuctions, bool>[] obs, ref SqlCommand cmd, string paramPrefix)
+        {
+            string query = "";
+
+            for (int t = 0; t < obs.Length; t++)
+            {
+                Tuple<DatabaseTableObject, SQLWhereConjuctions, bool> ob = obs[t];
+                
+                Type type = ob.GetType();
+
+                FieldInfo[] fields = type.GetFields();
+                if (fields.Length > 0)
+                {
+                    if (t > 0 || ob.Item2 == SQLWhereConjuctions.NOT)
+                        query += " " + ob.Item2.GetStringValue() + " ";
+
+                    query += "(";
+                    for (int i = 0; i < fields.Length; i++)
+                    {
+                        if (!sqlIgnore(fields[i]))
+                        {
+                            var value = formatValue(fields[i].GetValue(ob.Item1));
+
+                            if (value != null || ob.Item3)
+                            {
+                                SqlParameter tempParam = new SqlParameter();
+                                tempParam.ParameterName = "@" + paramPrefix + Regex.Replace(fields[i].Name, "[^A-Za-z0-9 _]", "");
+
+                                SQLEqualityOperations equality = ob.Item1.Equality;
+
+                                if (value is string)
+                                    tempParam.Value = ((string)value).Trim();
+                                if (value == null)
+                                {
+                                    tempParam.Value = "";
+                                    switch(equality)
+                                    {
+                                        case SQLEqualityOperations.EQUALS:
+                                            equality = SQLEqualityOperations.ISNULL;
+                                            break;
+                                        case SQLEqualityOperations.NOTEQUALS:
+                                            equality = SQLEqualityOperations.NOTNULL;
+                                            break;
+                                    }
+                                }
+                                else tempParam.Value = value;
+
+                                cmd.Parameters.Add(tempParam);
+
+                                query += type.Name + "." + fields[i].Name + equality.GetStringValue() + tempParam.ParameterName;
+
+                                if (i + 1 < fields.Length)
+                                    query += " AND ";
+                            }
+                        }
+                    }
+                    query += ")";
+                }
+            }
+
+            return query;
+        }
+
+        private static bool sqlIgnore(FieldInfo field)
+        {
+            bool ignore = false;
+            DatabaseColumnAttribute[] attrs = field.GetCustomAttributes(typeof(DatabaseColumnAttribute), false) as DatabaseColumnAttribute[];
+            if (attrs.Length > 0)
+                ignore = attrs[0].SQLIgnore;
+
+            return ignore;
         }
 
     }

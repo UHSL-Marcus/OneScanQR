@@ -1,11 +1,14 @@
-﻿using System;
+﻿using SQLControls;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -133,6 +136,15 @@ namespace AdminWebPortal.Utils
             }
             return success;
         }
+
+        public static void AddTextCell(this TableCellCollection col, string text)
+        {
+            TableCell cell = new TableCell();
+            cell.Text = text;
+            col.Add(cell);
+        }
+
+        
 
     }
 }

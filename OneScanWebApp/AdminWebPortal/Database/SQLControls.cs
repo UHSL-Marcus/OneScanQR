@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace AdminWebPortal.Database
+namespace AdminWebPortalTT.Database
 {
     public class SQLControls
     {

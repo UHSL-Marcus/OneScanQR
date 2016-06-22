@@ -30,19 +30,12 @@ namespace OneScanWebApp.Utils
             }
         }
 
-        private byte[] buildPixelArray(Bitmap img, int width, int height, int rowLen)
-        {
-            
-
-            return null;
-        }
-
         public byte[] get1BitBitmapByteArray(int width, int height)
         {
             return buildByteArrayFromQR(width, height);
         }
 
-        public byte[] getLSbOrderedPixels(int width, int height)
+        public byte[] getLSBOrderedPixels(int width, int height)
         {
             return buildByteArrayFromQR(width, height, false, false);
         }

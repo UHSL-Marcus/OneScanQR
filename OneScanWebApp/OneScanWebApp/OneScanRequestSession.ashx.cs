@@ -25,7 +25,7 @@ namespace OneScanWebApp
             
             int mode;
             if (!int.TryParse(context.Request.QueryString["mode"], out mode))
-                throw new HttpException(400, "Query Incomplete");
+                throw new HttpException(400, "Query Incomplete (Invalid Mode)");
 
             string doorID = context.Request.QueryString["door_id"];
             string guid = context.Request.QueryString["guid"];
@@ -48,7 +48,7 @@ namespace OneScanWebApp
                     toHmac += "&door_id = " + doorID;
                     List<Door> doors;
                     if (!SQLControls.getEntryByColumn(doorID, "DoorID", out doors) || doors.Count > 1)
-                        throw new HttpException(400, "Query Incomplete");
+                        throw new HttpException(400, "Query Incomplete (Invalid DoorID)");
                     secret = doors[0].DoorSecret;
                     loginType = LoginTypes.UserToken;
                     break;
@@ -57,12 +57,12 @@ namespace OneScanWebApp
                     toHmac += "&guid=" + guid + "&key=" + key;
                     List<RegistrationToken> regtokns;
                     if (!SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
-                        throw new HttpException(400, "Query Incomplete");
+                        throw new HttpException(400, "Query Incomplete (Invalid AuthKey)");
                     secret = regtokns[0].Secret;
                     loginType = LoginTypes.Register;
                     sData.regkey = key;
                     break;
-                default: throw new HttpException(400, "Query Incomplete");
+                default: throw new HttpException(400, "Query Incomplete (Mode out of range)");
             }
 
 
@@ -91,11 +91,11 @@ namespace OneScanWebApp
 
                     if (QR_img == 1)
                     {
-                        byte[] qrArr = qrgen.getLSbOrderedPixels(128, 128);
+                        byte[] qrArr = qrgen.getLSBOrderedPixels(128, 128);
                         context.Response.OutputStream.Write(qrArr, 0, qrArr.Length);
                     }
 
-                    if (QR_img == 2)
+                    if (QR_img == 2) 
                         context.Response.Write(Convert.ToBase64String(qrgen.get1BitBitmapByteArray(256, 256)));
 
                     

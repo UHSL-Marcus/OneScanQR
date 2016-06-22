@@ -1,11 +1,7 @@
-﻿using AdminWebPortal.Database;
-using AdminWebPortal.Utils;
+﻿using AdminWebPortal.Utils;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -27,34 +23,31 @@ namespace AdminWebPortal.Views.Main
             TableRow headings = AdminUsersTbl.Rows[0];
             AdminUsersTbl.Rows.Clear();
             AdminUsersTbl.Rows.Add(headings);
-            
 
-            DataTableReader reader = SQLControls.getDataReader("SELECT AdminUser.Id, AdminToken.Id, AdminUser.Name, AdminToken.UserToken FROM AdminUser JOIN AdminToken ON AdminToken.Id=AdminUser.AdminToken");
-
-            while (reader.Read())
+            List<TableInfo> info;
+            if (SQLControls.Get.doJoinSelect(new TableInfo(), out info))
             {
-                TableRow tRow = new TableRow();
-                TableCell tCell;
-
-                for (int i = 2; i < 4; i++)
+                foreach (TableInfo entry in info)
                 {
+                    TableRow tRow = new TableRow();
+                    TableCell tCell;
+
+                    tRow.Cells.AddTextCell(entry.AdminUser_Name);
+                    tRow.Cells.AddTextCell(entry.AdminToken_UserToken);
+                    
                     tCell = new TableCell();
-                    tCell.Text = reader.GetString(i);
+
+                    Button delBtn = new Button();
+                    delBtn.Text = "Delete User";
+                    delBtn.ID = "deleteUser" + entry.AdminUserId.ToString();
+                    delBtn.Click += DelBtn_Click;
+                    delBtn.CommandArgument = string.Join(",", new string[] { entry.AdminUserId.ToString(), entry.AdminTokenId.ToString() });
+
+                    tCell.Controls.Add(delBtn);
                     tRow.Cells.Add(tCell);
+
+                    AdminUsersTbl.Rows.Add(tRow);
                 }
-
-                tCell = new TableCell();
-
-                Button delBtn = new Button();
-                delBtn.Text = "Delete User";
-                delBtn.ID = "deleteUser" + reader.GetInt32(0).ToString();
-                delBtn.Click += DelBtn_Click;
-                delBtn.CommandArgument = string.Join(",", new string[] { reader.GetInt32(0).ToString(), reader.GetInt32(1).ToString() });
-
-                tCell.Controls.Add(delBtn);
-                tRow.Cells.Add(tCell);
-
-                AdminUsersTbl.Rows.Add(tRow);
             }
         }
 
@@ -65,11 +58,9 @@ namespace AdminWebPortal.Views.Main
                 Button btn = (Button)sender;
                 //DeleteButtonParameters args = JsonUtils.GetObject<DeleteButtonParameters>(btn.CommandArgument);
                 string[] args = btn.CommandArgument.Split(',');
-                string queryU = "DELETE FROM AdminUser WHERE Id='" + args[0] + "'";
-                string queryT = "DELETE FROM AdminToken WHERE Id='" + args[1] + "'";
 
-                SQLControls.doNonQuery(queryU);
-                SQLControls.doNonQuery(queryT);
+                SQLControls.Delete.doDeleteEntryByColumn("AdminUser", args[0], "Id");
+                SQLControls.Delete.doDeleteEntryByColumn("AdminToken", args[1],"Id");
 
                 fillTable();
             }
@@ -79,7 +70,10 @@ namespace AdminWebPortal.Views.Main
         {
             string key = Guid.NewGuid().ToString();
             string secret = Guid.NewGuid().ToString();
-            if (SQLControls.doNonQuery("INSERT INTO RegistrationToken VALUES('" + key + "', '" + secret + "')"))
+
+            AdminWebApp.Database.Objects.RegistrationToken rt = new AdminWebApp.Database.Objects.RegistrationToken();
+            rt.AuthKey = key; rt.Secret = secret;
+            if (SQLControls.Set.doInsert(rt))
             {
                 string guid = Guid.NewGuid().ToString();
                 string query = "guid=" + guid + "&key=" + key;

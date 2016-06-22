@@ -1,10 +1,8 @@
-﻿using AdminWebPortal.Database;
+﻿
+using AdminWebPortal.Database.Objects;
+using AdminWebPortal.Utils;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -27,32 +25,32 @@ namespace AdminWebPortal.Views.Main
             DoorsTbl.Rows.Add(headings);
 
 
-            DataTableReader reader = SQLControls.getDataReader("SELECT Door.Id, Door.DoorID, Door.DoorSecret FROM Door");
 
-            while (reader.Read())
+            List<Door> doors;
+            if (SQLControls.Get.doSelect("*", out doors))
             {
-                TableRow tRow = new TableRow();
-                TableCell tCell;
 
-                for (int i = 1; i < 3; i++)
+                foreach (Door door in doors)
                 {
+                    TableRow tRow = new TableRow();
+                    TableCell tCell;
+
+                    tRow.Cells.AddTextCell(door.DoorID);
+                    tRow.Cells.AddTextCell(door.DoorSecret);
+
                     tCell = new TableCell();
-                    tCell.Text = reader.GetString(i);
+
+                    Button delBtn = new Button();
+                    delBtn.Text = "Delete";
+                    delBtn.ID = "deleteDoor" + door.Id.ToString();
+                    delBtn.Click += DelBtn_Click;
+                    delBtn.CommandArgument = door.Id.ToString();
+
+                    tCell.Controls.Add(delBtn);
                     tRow.Cells.Add(tCell);
+
+                    DoorsTbl.Rows.Add(tRow);
                 }
-
-                tCell = new TableCell();
-
-                Button delBtn = new Button();
-                delBtn.Text = "Delete";
-                delBtn.ID = "deleteDoor" + reader.GetInt32(0).ToString();
-                delBtn.Click += DelBtn_Click;
-                delBtn.CommandArgument = reader.GetInt32(0).ToString();
-
-                tCell.Controls.Add(delBtn);
-                tRow.Cells.Add(tCell);
-
-                DoorsTbl.Rows.Add(tRow);
             }
         }
 
@@ -62,11 +60,9 @@ namespace AdminWebPortal.Views.Main
             {
                 Button btn = (Button)sender;
                 string dID = btn.CommandArgument;
-                string queryP = "DELETE FROM DoorUserTokenPair WHERE DoorID='" + dID + "'";
-                string queryD = "DELETE FROM Door WHERE Id='" + dID + "'";
 
-                SQLControls.doNonQuery(queryP);
-                SQLControls.doNonQuery(queryD);
+                SQLControls.Delete.doDeleteEntryByColumn("DoorUserTokenPair", dID, "DoorID");
+                SQLControls.Delete.doDeleteEntryByColumn("Door", dID, "Id");
 
                 fillTable();
             }
@@ -74,11 +70,11 @@ namespace AdminWebPortal.Views.Main
 
         protected void addDoorBtn_Click(object sender, EventArgs e)
         {
-            Dictionary<string, object> entry = new Dictionary<string, object>();
-            entry.Add("Door.DoorID", newDoorIdTxtBx.Text);
-            entry.Add("Door.DoorSecret",newDoorSecretTxtBx.Text);
+            Door door = new Door();
+            door.DoorID = newDoorIdTxtBx.Text;
+            door.DoorSecret = newDoorSecretTxtBx.Text;
 
-            if (SQLControls.doInsert("Door", entry))
+            if (SQLControls.Set.doInsert(door))
             {
                 fillTable();
                 newDoorIdTxtBx.Text = "";
