@@ -42,14 +42,14 @@ namespace OneScanWebApp
                         case 0:
                             toHmac += "&door_id=" + doorID;
                             List<Door> doors;
-                            if (SQLControls.getEntryByColumn(doorID, "DoorID", out doors) || doors.Count > 1)
+                            if (SQLControlsLib.Get.doSelectByColumn(doorID, "DoorID", out doors) || doors.Count > 1)
                                 secret = doors[0].DoorSecret;
                             break;
                         case 1:
                             key = context.Request.QueryString["key"];
                             toHmac += "&guid=" + guid + "&key=" + key;
                             List<RegistrationToken> regtokns;
-                            if (SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
+                            if (SQLControlsLib.Get.doSelectByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
                                 secret = regtokns[0].Secret;
                             break;
                     }
@@ -68,7 +68,7 @@ namespace OneScanWebApp
                             {
                                 status = JsonUtils.GetObject<OneScanSessionStatus>(System.Text.Encoding.Default.GetString(reply)).Status;
                                 if (key != null && status > 1)
-                                    SQLControls.deleteEntryByColumn<RegistrationToken, string>(key, "AuthKey");
+                                    SQLControlsLib.Delete.doDeleteEntryByColumn<RegistrationToken, string>(key, "AuthKey");
                             }
                         }
                    // }

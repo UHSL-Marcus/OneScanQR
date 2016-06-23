@@ -44,7 +44,7 @@ namespace AdminWebPortal.Views.Main.QRPages
             string toHmac = "guid=" + guid + "&key=" + key;
 
             List<RegistrationToken> regtokns;
-            if (SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
+            if (SQLControlsLib.Get.doSelectByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
             {
 
                 secret = regtokns[0].Secret;

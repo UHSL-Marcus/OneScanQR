@@ -9,7 +9,7 @@ using System.Web;
 
 namespace AdminWebPortalTT.Database
 {
-    public class SQLControls
+    /*public class SQLControlsLib
     {
         public static bool getEntryByColumn<TYPE>(object info, string column, out List<TYPE> output)
         {
@@ -199,5 +199,5 @@ namespace AdminWebPortalTT.Database
         public class SQLIgnoreAttribute : Attribute
         {
         }
-    }
+    }*/
 }

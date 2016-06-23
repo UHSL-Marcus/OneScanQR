@@ -7,12 +7,12 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace OneScanWebApp.Database
+namespace OneScanWebAppTT.Database
 {
-    public class SQLIgnoreAttribute : Attribute
+    /*public class SQLIgnoreAttribute : Attribute
     {
     }
-    public class SQLControls
+    public class SQLControlsLib
     {
 
         public static bool getSingleColumnByColumn<outT, inT>(inT checkInfo, string table, string inColumn, string outColumn, out outT output)
@@ -353,5 +353,5 @@ namespace OneScanWebApp.Database
         {
             return getDataReader(new SqlCommand(sql));
         }
-    }
+    }*/
 }

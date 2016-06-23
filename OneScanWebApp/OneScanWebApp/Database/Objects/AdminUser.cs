@@ -1,13 +1,13 @@
-﻿using System;
+﻿using SQLControlsLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
 namespace OneScanWebApp.Database.Objects
 {
-    public class AdminUser
+    public class AdminUser : DatabaseTableObject
     {
-        public int? Id;
         public string Name;
         public int? AdminToken;
     }

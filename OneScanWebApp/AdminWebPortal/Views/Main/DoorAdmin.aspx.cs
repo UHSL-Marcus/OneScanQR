@@ -27,7 +27,7 @@ namespace AdminWebPortal.Views.Main
 
 
             List<Door> doors;
-            if (SQLControls.Get.doSelect("*", out doors))
+            if (SQLControlsLib.Get.doSelect("*", out doors))
             {
 
                 foreach (Door door in doors)
@@ -59,10 +59,10 @@ namespace AdminWebPortal.Views.Main
             if (sender is Button)
             {
                 Button btn = (Button)sender;
-                string dID = btn.CommandArgument;
+                int dID = int.Parse(btn.CommandArgument);
 
-                SQLControls.Delete.doDeleteEntryByColumn("DoorUserTokenPair", dID, "DoorID");
-                SQLControls.Delete.doDeleteEntryByColumn("Door", dID, "Id");
+                SQLControlsLib.Delete.doDeleteEntryByColumn("DoorUserTokenPair", dID, "DoorID");
+                SQLControlsLib.Delete.doDeleteEntryByColumn("Door", dID, "Id");
 
                 fillTable();
             }
@@ -74,7 +74,7 @@ namespace AdminWebPortal.Views.Main
             door.DoorID = newDoorIdTxtBx.Text;
             door.DoorSecret = newDoorSecretTxtBx.Text;
 
-            if (SQLControls.Set.doInsert(door))
+            if (SQLControlsLib.Set.doInsert(door))
             {
                 fillTable();
                 newDoorIdTxtBx.Text = "";

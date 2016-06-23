@@ -17,7 +17,7 @@ namespace AdminWebPortal.Views.Main
             usersTbl.Rows.Add(headings);
 
             List<TableInfo> info;
-            if (SQLControls.Get.doJoinSelect(new TableInfo(), out info))
+            if (SQLControlsLib.Get.doJoinSelect(new TableInfo(), out info))
             {
                 foreach (TableInfo entry in info)
                 {
@@ -104,7 +104,7 @@ namespace AdminWebPortal.Views.Main
             DoorTable.Rows.Add(headRow);
 
             List<DoorViewInfo> info;
-            if (SQLControls.Get.doJoinSelect(new DoorViewInfo(userTknID.ToString()), out info))
+            if (SQLControlsLib.Get.doJoinSelect(new DoorViewInfo(userTknID.ToString()), out info))
             {
                 foreach (DoorViewInfo entry in info)
                 {
@@ -143,8 +143,7 @@ namespace AdminWebPortal.Views.Main
 
         private string[] addDoorRegisterControls(ControlCollection col, int userTokenID, int? index = null)
         {
-            List<AddDoorInfo> info = SQLControls.getData<AddDoorInfo>(new AddDoorInfo(userTokenID.ToString()));
-
+            
             DropDownList dl = new DropDownList();
             dl.ID = "addDoorRegisterDropDown" + userTokenID;
 
@@ -160,8 +159,12 @@ namespace AdminWebPortal.Views.Main
             LiteralControl brk = new LiteralControl("<br />");
             brk.ID = "addDoorRegisterBreak" + userTokenID;
 
-            foreach (AddDoorInfo entry in info)
-                dl.Items.Add(new ListItem(entry.DoorID, entry.Id.Value.ToString()));
+            List<AddDoorInfo> info;
+            if (SQLControlsLib.Get.doJoinSelect(new AddDoorInfo(userTokenID.ToString()), out info))
+            { 
+                foreach (AddDoorInfo entry in info)
+                    dl.Items.Add(new ListItem(entry.DoorID, entry.Id.Value.ToString()));
+            }
 
             if (index == null)
                 index = col.Count;

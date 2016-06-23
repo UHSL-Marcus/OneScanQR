@@ -1,7 +1,7 @@
 ﻿
 
 using AdminWebPortal.Database.Objects;
-using SQLControls;
+using SQLControlsLib;
 
 namespace AdminWebPortal.Views.Main
 {
@@ -51,13 +51,22 @@ namespace AdminWebPortal.Views.Main
 
             public AddDoorInfo(string UserTokenID)
             {
-                "FROM Door FULL OUTER JOIN DoorUserTokenPair on DoorUserTokenPair.DoorID<>Door.Id where DoorUserTokenPair.UserToken<>3 or DoorUserTokenPair.UserToken is NULL";
+                //"FROM Door FULL OUTER JOIN DoorUserTokenPair on DoorUserTokenPair.DoorID<>Door.Id where DoorUserTokenPair.UserToken<>3 or DoorUserTokenPair.UserToken is NULL";
+                // FROM Door FULL OUTER JOIN DoorUserTokenPair ON Door.Id<>DoorUserTokenPair.DoorID  WHERE (DoorUserTokenPair.UserToken<>18) OR (DoorUserTokenPair.UserToken IS NULL)
 
-                JoinOnPair on = new JoinOnPair("Id", "DoorID", "<>");
-                JoinPair join = new JoinPair(typeof(Door), typeof(DoorUserTokenPair), new JoinOnPair[] { on });
+                JoinOnPair on = new JoinOnPair("Id", "DoorID");
+                JoinPair join = new JoinPair(typeof(Door).Name, typeof(DoorUserTokenPair).Name, new JoinOnPair[] { on }, JoinTypes.FULLJOIN);
+                joins.Add(join);
 
                 DoorUserTokenPair dtp = new DoorUserTokenPair();
-                dtp.DoorID.ChangeFieldEquality<DoorUserTokenPair>(SQLEqualityOperations.ISNULL);
+                dtp.UserToken = int.Parse(UserTokenID);
+                dtp.setFieldOptions("UserToken", SQLEqualityOperations.NOTEQUALS);
+                whereobs.Add(new whereObject(dtp));
+
+                DoorUserTokenPair dtp2 = new DoorUserTokenPair();
+                dtp2.setFieldOptions("UserToken", true);
+                whereobs.Add(new whereObject(dtp2, SQLWhereConjuctions.OR));
+
             }
         }
     }

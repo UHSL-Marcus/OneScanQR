@@ -48,7 +48,7 @@ namespace OneScanWebApp
                             {
 
                                 int? userTokenId;
-                                SQLControls.getEntryIDByColumn<AdminToken, string>(LoginReply.UserToken.UserToken, "UserToken", out userTokenId);
+                                SQLControlsLib.Get.doSelectIDByColumn<AdminToken, string>(LoginReply.UserToken.UserToken, "UserToken", out userTokenId);
 
                                 if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
                                 {
@@ -63,13 +63,13 @@ namespace OneScanWebApp
                                     {
                                         AdminToken at = new AdminToken();
                                         at.UserToken = LoginReply.UserToken.UserToken;
-                                        if (SQLControls.doInsertReturnID(at, out userTokenId))
+                                        if (SQLControlsLib.Set.doInsertReturnID(at, out userTokenId))
                                         {
                                             AdminUser au = new AdminUser();
                                             au.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
                                             au.AdminToken = userTokenId;
 
-                                            if (SQLControls.doInsert(au))
+                                            if (SQLControlsLib.Set.doInsert(au))
                                                 continueReg = true;
                                         }
                                     }

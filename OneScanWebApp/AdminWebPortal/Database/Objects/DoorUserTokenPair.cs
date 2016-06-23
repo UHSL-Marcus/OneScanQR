@@ -1,4 +1,4 @@
-﻿using SQLControls;
+﻿using SQLControlsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +8,7 @@ namespace AdminWebPortal.Database.Objects
 {
     public class DoorUserTokenPair : DatabaseTableObject
     {
-        [DatabaseColumn]
         public int? DoorID;
-        [DatabaseColumn]
         public int? UserToken;
     }
 }

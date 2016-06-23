@@ -45,7 +45,7 @@ namespace OneScanWebApp
                             key = context.Request.QueryString["key"];
                             toHmac += "&key=" + key;
                             List<RegistrationToken> regtokns;
-                            if (SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
+                            if (SQLControlsLib.Get.doSelectByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
                                 secret = regtokns[0].Secret;
                             break;
                     }
@@ -60,7 +60,7 @@ namespace OneScanWebApp
                             {
                                 status = JsonUtils.GetObject<OneScanSessionStatus>(System.Text.Encoding.Default.GetString(reply)).Status;
                                 if (key != null && status > 1)
-                                    SQLControls.deleteEntryByColumn<RegistrationToken, string>(key, "AuthKey");
+                                    SQLControlsLib.Delete.doDeleteEntryByColumn<RegistrationToken, string>(key, "AuthKey");
                             }
                         }
                     //}

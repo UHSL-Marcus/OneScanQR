@@ -47,7 +47,7 @@ namespace OneScanWebApp
                 case 0:
                     toHmac += "&door_id = " + doorID;
                     List<Door> doors;
-                    if (!SQLControls.getEntryByColumn(doorID, "DoorID", out doors) || doors.Count > 1)
+                    if (!SQLControlsLib.Get.doSelectByColumn(doorID, "DoorID", out doors) || doors.Count > 1)
                         throw new HttpException(400, "Query Incomplete (Invalid DoorID)");
                     secret = doors[0].DoorSecret;
                     loginType = LoginTypes.UserToken;
@@ -56,7 +56,7 @@ namespace OneScanWebApp
                     string key = context.Request.QueryString["key"];
                     toHmac += "&guid=" + guid + "&key=" + key;
                     List<RegistrationToken> regtokns;
-                    if (!SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
+                    if (!SQLControlsLib.Get.doSelectByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
                         throw new HttpException(400, "Query Incomplete (Invalid AuthKey)");
                     secret = regtokns[0].Secret;
                     loginType = LoginTypes.Register;

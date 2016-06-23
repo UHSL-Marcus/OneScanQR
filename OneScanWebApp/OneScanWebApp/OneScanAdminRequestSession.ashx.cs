@@ -47,7 +47,7 @@ namespace OneScanWebApp
                     string key = context.Request.QueryString["key"];
                     toHmac += "&key=" + key;
                     List<RegistrationToken> regtokns;
-                    if (!SQLControls.getEntryByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
+                    if (!SQLControlsLib.Get.doSelectByColumn(key, "AuthKey", out regtokns) || regtokns.Count > 1)
                         throw new HttpException(400, "Query Incomplete (Invalid AuthKey)");
                     secret = regtokns[0].Secret;
                     loginType = LoginTypes.Register;

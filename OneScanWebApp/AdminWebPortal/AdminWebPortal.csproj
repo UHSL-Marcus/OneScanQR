@@ -60,9 +60,8 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SQLControls, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\SQLControls\bin\Debug\SQLControls.dll</HintPath>
+    <Reference Include="SQLControlsLib">
+      <HintPath>..\..\..\SQLControlsLib\SQLControlsLib\bin\Release\SQLControlsLib.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />

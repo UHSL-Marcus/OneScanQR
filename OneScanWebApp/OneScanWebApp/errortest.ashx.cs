@@ -23,7 +23,7 @@ namespace OneScanWebApp
             log.Error = "test entry.com 'info;'@";
 
             int? output;
-            SQLControls.doInsertReturnID(log, out output);
+            SQLControlsLib.Set.doInsertReturnID(log, out output);
 
             throw new HttpException(500, "inserted: " + output);
 

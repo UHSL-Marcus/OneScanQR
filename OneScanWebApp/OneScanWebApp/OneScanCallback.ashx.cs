@@ -52,18 +52,18 @@ namespace OneScanWebApp
                             if (LoginReply.Success)
                             {
                                 int? userTokenId;
-                                SQLControls.getEntryIDByColumn<UserToken, string>(LoginReply.UserToken.UserToken, "Token", out userTokenId);
+                                SQLControlsLib.Get.doSelectIDByColumn<UserToken, string>(LoginReply.UserToken.UserToken, "Token", out userTokenId);
 
                                 if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
                                 {
                                     int? doorId;
-                                    if (SQLControls.getEntryIDByColumn<Door, string>(sData.doorID, "DoorID", out doorId))
+                                    if (SQLControlsLib.Get.doSelectIDByColumn<Door, string>(sData.doorID, "DoorID", out doorId))
                                     {
                                         DoorUserTokenPair pair = new DoorUserTokenPair();
                                         pair.DoorID = doorId;
                                         pair.UserToken = userTokenId;
 
-                                        if (SQLControls.getEntryExists(pair))
+                                        if (SQLControlsLib.Get.doSelectEntryExists(pair))
                                         {
                                             outcome.Success = true;
                                             outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
@@ -79,13 +79,13 @@ namespace OneScanWebApp
                                     {
                                         UserToken ut = new UserToken();
                                         ut.Token = LoginReply.UserToken.UserToken;
-                                        if (SQLControls.doInsertReturnID(ut, out userTokenId))
+                                        if (SQLControlsLib.Set.doInsertReturnID(ut, out userTokenId))
                                         {
                                             UserInfo u = new UserInfo();
                                             u.Name = LoginReply.LoginCredentials.FirstName + " " + LoginReply.LoginCredentials.LastName;
                                             u.UserToken = userTokenId;
 
-                                            if (SQLControls.doInsert(u))
+                                            if (SQLControlsLib.Set.doInsert(u))
                                                 continueReg = true;
                                         }
                                     }

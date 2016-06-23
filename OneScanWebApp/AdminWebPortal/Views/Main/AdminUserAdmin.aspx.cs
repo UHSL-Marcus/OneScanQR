@@ -25,7 +25,7 @@ namespace AdminWebPortal.Views.Main
             AdminUsersTbl.Rows.Add(headings);
 
             List<TableInfo> info;
-            if (SQLControls.Get.doJoinSelect(new TableInfo(), out info))
+            if (SQLControlsLib.Get.doJoinSelect(new TableInfo(), out info))
             {
                 foreach (TableInfo entry in info)
                 {
@@ -59,8 +59,8 @@ namespace AdminWebPortal.Views.Main
                 //DeleteButtonParameters args = JsonUtils.GetObject<DeleteButtonParameters>(btn.CommandArgument);
                 string[] args = btn.CommandArgument.Split(',');
 
-                SQLControls.Delete.doDeleteEntryByColumn("AdminUser", args[0], "Id");
-                SQLControls.Delete.doDeleteEntryByColumn("AdminToken", args[1],"Id");
+                SQLControlsLib.Delete.doDeleteEntryByColumn("AdminUser", int.Parse(args[0]), "Id");
+                SQLControlsLib.Delete.doDeleteEntryByColumn("AdminToken", int.Parse(args[1]),"Id");
 
                 fillTable();
             }
@@ -73,7 +73,7 @@ namespace AdminWebPortal.Views.Main
 
             AdminWebApp.Database.Objects.RegistrationToken rt = new AdminWebApp.Database.Objects.RegistrationToken();
             rt.AuthKey = key; rt.Secret = secret;
-            if (SQLControls.Set.doInsert(rt))
+            if (SQLControlsLib.Set.doInsert(rt))
             {
                 string guid = Guid.NewGuid().ToString();
                 string query = "guid=" + guid + "&key=" + key;

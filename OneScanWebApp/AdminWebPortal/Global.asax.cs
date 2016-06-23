@@ -16,6 +16,8 @@ namespace AdminWebPortal
             // Code that runs on application startup
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            SQLControlsLib.Settings.SetConnectionString(Properties.Settings.Default.Database.ToString());
         }
     }
 }

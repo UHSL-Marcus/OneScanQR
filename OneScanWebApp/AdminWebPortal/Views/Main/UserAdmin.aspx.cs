@@ -77,7 +77,7 @@ namespace AdminWebPortal.Views.Main
                         DoorUserTokenPair dtp = new DoorUserTokenPair();
                         dtp.DoorID = args.DoorID;
                         dtp.UserToken = args.UserTokenID;
-                        SQLControls.Delete.doDelete(dtp);
+                        SQLControlsLib.Delete.doDelete(dtp);
 
                         TableCell parentCell;
                         if (DoorTable.FindParent(out parentCell))
@@ -155,7 +155,7 @@ namespace AdminWebPortal.Views.Main
                         DoorUserTokenPair dtp = new DoorUserTokenPair();
                         dtp.DoorID = int.Parse(doorID);
                         dtp.UserToken = args.UserTokenID;
-                        SQLControls.Set.doInsert(dtp);
+                        SQLControlsLib.Set.doInsert(dtp);
 
                         foreach (string id in OpenDoorRegisterCtls[args.UserTokenID.Value].Item2)
                             parentCell.Controls.Remove(parentCell.FindControlRecursive(id));
@@ -183,9 +183,9 @@ namespace AdminWebPortal.Views.Main
                 Button btn = (Button)sender;
                 DeleteBtnArguments args = JsonUtils.GetObject<DeleteBtnArguments>(btn.CommandArgument);
 
-                SQLControls.Delete.doDeleteEntryByColumn("DoorUserTokenPair", args.UserTokenID.Value, "UserToken");
-                SQLControls.Delete.doDeleteEntryByColumn("UserInfo", args.UserInfoID.Value, "Id");
-                SQLControls.Delete.doDeleteEntryByColumn("UserToken", args.UserTokenID.Value, "Id");
+                SQLControlsLib.Delete.doDeleteEntryByColumn("DoorUserTokenPair", args.UserTokenID.Value, "UserToken");
+                SQLControlsLib.Delete.doDeleteEntryByColumn("UserInfo", args.UserInfoID.Value, "Id");
+                SQLControlsLib.Delete.doDeleteEntryByColumn("UserToken", args.UserTokenID.Value, "Id");
 
                 usersTbl.Rows.Remove((TableRow)usersTbl.FindControlRecursive(args.RowID));
 
@@ -199,7 +199,7 @@ namespace AdminWebPortal.Views.Main
 
             RegistrationToken rt = new RegistrationToken();
             rt.AuthKey = key; rt.Secret = secret;
-            if (SQLControls.Set.doInsert(rt))
+            if (SQLControlsLib.Set.doInsert(rt))
             {
                 string guid = Guid.NewGuid().ToString();
                 string query = "guid=" + guid + "&key=" + key;

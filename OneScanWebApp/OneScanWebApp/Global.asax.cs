@@ -38,7 +38,7 @@ namespace OneScanWebApp
 
         protected void Application_Start(object sender, EventArgs e)
         {
-            //SQLControls.Settings.SetConnectionString(Properties.Settings.Default.Database.ToString());
+            SQLControlsLib.Settings.SetConnectionString(Properties.Settings.Default.Database.ToString());
         }
 
         protected void Session_Start(object sender, EventArgs e)
@@ -80,16 +80,15 @@ namespace OneScanWebApp
             string entry = "";
             string guid = (string)Session[Consts.ERROR_ID];
 
-            SQLControls.getSingleColumnByColumn(guid, "Log", "Guid", "Error", out entry);
+            SQLControlsLib.Get.doSelectSingleColumnByColumn(guid, "Log", "Guid", "Error", out entry);
 
             entry += "\n\n" + _info;
 
             Log log = new Log();
-            log.Guid = guid;
             log.Timestamp = DateTime.UtcNow;
             log.Error = entry;
 
-            SQLControls.doUpdateOrInsert(log, "Guid");
+            SQLControlsLib.Update.doUpdateOrInsert(log, "Guid", guid);
  
         }
 
