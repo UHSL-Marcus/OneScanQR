@@ -1,5 +1,4 @@
-﻿using OneScanWebApp.Database;
-using OneScanWebApp.Database.Objects;
+﻿using OneScanWebApp.Database.Objects;
 using OneScanWebApp.Utils;
 using System;
 using System.Collections.Concurrent;
@@ -85,6 +84,7 @@ namespace OneScanWebApp
             entry += "\n\n" + _info;
 
             Log log = new Log();
+            log.Guid = guid;
             log.Timestamp = DateTime.UtcNow;
             log.Error = entry;
 

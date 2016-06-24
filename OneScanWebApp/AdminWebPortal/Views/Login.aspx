@@ -7,17 +7,17 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContentPlaceholder" runat="server">
     <span ID="resultlabel"></span>
 
-    <div runat="server" id="RegisterQRDiv" ClientIDMode="Static">
+    <div runat="server" id="RegisterQRDiv">
         <asp:UpdatePanel ID="hiddenQRCompleteUptPnl" runat="server">
             <ContentTemplate>
                 <asp:Image ID="qrImg" runat="server" />
-                <asp:Button ID="hiddenNewQRBtn" runat="server" Text="" OnClick="hiddenNewQRBtn_Click" /> 
+                <asp:Button ID="hiddenNewQRBtn" runat="server" Text="" CssClass="hidden" OnClick="hiddenNewQRBtn_Click" ClientIDMode="Static" /> 
             </ContentTemplate>
         </asp:UpdatePanel>
     
          <asp:UpdatePanel ID="hiddenPostBackUptPnl" runat="server">
             <ContentTemplate>
-                <asp:Button ID="hiddenStatusCheckBtn" runat="server" Text="" CssClass="hidden" OnClick="hiddenStatusCheckBtn_Click" />
+                <asp:Button ID="hiddenStatusCheckBtn" runat="server" Text="" CssClass="hidden" OnClick="hiddenStatusCheckBtn_Click" ClientIDMode="Static" />
                 <asp:Label ID="tempTest" runat="server"></asp:Label>
             </ContentTemplate>
         </asp:UpdatePanel>

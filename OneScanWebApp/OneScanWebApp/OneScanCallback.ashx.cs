@@ -1,5 +1,4 @@
-﻿using OneScanWebApp.Database;
-using OneScanWebApp.Database.Objects;
+﻿using OneScanWebApp.Database.Objects;
 using OneScanWebApp.PayloadObjects;
 using OneScanWebApp.Utils;
 using System;

@@ -7,9 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AdminWebPortal.Views.Main {
-    
-    
+namespace AdminWebPortal.Views.Main
+{
+
+
     public partial class UserAdmin {
         
         /// <summary>

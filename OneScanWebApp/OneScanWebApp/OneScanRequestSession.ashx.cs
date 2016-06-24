@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using OneScanWebApp.Utils;
+﻿using OneScanWebApp.Database.Objects;
 using OneScanWebApp.PayloadObjects;
-using OneScanWebApp.Database;
-using System.IO;
+using OneScanWebApp.Utils;
+using System;
+using System.Collections.Generic;
+using System.Web;
 using System.Web.SessionState;
-using OneScanWebApp.Database.Objects;
-using Newtonsoft.Json;
-using System.Drawing;
-using System.Text;
 
 namespace OneScanWebApp
 {

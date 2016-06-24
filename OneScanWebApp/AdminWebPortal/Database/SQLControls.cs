@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Web;
-
-namespace AdminWebPortalTT.Database
+﻿namespace AdminWebPortalTT.Database
 {
     /*public class SQLControlsLib
     {

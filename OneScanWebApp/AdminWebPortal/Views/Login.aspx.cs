@@ -1,12 +1,9 @@
 ﻿using AdminWebPortal.Utils;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace AdminWebPortal.Views.Login
 {
@@ -17,12 +14,10 @@ namespace AdminWebPortal.Views.Login
         {
             bool loggedIn = (HttpContext.Current.User != null) && HttpContext.Current.User.Identity.IsAuthenticated;
             if (loggedIn)
-                FormsAuthentication.RedirectFromLoginPage("", false);
+                Server.Transfer(FormsAuthentication.DefaultUrl);
 
             if (!IsPostBack)
                 getQR();
-
-            FormsAuthentication.RedirectFromLoginPage("", false);
         }
 
         private void getQR()
@@ -59,9 +54,8 @@ namespace AdminWebPortal.Views.Login
             byte[] reply;
             if (HTTPRequest.HTTPGetRequest(getPollUrl(), out reply))
             {
-                FormsAuthentication.RedirectFromLoginPage("", false);
 
-                /*int status;
+                int status;
                 if (int.TryParse(System.Text.Encoding.Default.GetString(reply), out status))
                 {
                     string returnS = "";
@@ -79,7 +73,7 @@ namespace AdminWebPortal.Views.Login
 
                     ScriptManager.RegisterStartupScript(hiddenPostBackUptPnl, hiddenPostBackUptPnl.GetType(), "scanFailedScript" + UniqueID, returnS, true);
 
-                }*/
+                }
             }
         }
     }

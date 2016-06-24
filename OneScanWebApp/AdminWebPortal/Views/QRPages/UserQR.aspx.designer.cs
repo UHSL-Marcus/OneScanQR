@@ -7,9 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AdminWebPortal.Views.Main.QRPages {
-    
-    
+namespace AdminWebPortal.Views.Main.QRPages
+{
+
+
     public partial class UserQR {
         
         /// <summary>

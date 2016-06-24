@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
-using System.Drawing;
-using System.Threading;
 using System.Web;
 
 namespace OneScanWebApp.Utils
@@ -31,7 +29,7 @@ namespace OneScanWebApp.Utils
             catch (Exception e)
             {
                 success = false;
-                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog(e.Message);
+                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog("(SendOnescanPayload) " + e.Message);
                 //throw new HttpException(500, "(SendOneScanPayload) " + e.Message); 
             }
 
@@ -61,7 +59,7 @@ namespace OneScanWebApp.Utils
             }
             catch (Exception e)
             {
-                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog(e.Message);
+                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog("(GetQR) " + e.Message);
                 success = false;
                 //throw new HttpException(500, "(GetQRData) " + e.Message);
             }

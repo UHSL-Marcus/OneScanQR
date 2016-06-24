@@ -122,6 +122,7 @@
     <Content Include="Content\Utils\Misc.css" />
     <Content Include="Content\Utils\Table.css" />
     <Content Include="Content\Views\Master.css" />
+    <Content Include="default.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -204,6 +205,13 @@
     <Compile Include="Database\Objects\DoorUserTokenPair.cs" />
     <Compile Include="Database\Objects\RegistrationToken.cs" />
     <Compile Include="Database\SQLControls.cs" />
+    <Compile Include="default.aspx.cs">
+      <DependentUpon>default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="default.aspx.designer.cs">
+      <DependentUpon>default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

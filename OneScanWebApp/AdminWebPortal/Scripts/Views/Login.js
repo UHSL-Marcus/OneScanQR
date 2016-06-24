@@ -4,7 +4,8 @@
 
     $("#resultlabel").html(info);
 
-    setTimeout($("#hiddenStatusCheckBtn").click(), 500);
+    if (!CancelCurrentAction)
+        setTimeout($("#hiddenStatusCheckBtn").click(), 500);
 }
 
 function ScanFailed() {

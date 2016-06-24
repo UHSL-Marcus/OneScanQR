@@ -7,9 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AdminWebPortal {
-    
-    
+namespace AdminWebPortal
+{
+
+
     public partial class Site_Mobile {
         
         /// <summary>

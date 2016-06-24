@@ -7,9 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AdminWebPortal.Views.Login {
-    
-    
+namespace AdminWebPortal.Views.Login
+{
+
+
     public partial class Login1 {
         
         /// <summary>

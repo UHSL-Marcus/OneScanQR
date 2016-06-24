@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Text;
-using System.Web;
 
 namespace AdminWebPortal.Utils
 {
@@ -89,7 +86,7 @@ namespace AdminWebPortal.Utils
             catch (Exception e)
             {
                 success = false;
-                //throw new HttpException(500, "(HTTPBuildPostRequest) " + e.Message); // change to logging
+                //throw new HttpException(500, "(HTTPBuildPostRequest) " + e.ToString()); // change to logging
                 throw e;
             }
 
@@ -149,7 +146,7 @@ namespace AdminWebPortal.Utils
             {
 
                 success = false;
-                //throw new HttpException(500, "(HTTPBuildGetRequest) " + e.Message); // change to logging
+                //throw new HttpException(500, "(HTTPBuildGetRequest) " + e.ToString()); // change to logging
                 throw e;
 
             }
@@ -215,7 +212,7 @@ namespace AdminWebPortal.Utils
             catch (Exception e)
             {
                 success = false;
-                //throw new HttpException(500, "(DoRequest) " + e.Message); // change to logging
+                //throw new HttpException(500, "(DoRequest) " + e.ToString()); // change to logging
                 throw e;
             }
 
@@ -258,7 +255,7 @@ namespace AdminWebPortal.Utils
             catch (Exception e)
             {
                 success = false;
-                //throw new HttpException(500, "(DecodeResponseStream) " + e.Message); // change to logging
+                //throw new HttpException(500, "(DecodeResponseStream) " + e.ToString()); // change to logging
                 throw e;
             }
 

@@ -1,10 +1,7 @@
-﻿using OneScanWebApp.Database;
-using OneScanWebApp.Database.Objects;
+﻿using OneScanWebApp.Database.Objects;
 using OneScanWebApp.Utils;
-using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Web;
 using System.Web.SessionState;
 

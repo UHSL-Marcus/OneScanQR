@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Web;
 
 namespace OneScanWebApp.Utils
@@ -53,8 +54,7 @@ namespace OneScanWebApp.Utils
             RequestStruct requestStruct;
             if (HTTPBuildPostRequest(url, data, out requestStruct, headers, parameters))
             {
-                int count = 0;
-                while (!(success = DoRequest(ref requestStruct, ref reply)) && ++count < 3) ;
+                success = DoRequest(ref requestStruct, ref reply);
             }
 
             return success;
@@ -64,32 +64,43 @@ namespace OneScanWebApp.Utils
         {
             bool success = false;
             reqSt = null;
+            int count = 0;
+            string messages = "";
 
-            try
+            while (!success && count++ < 3)
             {
-                
-                reqSt = new RequestStruct();
+                try
+                {
 
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(GetUrl(url, parameters));
-                req.Method = "POST";
-                req.ContentLength = Encoding.UTF8.GetByteCount(data);
+                    reqSt = new RequestStruct();
 
-                AddHeaders(ref req, headers);
+                    HttpWebRequest req = (HttpWebRequest)WebRequest.Create(GetUrl(url, parameters));
+                    req.Method = "POST";
+                    req.ContentLength = Encoding.UTF8.GetByteCount(data);
 
-                StreamWriter stmw = new StreamWriter(req.GetRequestStream());
-                stmw.Write(data);
-                stmw.Flush();
+                    AddHeaders(ref req, headers);
 
-                reqSt.request = req;
+                    StreamWriter stmw = new StreamWriter(req.GetRequestStream());
+                    stmw.Write(data);
+                    stmw.Flush();
 
-                success = true;
+                    reqSt.request = req;
 
-            }
-            catch (Exception e)
-            {
-                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog(e.Message);
-                success = false;
-                //throw new HttpException(500, "(HTTPBuildPostRequest) " + e.Message); // change to logging
+                    success = true;
+
+                }
+                catch (Exception e)
+                {
+                    messages += e.ToString() + "\n\n";
+                    if (count < 3)
+                        Thread.Sleep(1000);
+                    else
+                    {
+                        ((Global)HttpContext.Current.ApplicationInstance).UpdateLog("(BuildPost) " + messages);
+                        success = false;
+                        //throw new HttpException(500, "(HTTPBuildPostRequest) " + e.ToString()); // change to logging
+                    }
+                }
             }
             
             return success;
@@ -118,8 +129,7 @@ namespace OneScanWebApp.Utils
             RequestStruct requestStruct;
             if (HTTPBuildGetRequest(url, out requestStruct, headers, parameters))
             {
-                int count = 0;
-                while (!(success = DoRequest(ref requestStruct, ref reply)) && ++count < 3) ;
+                success = DoRequest(ref requestStruct, ref reply);
             }
 
             return success;
@@ -130,27 +140,37 @@ namespace OneScanWebApp.Utils
 
             bool success = false;
             reqSt = null;
-            try
+            int count = 0;
+            string messages = "";
+
+            while (!success && count++ < 3)
             {
-                //using (WebClient client = GetWebClient(headers, parameters))
-                //success = DecodeReply(client.DownloadString(url), client, ref reply);
-                reqSt = new RequestStruct();
+                try
+                {
+                    reqSt = new RequestStruct();
 
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(GetUrl(url, parameters));
-                req.Method = "GET";
+                    HttpWebRequest req = (HttpWebRequest)WebRequest.Create(GetUrl(url, parameters));
+                    req.Method = "GET";
 
-                AddHeaders(ref req, headers);
+                    AddHeaders(ref req, headers);
 
-                reqSt.request = req;
+                    reqSt.request = req;
 
-                success = true;
-            }
-            catch (Exception e)
-            {
-                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog(e.Message);
-                success = false;
-                //throw new HttpException(500, "(HTTPBuildGetRequest) " + e.Message); // change to logging
+                    success = true;
+                }
+                catch (Exception e)
+                {
+                    messages += e.ToString() + "\n\n";
+                    if (count < 3)
+                        Thread.Sleep(1000);
+                    else
+                    {
+                        ((Global)HttpContext.Current.ApplicationInstance).UpdateLog("(BuildGet) " + messages);
+                        success = false;
+                        //throw new HttpException(500, "(HTTPBuildGetRequest) " + e.ToString()); // change to logging
+                    }
 
+                }
             }
 
             return success;
@@ -195,22 +215,34 @@ namespace OneScanWebApp.Utils
 
         private static bool DoRequest(ref RequestStruct requestStruct, ref byte[] reply)
         {
+            int count = 0;
+            string messages = "";
             bool success = false;
 
-            try {
-                requestStruct.response = requestStruct.request.GetResponse();
-                requestStruct.responseStream = requestStruct.response.GetResponseStream();
-                if (DecodeResponseStream(ref requestStruct))
-                {
-                    reply = requestStruct.responsedata;
-                    success = true;
-                }
-            }
-            catch (Exception e)
+            while (!success && count++ < 3)
             {
-                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog(e.Message);
-                success = false;
-                //throw new HttpException(500, "(DoRequest) " + e.Message); // change to logging
+                try
+                {
+                    requestStruct.response = requestStruct.request.GetResponse();
+                    requestStruct.responseStream = requestStruct.response.GetResponseStream();
+                    if (DecodeResponseStream(ref requestStruct))
+                    {
+                        reply = requestStruct.responsedata;
+                        success = true;
+                    }
+                }
+                catch (Exception e)
+                {
+                    messages += e.ToString() + "\n\n";
+                    if (count < 3)
+                        Thread.Sleep(1000);
+                    else
+                    {
+                        ((Global)HttpContext.Current.ApplicationInstance).UpdateLog("(DoRequest) " + messages);
+                        success = false;
+                        //throw new HttpException(500, "(DoRequest) " + e.ToString()); // change to logging
+                    }
+                }
             }
 
             return success;
@@ -251,9 +283,9 @@ namespace OneScanWebApp.Utils
             }
             catch (Exception e)
             {
-                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog(e.Message);
+                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog("(DecodeResponse) " + e.ToString());
                 success = false;
-                //throw new HttpException(500, "(DecodeResponseStream) " + e.Message); // change to logging
+                //throw new HttpException(500, "(DecodeResponseStream) " + e.ToString()); // change to logging
                 throw e;
             }
 

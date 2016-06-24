@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace OneScanWebApp.PayloadObjects
+﻿namespace OneScanWebApp.PayloadObjects
 {
     class RecievedQRData
     {

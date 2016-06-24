@@ -7,9 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AdminWebPortal {
-    
-    
+namespace AdminWebPortal
+{
+
+
     public partial class SiteMaster {
         
         /// <summary>
