@@ -1,4 +1,5 @@
 ﻿using AdminWebPortal.Utils;
+using HTTPRequestLib;
 using System;
 using System.Configuration;
 using System.Web;
@@ -28,7 +29,7 @@ namespace AdminWebPortal.Views.Login
             query += "&data=" + hmac;
 
             byte[] reply;
-            HTTPRequest.HTTPGetRequest(Consts.URL_BASE + "OneScanAdminRequestSession.ashx?" + query, out reply);
+            Get.HTTPGetRequest(Consts.URL_BASE + "OneScanAdminRequestSession.ashx?" + query, out reply);
 
             qrImg.ImageUrl = "data:image/bmp;base64," + System.Text.Encoding.Default.GetString(reply);
 
@@ -52,7 +53,7 @@ namespace AdminWebPortal.Views.Login
         protected void hiddenStatusCheckBtn_Click(object sender, EventArgs e)
         {
             byte[] reply;
-            if (HTTPRequest.HTTPGetRequest(getPollUrl(), out reply))
+            if (Get.HTTPGetRequest(getPollUrl(), out reply))
             {
 
                 int status;

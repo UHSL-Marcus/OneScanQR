@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 
-namespace AdminWebPortal.Utils
+namespace AdminWebPortalTT.Utils
 {
     public delegate void HTTPAsyncCallback(byte[] ba);
     class RequestStruct

@@ -1,4 +1,5 @@
-﻿using OneScanWebApp.PayloadObjects;
+﻿using HTTPRequestLib;
+using OneScanWebApp.PayloadObjects;
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
@@ -23,14 +24,22 @@ namespace OneScanWebApp.Utils
             try
             {
                 byte[] bytes;
-                success = HTTPRequest.HTTPPostRequest(ConfigurationManager.AppSettings["OnescanServerURL"], data, out bytes, headers);
-                reply = System.Text.Encoding.Default.GetString(bytes);
+                if(Post.HTTPPostRequest(ConfigurationManager.AppSettings["OnescanServerURL"], data, out bytes, headers))
+                {
+                    reply = System.Text.Encoding.Default.GetString(bytes);
+                    success = true;
+                }
+                else
+                {
+                    ((Global)HttpContext.Current.ApplicationInstance).UpdateLog("(SendOnescanPayload) " + ExceptionHistory.lastException.ToString());
+                }
+
+                
             }
             catch (Exception e)
             {
                 success = false;
-                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog("(SendOnescanPayload) " + e.Message);
-                //throw new HttpException(500, "(SendOneScanPayload) " + e.Message); 
+                ((Global)HttpContext.Current.ApplicationInstance).UpdateLog("(SendOnescanPayload) " + e.ToString());
             }
 
             return success;

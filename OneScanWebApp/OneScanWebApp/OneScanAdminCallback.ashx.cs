@@ -45,7 +45,7 @@ namespace OneScanWebApp
                             {
 
                                 int? userTokenId;
-                                SQLControlsLib.Get.doSelectIDByColumn<AdminToken, string>(LoginReply.UserToken.UserToken, "UserToken", out userTokenId);
+                                SQLControlsLib.Get.doSelectIDByColumn<AdminToken, string, int?>(LoginReply.UserToken.UserToken, "UserToken", out userTokenId);
 
                                 if (LoginReply.LoginPayload.LoginMode.Equals(LoginTypes.UserToken.ToString()) && userTokenId != null)
                                 {

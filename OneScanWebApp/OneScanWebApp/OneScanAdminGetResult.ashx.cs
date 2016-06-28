@@ -1,4 +1,5 @@
-﻿using OneScanWebApp.Database.Objects;
+﻿using HTTPRequestLib;
+using OneScanWebApp.Database.Objects;
 using OneScanWebApp.Utils;
 using System.Collections.Generic;
 using System.Configuration;
@@ -53,7 +54,7 @@ namespace OneScanWebApp
                         if (Global.OneScanAdminSessions.TryGetValue(guid, out sessionID))
                         {
                             byte[] reply;
-                            if (HTTPRequest.HTTPGetRequest(ConfigurationManager.AppSettings["OnescanStatusCheckURL"] + "?OnescanSessionID=" + sessionID, out reply))
+                            if (Get.HTTPGetRequest(ConfigurationManager.AppSettings["OnescanStatusCheckURL"] + "?OnescanSessionID=" + sessionID, out reply))
                             {
                                 status = JsonUtils.GetObject<OneScanSessionStatus>(System.Text.Encoding.Default.GetString(reply)).Status;
                                 if (key != null && status > 1)

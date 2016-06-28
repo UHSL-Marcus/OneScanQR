@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading;
 using System.Web;
 
-namespace OneScanWebApp.Utils
+namespace OneScanWebAppTT.Utils
 {
-    public delegate void HTTPAsyncCallback(byte[] ba);
+    /*public delegate void HTTPAsyncCallback(byte[] ba);
     class RequestStruct
     {
         public WebRequest request;
@@ -317,5 +317,5 @@ namespace OneScanWebApp.Utils
 
             return success;
         }
-    }
+    }*/
 }

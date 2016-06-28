@@ -1,6 +1,7 @@
 ﻿using AdminWebApp.Database.Objects;
 
 using AdminWebPortal.Utils;
+using HTTPRequestLib;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Web.UI.WebControls;
@@ -57,7 +58,7 @@ namespace AdminWebPortal.Views.Main.QRPages
                     query += "&data=" + hmac;
 
                     byte[] reply;
-                    if (HTTPRequest.HTTPGetRequest(sessionUrl + query, out reply))
+                    if (Get.HTTPGetRequest(sessionUrl + query, out reply))
                     {
                         qrImg.ImageUrl = "data:image/bmp;base64," + System.Text.Encoding.Default.GetString(reply);
                         success = true;
@@ -82,7 +83,7 @@ namespace AdminWebPortal.Views.Main.QRPages
             string returnS = "";
 
             byte[] reply;
-            if (HTTPRequest.HTTPGetRequest(getPollUrl(), out reply))
+            if (Get.HTTPGetRequest(getPollUrl(), out reply))
             {
                 int status;
                 if (int.TryParse(System.Text.Encoding.Default.GetString(reply), out status))
