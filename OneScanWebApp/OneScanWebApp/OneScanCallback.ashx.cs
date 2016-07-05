@@ -62,7 +62,7 @@ namespace OneScanWebApp
                                         pair.DoorID = doorId;
                                         pair.UserToken = userTokenId;
 
-                                        if (SQLControlsLib.Get.doSelectEntryExists(pair))
+                                        if (SQLControlsLib.Get.doEntryExists(pair))
                                         {
                                             outcome.Success = true;
                                             outcome.MessageType = OutcomeTypes.ProcessComplete.ToString();
