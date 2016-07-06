@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DoorLockDemo.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="DoorSecret" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">56</Value>
+    </Setting>
+    <Setting Name="DoorID" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">34</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
