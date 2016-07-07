@@ -17,26 +17,45 @@ namespace DoorLockDemo
         private AppStateMachine stateMachine = new AppStateMachine();
         private byte[] imgData = new byte[0];
 
+        private int cancelBtnGetQrY;
+        private int cancelBtnScanningY;
+
         public Form1()
         {
             InitializeComponent();
         }
+
         private void Form1_Load(object sender, EventArgs e)
         {
+
+            label1.Text = "Door " + Properties.Settings.Default.DoorID;
+
             getQrBtn.Parent = btnPnl;
             int x = (btnPnl.Width/2) - (getQrBtn.Width/2);
             int y = (btnPnl.Height/2) - (getQrBtn.Height/2);
             getQrBtn.Location = new Point(x, y);
 
+            int cancelBtnLoadingRadioCombinedHeight = (getQrBtn.Height + loadingRadioPctrBx.Height + getQrBtn.Margin.Top + loadingRadioPctrBx.Margin.Bottom);
             cancelBtn.Parent = btnPnl;
             x = (btnPnl.Width / 2) - (cancelBtn.Width / 2);
-            y = (btnPnl.Height / 2) - (cancelBtn.Height / 2);
+            cancelBtnScanningY = ((btnPnl.Height / 2) - (cancelBtn.Height / 2));
+            cancelBtnGetQrY = cancelBtnScanningY + (Math.Abs(cancelBtn.Height - cancelBtnLoadingRadioCombinedHeight) / 2);
+            
             cancelBtn.Location = new Point(x, y);
+
+            loadingRadioPctrBx.Parent = btnPnl;
+            x = (btnPnl.Width / 2) - (loadingRadioPctrBx.Width / 2);
+            y = ((btnPnl.Height / 2) - (loadingRadioPctrBx.Height / 2)) - (Math.Abs(loadingRadioPctrBx.Height - cancelBtnLoadingRadioCombinedHeight) / 2);
+            loadingRadioPctrBx.Location = new Point(x, y);
 
             resetBtn.Parent = btnPnl;
             x = (btnPnl.Width / 2) - (resetBtn.Width / 2);
             y = (btnPnl.Height / 2) - (resetBtn.Height / 2);
             resetBtn.Location = new Point(x, y);
+
+            qrPctrBx.Dock = DockStyle.Fill;
+
+           
 
             stateMachineInit();
         }
@@ -48,21 +67,23 @@ namespace DoorLockDemo
                 setQRBtnVisible(true);
                 setCancelBtnVisible(false);
                 setResetBtnVisible(false);
+                setLoadingRadioPctrBxVisible(false);
                 setLockImg(Properties.Resources.locked_padlock);
             });
             stateMachine.setStateCallback(AppStateMachine.State.REQUESTING_QR, delegate () {
                 setQRBtnVisible(false);
-                setCancelBtnVisible(true);
-                // add loading
+                setCancelBtnVisible(true, cancelBtnGetQrY);
+                setLoadingRadioPctrBxVisible(true);
             });
             stateMachine.setStateCallback(AppStateMachine.State.QR_DISPLAY, delegate () {
                 setQRPicture(true);
                 setCancelBtnVisible(false);
                 setQRBtnVisible(false);
+                setLoadingRadioPctrBxVisible(false);
             });
             stateMachine.setStateCallback(AppStateMachine.State.SCANNING, delegate () {
                 setQRPicture(false);
-                setCancelBtnVisible(true);
+                setCancelBtnVisible(true, cancelBtnScanningY);
                 setLockImg(Properties.Resources.loadingRoll);
             });
             stateMachine.setStateCallback(AppStateMachine.State.UNLOCKED, delegate () {
@@ -145,8 +166,8 @@ namespace DoorLockDemo
         public delegate void setQRPictureDel(bool visible);
         internal void setQRPicture(bool visible)
         {
-            if (qrPictBx.InvokeRequired)
-                qrPictBx.BeginInvoke(new setQRPictureDel(setQRPicture), new object[] { visible });
+            if (qrPctrBx.InvokeRequired)
+                qrPctrBx.BeginInvoke(new setQRPictureDel(setQRPicture), new object[] { visible });
             else {
                 try
                 {
@@ -154,12 +175,12 @@ namespace DoorLockDemo
                     using (MemoryStream ms = new MemoryStream(byteBuffer))
                     {
                         Bitmap bmp = new Bitmap(ms);
-                        qrPictBx.Image = bmp;
+                        qrPctrBx.Image = bmp;
                     }
                 }
                 catch (Exception) { }
 
-                qrPictBx.Visible = visible;
+                qrPctrBx.Visible = visible;
                 
             }
         }
@@ -173,13 +194,25 @@ namespace DoorLockDemo
                 getQrBtn.Visible = visible;
         }
 
-        public delegate void setCancelBtnVisibleDel(bool visible);
-        internal void setCancelBtnVisible(bool visible)
+        public delegate void setCancelBtnVisibleDel(bool visible, int? y_pos = null);
+        internal void setCancelBtnVisible(bool visible, int? y_pos = null)
         {
             if (cancelBtn.InvokeRequired)
-                cancelBtn.BeginInvoke(new setCancelBtnVisibleDel(setCancelBtnVisible), new object[] { visible });
-            else
+                cancelBtn.BeginInvoke(new setCancelBtnVisibleDel(setCancelBtnVisible), new object[] { visible, y_pos });
+            else {
+                if (y_pos.HasValue)
+                    cancelBtn.Location = new Point(cancelBtn.Location.X, y_pos.Value);
                 cancelBtn.Visible = visible;
+            }
+        }
+
+        public delegate void setLoadingRadioPctrBxVisibleDel(bool visible);
+        internal void setLoadingRadioPctrBxVisible(bool visible)
+        {
+            if (loadingRadioPctrBx.InvokeRequired)
+                loadingRadioPctrBx.BeginInvoke(new setLoadingRadioPctrBxVisibleDel(setLoadingRadioPctrBxVisible), new object[] { visible });
+            else
+                loadingRadioPctrBx.Visible = visible;
         }
 
         public delegate void setResetBtnVisibleDel(bool visible);
@@ -194,10 +227,10 @@ namespace DoorLockDemo
         public delegate void setLockImgDel(Bitmap img);
         internal void setLockImg(Bitmap img)
         {
-            if (padlockPictBx.InvokeRequired)
-                padlockPictBx.BeginInvoke(new setLockImgDel(setLockImg), new object[] { img });
+            if (padlockPctrBx.InvokeRequired)
+                padlockPctrBx.BeginInvoke(new setLockImgDel(setLockImg), new object[] { img });
             else {
-                padlockPictBx.Image = img;
+                padlockPctrBx.Image = img;
             }
         }
 
