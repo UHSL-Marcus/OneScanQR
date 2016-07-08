@@ -1,6 +1,6 @@
 ﻿namespace DoorLockDemo
 {
-    partial class Form1
+    partial class DoorLockDemoForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,42 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.qrPctrBx = new System.Windows.Forms.PictureBox();
-            this.padlockPctrBx = new System.Windows.Forms.PictureBox();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DoorLockDemoForm));
             this.label1 = new System.Windows.Forms.Label();
             this.getQrBtn = new System.Windows.Forms.Button();
             this.cancelBtn = new System.Windows.Forms.Button();
             this.btnPnl = new System.Windows.Forms.Panel();
-            this.loadingRadioPctrBx = new System.Windows.Forms.PictureBox();
             this.resetBtn = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            ((System.ComponentModel.ISupportInitialize)(this.qrPctrBx)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.padlockPctrBx)).BeginInit();
+            this.padlockPctrBx = new System.Windows.Forms.PictureBox();
+            this.questionMarkPctrBx = new System.Windows.Forms.PictureBox();
+            this.qrPctrBx = new System.Windows.Forms.PictureBox();
+            this.loadingRadioPctrBx = new System.Windows.Forms.PictureBox();
             this.btnPnl.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.loadingRadioPctrBx)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.padlockPctrBx)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.questionMarkPctrBx)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.qrPctrBx)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.loadingRadioPctrBx)).BeginInit();
             this.SuspendLayout();
-            // 
-            // qrPctrBx
-            // 
-            this.qrPctrBx.BackColor = System.Drawing.Color.Transparent;
-            this.qrPctrBx.Location = new System.Drawing.Point(15, 12);
-            this.qrPctrBx.Name = "qrPctrBx";
-            this.qrPctrBx.Size = new System.Drawing.Size(93, 66);
-            this.qrPctrBx.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.qrPctrBx.TabIndex = 1;
-            this.qrPctrBx.TabStop = false;
-            // 
-            // padlockPctrBx
-            // 
-            this.padlockPctrBx.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.padlockPctrBx.Image = global::DoorLockDemo.Properties.Resources.locked_padlock;
-            this.padlockPctrBx.Location = new System.Drawing.Point(3, 40);
-            this.padlockPctrBx.Name = "padlockPctrBx";
-            this.padlockPctrBx.Size = new System.Drawing.Size(367, 220);
-            this.padlockPctrBx.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.padlockPctrBx.TabIndex = 0;
-            this.padlockPctrBx.TabStop = false;
             // 
             // label1
             // 
@@ -104,6 +86,7 @@
             this.btnPnl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPnl.Controls.Add(this.questionMarkPctrBx);
             this.btnPnl.Controls.Add(this.resetBtn);
             this.btnPnl.Controls.Add(this.qrPctrBx);
             this.btnPnl.Controls.Add(this.cancelBtn);
@@ -113,17 +96,6 @@
             this.btnPnl.Name = "btnPnl";
             this.btnPnl.Size = new System.Drawing.Size(367, 108);
             this.btnPnl.TabIndex = 6;
-            // 
-            // loadingRadioPctrBx
-            // 
-            this.loadingRadioPctrBx.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.loadingRadioPctrBx.Image = global::DoorLockDemo.Properties.Resources.loadingRadio;
-            this.loadingRadioPctrBx.Location = new System.Drawing.Point(236, 24);
-            this.loadingRadioPctrBx.Name = "loadingRadioPctrBx";
-            this.loadingRadioPctrBx.Size = new System.Drawing.Size(73, 36);
-            this.loadingRadioPctrBx.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.loadingRadioPctrBx.TabIndex = 7;
-            this.loadingRadioPctrBx.TabStop = false;
             // 
             // resetBtn
             // 
@@ -156,20 +128,69 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(373, 377);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
-            // Form1
+            // padlockPctrBx
+            // 
+            this.padlockPctrBx.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.padlockPctrBx.Image = global::DoorLockDemo.Properties.Resources.locked_padlock;
+            this.padlockPctrBx.Location = new System.Drawing.Point(3, 40);
+            this.padlockPctrBx.Name = "padlockPctrBx";
+            this.padlockPctrBx.Size = new System.Drawing.Size(367, 220);
+            this.padlockPctrBx.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.padlockPctrBx.TabIndex = 0;
+            this.padlockPctrBx.TabStop = false;
+            // 
+            // questionMarkPctrBx
+            // 
+            this.questionMarkPctrBx.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.questionMarkPctrBx.Image = global::DoorLockDemo.Properties.Resources.question_mark;
+            this.questionMarkPctrBx.Location = new System.Drawing.Point(338, 88);
+            this.questionMarkPctrBx.Name = "questionMarkPctrBx";
+            this.questionMarkPctrBx.Size = new System.Drawing.Size(26, 17);
+            this.questionMarkPctrBx.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.questionMarkPctrBx.TabIndex = 8;
+            this.questionMarkPctrBx.TabStop = false;
+            this.questionMarkPctrBx.Click += new System.EventHandler(this.questionMarkPctrBx_Click);
+            this.questionMarkPctrBx.MouseEnter += new System.EventHandler(this.questionMarkPctrBx_MouseEnter);
+            this.questionMarkPctrBx.MouseLeave += new System.EventHandler(this.questionMarkPctrBx_MouseLeave);
+            // 
+            // qrPctrBx
+            // 
+            this.qrPctrBx.BackColor = System.Drawing.Color.Transparent;
+            this.qrPctrBx.Location = new System.Drawing.Point(15, 12);
+            this.qrPctrBx.Name = "qrPctrBx";
+            this.qrPctrBx.Size = new System.Drawing.Size(93, 66);
+            this.qrPctrBx.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.qrPctrBx.TabIndex = 1;
+            this.qrPctrBx.TabStop = false;
+            // 
+            // loadingRadioPctrBx
+            // 
+            this.loadingRadioPctrBx.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.loadingRadioPctrBx.Image = global::DoorLockDemo.Properties.Resources.loadingRadio;
+            this.loadingRadioPctrBx.Location = new System.Drawing.Point(236, 24);
+            this.loadingRadioPctrBx.Name = "loadingRadioPctrBx";
+            this.loadingRadioPctrBx.Size = new System.Drawing.Size(73, 36);
+            this.loadingRadioPctrBx.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.loadingRadioPctrBx.TabIndex = 7;
+            this.loadingRadioPctrBx.TabStop = false;
+            // 
+            // DoorLockDemoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(397, 401);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.qrPctrBx)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.padlockPctrBx)).EndInit();
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(413, 440);
+            this.Name = "DoorLockDemoForm";
+            this.Text = "Onescan Access Control Demo";
+            this.Load += new System.EventHandler(this.DoorLockDemoForm_Load);
             this.btnPnl.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.loadingRadioPctrBx)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.padlockPctrBx)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.questionMarkPctrBx)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.qrPctrBx)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.loadingRadioPctrBx)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -185,6 +206,7 @@
         private System.Windows.Forms.Button resetBtn;
         private System.Windows.Forms.PictureBox loadingRadioPctrBx;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.PictureBox questionMarkPctrBx;
     }
 }
 

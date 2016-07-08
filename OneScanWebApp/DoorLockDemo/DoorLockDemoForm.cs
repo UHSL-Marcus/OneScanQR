@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace DoorLockDemo
 {
-    public partial class Form1 : Form
+    public partial class DoorLockDemoForm : Form
     {
 
         private BackgroundWorker bgWorker;
@@ -20,12 +20,12 @@ namespace DoorLockDemo
         private int cancelBtnGetQrY;
         private int cancelBtnScanningY;
 
-        public Form1()
+        public DoorLockDemoForm()
         {
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void DoorLockDemoForm_Load(object sender, EventArgs e)
         {
 
             label1.Text = "Door " + Properties.Settings.Default.DoorID;
@@ -123,9 +123,11 @@ namespace DoorLockDemo
 
         private void backgroundWorker_GetQRDone(object sender, RunWorkerCompletedEventArgs e)
         {
-            Tuple<bool, byte[]> result = e.Result as Tuple<bool, byte[]>;
-            
+
+
             if (!e.Cancelled)
+            {
+                Tuple<bool, byte[]> result = e.Result as Tuple<bool, byte[]>;
                 if (result.Item1)
                 {
                     imgData = result.Item2;
@@ -140,7 +142,8 @@ namespace DoorLockDemo
                     bgWorker.RunWorkerAsync();
 
                     stateMachine.doEvent(AppStateMachine.Event.GOT_QR);
-                } 
+                }
+            }
         }
 
         private void backgroundWorker_GetStatusDone(object sender, RunWorkerCompletedEventArgs e)
@@ -234,6 +237,42 @@ namespace DoorLockDemo
             }
         }
 
-        
+        private void questionMarkPctrBx_Click(object sender, EventArgs e)
+        {
+            aboutForm aboutFrm = null;
+            foreach (Form OpenForm in Application.OpenForms)
+            {
+                if (OpenForm.GetType() == typeof(aboutForm))
+                {
+                    aboutFrm = OpenForm as aboutForm;
+                    break;
+                }
+                   
+            }
+
+            if (aboutFrm != null)
+                aboutFrm.Close();
+            else
+            {
+                aboutFrm = new aboutForm();
+                int x = Location.X + (Width / 2) - (aboutFrm.Width /2);
+                int y = Location.Y + (int)Math.Floor(Height * 0.3) - (aboutFrm.Height / 2);
+                
+                aboutFrm.Show(this);
+                aboutFrm.SetDesktopLocation(x, y);
+
+            }
+
+        }
+
+        private void questionMarkPctrBx_MouseEnter(object sender, EventArgs e)
+        {
+            questionMarkPctrBx.Image = Properties.Resources.question_mark_grey;
+        }
+
+        private void questionMarkPctrBx_MouseLeave(object sender, EventArgs e)
+        {
+            questionMarkPctrBx.Image = Properties.Resources.question_mark;
+        }
     }
 }

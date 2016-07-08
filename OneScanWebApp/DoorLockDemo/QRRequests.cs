@@ -14,6 +14,8 @@ namespace DoorLockDemo
     {
         public static void doGetQR(object sender, DoWorkEventArgs e)
         {
+            e.Result = Tuple.Create(false, new byte[0]);
+
             BackgroundWorker worker = sender as BackgroundWorker;
 
             string query = "mode=0&qr_img=2&door_id=" + Properties.Settings.Default.DoorID;
@@ -34,6 +36,8 @@ namespace DoorLockDemo
             Get.HTTPGetRequestAsync(url, callback);
 
             while (!complete && !worker.CancellationPending){ }
+
+            if (worker.CancellationPending) e.Cancel = true;
 
         }
 
