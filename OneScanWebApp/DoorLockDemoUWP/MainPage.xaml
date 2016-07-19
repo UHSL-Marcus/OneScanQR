@@ -7,8 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource AppBarBackgroundThemeBrush}" Loaded="Grid_Loaded">
-        <Grid HorizontalAlignment="Center" Height="671" Margin="0" VerticalAlignment="Center" Width="698">
+    <Grid Background="{ThemeResource AppBarBackgroundThemeBrush}" Loaded="Grid_Loaded" Margin="-405,-196,-382,-245">
+        <Grid HorizontalAlignment="Center" Height="671" Margin="0" VerticalAlignment="Center" Width="698" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="1*"/>
@@ -16,22 +16,25 @@
                 <RowDefinition Height="3*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBox x:Name="title_text" Margin="10" TextWrapping="Wrap" Text="Door 34" IsReadOnly="True" FontSize="20" FontWeight="Bold" TextAlignment="Center" Grid.Row="1" BorderThickness="0" Background="{x:Null}"/>
-            <Image x:Name="padlock_Img" Margin="182,10,181,10" Grid.Row="2" HorizontalAlignment="Center" Width="335" Source="Assets/loadingRoll.gif" Stretch="Fill"/>
-            <StackPanel Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="3" Grid.RowSpan="2">
-                <Button x:Name="reset_btn" Content="Reset" HorizontalAlignment="Left" VerticalAlignment="Top" Width="84" Click="reset_btn_Click" Padding="0,4"/>
-                <Button x:Name="getQR_btn" Content="Get QR" HorizontalAlignment="Left" VerticalAlignment="Top" Width="84" Click="getQR_btn_Click"/>
-                <Button x:Name="cancel_btn" Content="Cancel" HorizontalAlignment="Left" VerticalAlignment="Top" Width="84" Click="cancel_btn_Click">
-                    <Button.Flyout>
-                        <Flyout>
-                            <Grid Height="100" Width="100"/>
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
-                <Image x:Name="qr_img" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100"/>
-                <Image x:Name="radioLoad_img" HorizontalAlignment="Left" Height="79" VerticalAlignment="Top" Width="84" Source="Assets/loadingRadio.gif" Stretch="Fill" RenderTransformOrigin="0.254,0.292"/>
-            </StackPanel>
+            <Rectangle Grid.Row="3" Fill="AliceBlue" />
+            <TextBox x:Name="title_text" Margin="10" TextWrapping="Wrap" Text="Door 34" IsReadOnly="True" FontSize="26" FontWeight="Bold" TextAlignment="Center" Grid.Row="1" BorderThickness="0" Background="{x:Null}" BorderBrush="{x:Null}"/>
+            <Image x:Name="padlock_Img" Margin="182,10,181,10" Grid.Row="2" HorizontalAlignment="Center" Width="335" Source="Assets/locked-padlock.png" Stretch="Fill"/>
+            <Image x:Name="qr_img" HorizontalAlignment="Center" Height="100" VerticalAlignment="Top" Width="126" Margin="491,25.333,81,0" Grid.Row="3"/>
+            <Grid HorizontalAlignment="Center" Margin="0" Grid.Row="3" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Button x:Name="reset_btn" Content="Reset" HorizontalAlignment="Center" VerticalAlignment="Center" Width="84" Click="reset_btn_Click" Padding="0,4" Margin="0" Grid.Row="1"/>
+                <Button x:Name="getQR_btn" Content="Get QR" HorizontalAlignment="Center" VerticalAlignment="Center" Width="84" Click="getQR_btn_Click" Margin="0" Grid.Row="1"/>
+                <Button x:Name="cancel_btn" Content="Cancel" HorizontalAlignment="Center" VerticalAlignment="Center" Width="84" Click="cancel_btn_Click" Margin="0" Grid.Row="1"/>
+
+
+                <Image x:Name="radioLoad_img" HorizontalAlignment="Center" Height="79" VerticalAlignment="Center" Width="84" Source="Assets/loadingRadio.gif" Stretch="Fill" RenderTransformOrigin="0.254,0.292" Margin="0,0,0,5"/>
+                <Button x:Name="cancelling_btn" Content="Cancelling..." HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Grid.Row="1"/>
+            </Grid>
         </Grid>
+        <Grid HorizontalAlignment="Left" Height="100" Margin="1150,987,-103,-6" VerticalAlignment="Top" Width="100"/>
 
     </Grid>
 </Page>

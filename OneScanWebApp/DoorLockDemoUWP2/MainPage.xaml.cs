@@ -6,8 +6,6 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using System.Threading.Tasks;
-using System.Threading;
-using HTTPRequestLibUWP;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -18,13 +16,16 @@ namespace DoorLockDemoUWP
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private CancellationTokenSource cancelTknSrc;
+        private BackgroundWorker bgWorker;
         private AppStateMachine stateMachine = new AppStateMachine();
         private byte[] imgData = new byte[0];
 
+        private int cancelBtnGetQrY;
+        private int cancelBtnScanningY;
+
         public MainPage()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -35,41 +36,35 @@ namespace DoorLockDemoUWP
 
         private void stateMachineInit()
         {
-            stateMachine.setStateCallback(AppStateMachine.State.LOCKED, new Action(() => {
+            stateMachine.setStateCallback(AppStateMachine.State.LOCKED, new Task (() => {
                 setControlVisible(qr_img, Visibility.Collapsed);
                 setControlVisible(getQR_btn, Visibility.Visible);
                 setControlVisible(cancel_btn, Visibility.Collapsed);
-                setControlVisible(cancelling_btn, Visibility.Collapsed);
                 setControlVisible(reset_btn, Visibility.Collapsed);
                 setControlVisible(radioLoad_img, Visibility.Collapsed);
-                setLockImg("ms-appx:///Assets/locked-padlock.png");
+                setLockImg("Assets/locked-padlock.png");
             }));
-            stateMachine.setStateCallback(AppStateMachine.State.REQUESTING_QR, new Action(() => {
+            stateMachine.setStateCallback(AppStateMachine.State.REQUESTING_QR, new Task(() => {
                 setControlVisible(getQR_btn, Visibility.Collapsed);
-                setControlVisible(radioLoad_img, Visibility.Visible);
                 setControlVisible(cancel_btn, Visibility.Visible);
+                setControlVisible(radioLoad_img, Visibility.Visible);
             }));
-            stateMachine.setStateCallback(AppStateMachine.State.QR_DISPLAY, new Action(() => {
+            stateMachine.setStateCallback(AppStateMachine.State.QR_DISPLAY, new Task(() => {
                 setQRPicture();
                 setControlVisible(qr_img, Visibility.Visible);
                 setControlVisible(cancel_btn, Visibility.Collapsed);
                 setControlVisible(radioLoad_img, Visibility.Collapsed); 
             }));
-            stateMachine.setStateCallback(AppStateMachine.State.SCANNING, new Action(() => {
+            stateMachine.setStateCallback(AppStateMachine.State.SCANNING, new Task(() => {
                 setControlVisible(qr_img, Visibility.Collapsed);
                 setControlVisible(cancel_btn, Visibility.Visible);
-                setLockImg("ms-appx:///Assets/loadingRoll.gif");
+                setLockImg("Assets/loadingRoll.gif");
             }));
-            stateMachine.setStateCallback(AppStateMachine.State.UNLOCKED, new Action(() => {
+            stateMachine.setStateCallback(AppStateMachine.State.UNLOCKED, new Task(() => {
                 setControlVisible(qr_img, Visibility.Collapsed);
                 setControlVisible(cancel_btn, Visibility.Collapsed);
                 setControlVisible(reset_btn, Visibility.Visible);
-                setLockImg("ms-appx:///Assets/unlocked-padlock.png");
-            }));
-            stateMachine.setStateCallback(AppStateMachine.State.CANCELLING, new Action(() => {
-                setControlVisible(cancel_btn, Visibility.Collapsed);
-                setControlVisible(cancelling_btn, Visibility.Visible);
-                setControlEnabled(cancelling_btn, false);
+                setLockImg("Assets/unlocked-padlock.png");
             }));
 
             stateMachine.start();
@@ -77,58 +72,72 @@ namespace DoorLockDemoUWP
 
         private void cancel_btn_Click(object sender, RoutedEventArgs e)
         {
-            stateMachine.doEvent(AppStateMachine.Event.CANCEL_REQUEST); //cancelling...
-            cancelTknSrc.Cancel();
+            bgWorker.CancelAsync();
+            stateMachine.doEvent(AppStateMachine.Event.CANCELLED);
         }
 
-        private async void getQR_btn_Click(object sender, RoutedEventArgs e)
+        private void getQR_btn_Click(object sender, RoutedEventArgs e)
         {
-            cancelTknSrc = new CancellationTokenSource();
-            Task<HTTPResponse> qrTask = QRRequests.doGetQR(cancelTknSrc.Token);
+            /*bgWorker = new BackgroundWorker();
+            bgWorker.DoWork += new DoWorkEventHandler(QRRequests.doGetQR);
+            bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker_GetQRDone);
+            bgWorker.WorkerSupportsCancellation = true;
+
+            bgWorker.RunWorkerAsync();*/
 
             stateMachine.doEvent(AppStateMachine.Event.QR_REQUEST);
-
-            HTTPResponse qrResponse = await qrTask;
-
-            if (!qrResponse.wasCancelled)
-            {
-                imgData = qrResponse.bytes;
-
-                stateMachine.doEvent(AppStateMachine.Event.GOT_QR);
-
-                var progress = new Progress<int>();
-                progress.ProgressChanged += Progress_ProgressChanged;
-
-                cancelTknSrc = new CancellationTokenSource();
-                try
-                {
-                    Task<int> getResultTask = QRRequests.doGetResult(cancelTknSrc.Token, progress);
-
-                    int resultStatus = await getResultTask;
-
-                    if (resultStatus == 2)
-                        stateMachine.doEvent(AppStateMachine.Event.SCAN_ACCEPTED);
-                    else if (resultStatus == 3)
-                        stateMachine.doEvent(AppStateMachine.Event.SCAN_DENIED);
-
-
-                }
-                catch (OperationCanceledException) { stateMachine.doEvent(AppStateMachine.Event.CANCELLED); }
-            }
-            else stateMachine.doEvent(AppStateMachine.Event.CANCELLED);
-
-        }
-
-        private void Progress_ProgressChanged(object sender, int e)
-        {
-            if (e == 1)
-                stateMachine.doEvent(AppStateMachine.Event.QR_SCANNED);
         }
 
         private void reset_btn_Click(object sender, RoutedEventArgs e)
         {
             stateMachine.doEvent(AppStateMachine.Event.RESET);
         }
+
+        private void getQR_callback()
+        {
+
+
+            /*if (!e.Cancelled)
+            {
+                Tuple<bool, byte[]> result = e.Result as Tuple<bool, byte[]>;
+                if (result.Item1)
+                {
+                    imgData = result.Item2;
+
+                    bgWorker = new BackgroundWorker();
+                    bgWorker.DoWork += new DoWorkEventHandler(QRRequests.doGetResult);
+                    bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker_GetStatusDone);
+                    bgWorker.WorkerReportsProgress = true;
+                    bgWorker.WorkerSupportsCancellation = true;
+                    bgWorker.ProgressChanged += new ProgressChangedEventHandler(backgroundWorker_GetStatusProgress);
+
+                    bgWorker.RunWorkerAsync();
+
+                    stateMachine.doEvent(AppStateMachine.Event.GOT_QR);
+                }
+            }*/
+        }
+
+        private void backgroundWorker_GetStatusDone(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+            if (!e.Cancelled)
+            {
+                int? result = e.Result as int?;
+
+                if (result == 2)
+                    stateMachine.doEvent(AppStateMachine.Event.SCAN_ACCEPTED);
+                else if (result == 3)
+                    stateMachine.doEvent(AppStateMachine.Event.SCAN_DENIED);
+            }
+        }
+
+        private void backgroundWorker_GetStatusProgress(object sender, ProgressChangedEventArgs e)
+        {
+            if (e.ProgressPercentage == 1)
+                stateMachine.doEvent(AppStateMachine.Event.QR_SCANNED);
+        }
+
 
         internal async void setQRPicture()
         {
@@ -166,20 +175,12 @@ namespace DoorLockDemoUWP
             });
         }
 
-        internal async void setControlEnabled(ContentControl ctl, bool enabled)
-        {
-            await ctl.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                ctl.IsEnabled = enabled;
-            });
-        }
-
-
+        
         internal async void setLockImg(string uri)
         {
             await padlock_Img.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => 
             {
-                padlock_Img.Source = new BitmapImage(new Uri(uri));
+                padlock_Img.Source = new BitmapImage(new Uri(uri, UriKind.RelativeOrAbsolute));
             });
         }
 

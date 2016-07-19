@@ -7,11 +7,11 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="5d723855-fdd6-462c-8fee-f63f067df856"
+    Name="583f3fdd-3ccd-49e2-a23f-c4b5d926632f"
     Publisher="CN=ML15AAF"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="5d723855-fdd6-462c-8fee-f63f067df856" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="583f3fdd-3ccd-49e2-a23f-c4b5d926632f" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>DoorLockDemoUWP</DisplayName>

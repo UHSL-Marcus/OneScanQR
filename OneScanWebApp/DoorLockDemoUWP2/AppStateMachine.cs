@@ -1,5 +1,4 @@
 ﻿
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,8 +12,7 @@ namespace DoorLockDemoUWP
             REQUESTING_QR,
             QR_DISPLAY,
             SCANNING,
-            UNLOCKED,
-            CANCELLING
+            UNLOCKED
         }
         public enum Event
         {
@@ -23,7 +21,6 @@ namespace DoorLockDemoUWP
             QR_SCANNED,
             SCAN_DENIED,
             SCAN_ACCEPTED,
-            CANCEL_REQUEST,
             CANCELLED,
             RESET
         }
@@ -36,7 +33,7 @@ namespace DoorLockDemoUWP
             },
             {
                 State.REQUESTING_QR, new Dictionary<Event, State>()
-                { {Event.GOT_QR, State.QR_DISPLAY }, {Event.CANCEL_REQUEST, State.CANCELLING } }
+                { {Event.GOT_QR, State.QR_DISPLAY }, {Event.CANCELLED, State.LOCKED } }
             },
             {
                 State.QR_DISPLAY, new Dictionary<Event, State>()
@@ -44,24 +41,20 @@ namespace DoorLockDemoUWP
             },
             {
                 State.SCANNING, new Dictionary<Event, State>()
-                { {Event.SCAN_ACCEPTED, State.UNLOCKED }, {Event.SCAN_DENIED, State.LOCKED }, {Event.CANCEL_REQUEST, State.CANCELLING } }
+                { {Event.SCAN_ACCEPTED, State.UNLOCKED }, {Event.SCAN_DENIED, State.LOCKED }, {Event.CANCELLED, State.LOCKED } }
             },
             {
                 State.UNLOCKED, new Dictionary<Event, State>()
                 { {Event.RESET, State.LOCKED } }
-            },
-            {
-                State.CANCELLING, new Dictionary<Event, State>()
-                { {Event.CANCELLED, State.LOCKED } }
             },
         };
 
         
 
         private State currentState = State.LOCKED;
-        private Dictionary<State, Action> stateInvokableMethods = new Dictionary<State, Action>();
+        private Dictionary<State, Task> stateInvokableMethods = new Dictionary<State, Task>();
 
-        public void setStateCallback(State state, Action callback)
+        public void setStateCallback(State state, Task callback)
         {
             if (!stateInvokableMethods.ContainsKey(state))
                 stateInvokableMethods.Add(state, callback);
@@ -71,12 +64,9 @@ namespace DoorLockDemoUWP
             State nextState;
             if (currentState.GetNextState(_event, out nextState))
             {
-                Action action;
-                if (stateInvokableMethods.TryGetValue(nextState, out action))
-                {
-                    action.Invoke();
-                    currentState = nextState;
-                }
+                Task task;
+                if (stateInvokableMethods.TryGetValue(nextState, out task))
+                    task.RunSynchronously();
 
                 
             }
@@ -84,9 +74,9 @@ namespace DoorLockDemoUWP
 
         public void start()
         {
-            Action action;
-            if (stateInvokableMethods.TryGetValue(currentState, out action))
-                action.Invoke();
+            Task task;
+            if (stateInvokableMethods.TryGetValue(currentState, out task))
+                task.RunSynchronously();
         }
     }
 
