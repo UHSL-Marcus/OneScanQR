@@ -8,6 +8,8 @@ using Windows.UI.Core;
 using System.Threading.Tasks;
 using System.Threading;
 using HTTPRequestLibUWP;
+using XamlAnimatedGif;
+using Windows.UI.Xaml.Media;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -24,30 +26,51 @@ namespace DoorLockDemoUWP
 
         public MainPage()
         {
+
             InitializeComponent();
         }
 
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        private async void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             stateMachineInit();
 
+            title_text.Text = "Door " + Consts.DoorID;
+            
+            await App.loadingTask.ContinueWith(new Action<Task> ((t) => 
+            {
+                stateMachine.doEvent(AppStateMachine.Event.LOADED);
+            }));
         }
 
         private void stateMachineInit()
         {
+            stateMachine.setStateCallback(AppStateMachine.State.LOADING, new Action(() => {
+                setControlVisible(qr_img, Visibility.Collapsed);
+                setControlVisible(getQR_btn, Visibility.Visible);
+                setControlEnabled(getQR_btn, false);
+                setControlVisible(cancel_btn, Visibility.Collapsed);
+                setControlVisible(cancelling_btn, Visibility.Collapsed);
+                setControlVisible(reset_btn, Visibility.Collapsed);
+                setControlVisible(radioLoad_img, Visibility.Visible);
+                setImg(radioLoad_img, "ms-appx:///Assets/Resources/LoadingEllipsis.gif", true);
+                setImg(padlock_Img, "ms-appx:///Assets/Resources/locked-padlock.png");
+            }));
+
             stateMachine.setStateCallback(AppStateMachine.State.LOCKED, new Action(() => {
                 setControlVisible(qr_img, Visibility.Collapsed);
                 setControlVisible(getQR_btn, Visibility.Visible);
+                setControlEnabled(getQR_btn, true);
                 setControlVisible(cancel_btn, Visibility.Collapsed);
                 setControlVisible(cancelling_btn, Visibility.Collapsed);
                 setControlVisible(reset_btn, Visibility.Collapsed);
                 setControlVisible(radioLoad_img, Visibility.Collapsed);
-                setLockImg("ms-appx:///Assets/locked-padlock.png");
+                setImg(padlock_Img, "ms-appx:///Assets/Resources/locked-padlock.png");
             }));
             stateMachine.setStateCallback(AppStateMachine.State.REQUESTING_QR, new Action(() => {
                 setControlVisible(getQR_btn, Visibility.Collapsed);
                 setControlVisible(radioLoad_img, Visibility.Visible);
                 setControlVisible(cancel_btn, Visibility.Visible);
+                setImg(radioLoad_img, "ms-appx:///Assets/Resources/LoadingRadio.gif", true);
             }));
             stateMachine.setStateCallback(AppStateMachine.State.QR_DISPLAY, new Action(() => {
                 setQRPicture();
@@ -58,13 +81,13 @@ namespace DoorLockDemoUWP
             stateMachine.setStateCallback(AppStateMachine.State.SCANNING, new Action(() => {
                 setControlVisible(qr_img, Visibility.Collapsed);
                 setControlVisible(cancel_btn, Visibility.Visible);
-                setLockImg("ms-appx:///Assets/loadingRoll.gif");
+                setImg(padlock_Img, "ms-appx:///Assets/Resources/loadingRoll.gif", true);
             }));
             stateMachine.setStateCallback(AppStateMachine.State.UNLOCKED, new Action(() => {
                 setControlVisible(qr_img, Visibility.Collapsed);
                 setControlVisible(cancel_btn, Visibility.Collapsed);
                 setControlVisible(reset_btn, Visibility.Visible);
-                setLockImg("ms-appx:///Assets/unlocked-padlock.png");
+                setImg(padlock_Img, "ms-appx:///Assets/Resources/unlocked-padlock.png");
             }));
             stateMachine.setStateCallback(AppStateMachine.State.CANCELLING, new Action(() => {
                 setControlVisible(cancel_btn, Visibility.Collapsed);
@@ -175,11 +198,15 @@ namespace DoorLockDemoUWP
         }
 
 
-        internal async void setLockImg(string uri)
+        internal async void setImg(Image image, string uri, bool animated = false)
         {
-            await padlock_Img.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => 
+            await image.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => 
             {
-                padlock_Img.Source = new BitmapImage(new Uri(uri));
+                image.Source = null;
+                if (animated)
+                    AnimationBehavior.SetSourceUri(image, new Uri(uri));
+                else
+                    image.Source = new BitmapImage(new Uri(uri));
             });
         }
 

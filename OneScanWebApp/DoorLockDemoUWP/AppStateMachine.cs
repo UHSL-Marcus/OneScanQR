@@ -9,6 +9,7 @@ namespace DoorLockDemoUWP
     {
         public enum State
         {
+            LOADING,
             LOCKED,
             REQUESTING_QR,
             QR_DISPLAY,
@@ -18,6 +19,7 @@ namespace DoorLockDemoUWP
         }
         public enum Event
         {
+            LOADED,
             QR_REQUEST,
             GOT_QR,
             QR_SCANNED,
@@ -30,6 +32,10 @@ namespace DoorLockDemoUWP
 
         public static readonly Dictionary<State, Dictionary<Event, State>> StateTransitions = new Dictionary<State, Dictionary<Event, State>>()
         {
+             {
+                State.LOADING, new Dictionary<Event, State>()
+                { {Event.LOADED, State.LOCKED } }
+            },
             {
                 State.LOCKED, new Dictionary<Event, State>()
                 { {Event.QR_REQUEST, State.REQUESTING_QR } }
@@ -58,7 +64,7 @@ namespace DoorLockDemoUWP
 
         
 
-        private State currentState = State.LOCKED;
+        private State currentState = State.LOADING;
         private Dictionary<State, Action> stateInvokableMethods = new Dictionary<State, Action>();
 
         public void setStateCallback(State state, Action callback)

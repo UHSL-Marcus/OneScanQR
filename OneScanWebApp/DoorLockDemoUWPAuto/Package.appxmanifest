@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
+  <Identity Name="c779cbf6-5adb-4443-b995-f6866856ee58" Publisher="CN=ML15AAF" Version="1.0.0.0" />
+  <mp:PhoneIdentity PhoneProductId="c779cbf6-5adb-4443-b995-f6866856ee58" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Properties>
+    <DisplayName>DoorLockDemoUWPAuto</DisplayName>
+    <PublisherDisplayName>ML15AAF</PublisherDisplayName>
+    <Logo>Assets\Logo\StoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+  </Dependencies>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="DoorLockDemoUWPAuto.App">
+      <uap:VisualElements DisplayName="DoorLockDemoUWPAuto" Square150x150Logo="Assets\Logo\Square150x150Logo.png" Square44x44Logo="Assets\Logo\Square44x44Logo.png" Description="DoorLockDemoUWPAuto" BackgroundColor="#FFFFFF">
+        <uap:DefaultTile Wide310x150Logo="Assets\Logo\Wide310x150Logo.png" Square310x310Logo="Assets\Logo\Square310x310Logo.png" Square71x71Logo="Assets\Logo\Square71x71Logo.png" ShortName="Lock Demo">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
+            <uap:ShowOn Tile="square310x310Logo" />
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="Assets\Logo\SplashScreen.png" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClient" />
+  </Capabilities>
+</Package>

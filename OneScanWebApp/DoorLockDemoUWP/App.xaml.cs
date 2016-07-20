@@ -12,6 +12,10 @@ namespace DoorLockDemoUWP
     /// </summary>
     sealed partial class App : Application
     {
+        
+   
+
+        public static System.Threading.Tasks.Task loadingTask;
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -27,7 +31,7 @@ namespace DoorLockDemoUWP
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -41,6 +45,9 @@ namespace DoorLockDemoUWP
             // just ensure that the window is active
             if (rootFrame == null)
             {
+                // Run QR request to avoid the slow first request
+                loadingTask = QRRequests.doGetQR((new System.Threading.CancellationTokenSource()).Token);
+
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
 
