@@ -7,21 +7,33 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Loaded="Grid_Loaded" Background="{ThemeResource AppBarBackgroundThemeBrush}">
+    <Grid Loaded="Grid_Loaded" Background="WhiteSmoke">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="6*"/>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="15*"/>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="60*"/>
+            <RowDefinition Height="30*"/>
+            <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
-        <Viewbox x:Name="title_VwBx" Grid.Row="1" Stretch="Uniform" Margin="10,5" VerticalAlignment="Bottom">
-            <TextBox x:Name="title_text" TextWrapping="NoWrap" Text="title" IsReadOnly="True" FontSize="26" FontWeight="Bold" TextAlignment="Center" BorderThickness="0" Background="Transparent" Style="{StaticResource TextBoxStyleNoFocus}" IsEnabled="False"/>
+        <Image x:Name="onecan_logo_Img" Grid.Row="1" Margin="10,0,50,5" Source="Assets/Resources/onescan_logo.png" HorizontalAlignment="right" VerticalAlignment="Bottom" />
+        <Viewbox x:Name="title_VwBx" Grid.Row="2" Stretch="Uniform" Margin="10,0,10,5" VerticalAlignment="Bottom">
+            <TextBox x:Name="title_text" TextWrapping="NoWrap" Text="title" IsReadOnly="True" FontSize="26" FontWeight="Bold" TextAlignment="Center" BorderThickness="0" Background="Transparent" Style="{StaticResource TextBoxStyleNoFocus}" IsEnabled="False" Foreground="#FF33D1FF"/>
         </Viewbox>
-        <Image x:Name="padlock_Img" Visibility="Visible" Grid.Row="2" Source="Assets/Resources/locked-padlock.png" Stretch="Uniform"/>
-        <Image x:Name="qr_img" Stretch="Uniform" Grid.Row="3" Margin="5,5,5,5"/>
-        <Viewbox x:Name="reset_VwBx" Grid.Row="3" Stretch="Uniform">
-            <TextBox x:Name="reset_text" TextWrapping="NoWrap" Text="0" IsReadOnly="True" FontSize="26" FontWeight="Bold" TextAlignment="Center" BorderThickness="0" Background="Transparent" Style="{StaticResource TextBoxStyleNoFocus}" IsEnabled="False"/>
-        </Viewbox>
+        <Image x:Name="padlock_Img" Visibility="Visible" Grid.Row="3" Source="Assets/Resources/locked-padlock.png" Stretch="Uniform"/>
+        <Image x:Name="onecan_padlock_Img" Grid.Row="4" Margin="5,5,5,5" Source="Assets/Resources/onescan_padlock.png" />
+        <Grid x:Name="qr_img_overlay_grid" Grid.Row="4">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="qr_img_overlay_grid_row0" Height="3.9*"/>
+                <RowDefinition x:Name="qr_img_overlay_grid_row1" Height="4*"/>
+                <RowDefinition x:Name="qr_img_overlay_grid_row2" Height="1.1*"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="qr_img" Stretch="Uniform" Grid.Row="1" />
+            <Viewbox x:Name="reset_VwBx" Grid.Row="1" Stretch="Uniform" Margin="0">
+                <TextBox x:Name="reset_text" TextWrapping="NoWrap" Text="0" IsReadOnly="True" FontSize="26" FontWeight="Bold" TextAlignment="Center" BorderThickness="0" Background="Transparent" Style="{StaticResource TextBoxStyleNoFocus}" IsEnabled="False" Foreground="#FF0051F6" Margin="0,0,3,0"/>
+            </Viewbox>
+        </Grid>
+       
+        
     </Grid>
 </Page>

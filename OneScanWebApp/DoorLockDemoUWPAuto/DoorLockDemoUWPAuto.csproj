@@ -17,6 +17,9 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>DoorLockDemoUWPAuto_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Never</AppxBundle>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -136,15 +139,15 @@
     <Content Include="Assets\Logo\Square44x44Logo.scale-150.png" />
     <Content Include="Assets\Logo\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Logo\Square44x44Logo.scale-400.png" />
-    <Content Include="Assets\Logo\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.targetsize-16_altform-unplated.png" />
     <Content Include="Assets\Logo\Square44x44Logo.targetsize-20.png" />
-    <Content Include="Assets\Logo\Square44x44Logo.targetsize-24.png" />
-    <Content Include="Assets\Logo\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.targetsize-256_altform-unplated.png" />
     <Content Include="Assets\Logo\Square44x44Logo.targetsize-30.png" />
     <Content Include="Assets\Logo\Square44x44Logo.targetsize-32.png" />
     <Content Include="Assets\Logo\Square44x44Logo.targetsize-36.png" />
     <Content Include="Assets\Logo\Square44x44Logo.targetsize-40.png" />
-    <Content Include="Assets\Logo\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.targetsize-48_altform-unplated.png" />
     <Content Include="Assets\Logo\Square44x44Logo.targetsize-60.png" />
     <Content Include="Assets\Logo\Square44x44Logo.targetsize-64.png" />
     <Content Include="Assets\Logo\Square44x44Logo.targetsize-72.png" />
@@ -165,11 +168,11 @@
     <Content Include="Assets\Logo\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Logo\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Logo\Wide310x150Logo.scale-400.png" />
+    <Content Include="Assets\Resources\LoadingArrow.gif" />
     <Content Include="Assets\Resources\LoadingEllipsis.gif" />
-    <Content Include="Assets\Resources\LoadingRadio.gif" />
-    <Content Include="Assets\Resources\loadingRoll.gif" />
-    <Content Include="Assets\Resources\locked-padlock.ico" />
     <Content Include="Assets\Resources\locked-padlock.png" />
+    <Content Include="Assets\Resources\onescan_logo.png" />
+    <Content Include="Assets\Resources\onescan_padlock.png" />
     <Content Include="Assets\Resources\question-mark.png" />
     <Content Include="Assets\Resources\question-mark_grey.png" />
     <Content Include="Assets\Resources\unlocked-padlock.png" />

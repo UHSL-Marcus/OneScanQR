@@ -62,7 +62,7 @@ namespace DoorLockDemoUWPAuto
 
                 stateMachine.doEvent(AppStateMachine.Event.START_RESET);
 
-                int count = 3;
+                int count = 6;
                 while (count > 0)
                 {
                     reset_text.Text = count.ToString();
@@ -80,8 +80,7 @@ namespace DoorLockDemoUWPAuto
             stateMachine.setStateCallback(AppStateMachine.State.FETCHING_QR, new Action(() => {
                 setControlVisible(qr_img, Visibility.Visible);
                 setControlVisible(reset_VwBx, Visibility.Collapsed);
-                setImg(qr_img, "ms-appx:///Assets/Resources/LoadingRadio.gif", true);
-                
+                setImg(qr_img, "ms-appx:///Assets/Resources/LoadingEllipsis.gif", true);
                 setImg(padlock_Img, "ms-appx:///Assets/Resources/locked-padlock.png");
             }));
 
@@ -90,8 +89,7 @@ namespace DoorLockDemoUWPAuto
             }));
 
             stateMachine.setStateCallback(AppStateMachine.State.SCANNING, new Action(() => {
-                setControlVisible(qr_img, Visibility.Collapsed);
-                setImg(padlock_Img, "ms-appx:///Assets/Resources/LoadingRoll.gif", true);
+                setImg(qr_img, "ms-appx:///Assets/Resources/LoadingEllipsis.gif", true);
             }));
 
             stateMachine.setStateCallback(AppStateMachine.State.SUCCESS, new Action(() => {
