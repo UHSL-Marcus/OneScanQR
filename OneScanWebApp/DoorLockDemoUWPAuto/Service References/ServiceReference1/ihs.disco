@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="http://speech.herts.ac.uk/ihs/ihs.asmx?wsdl" docRef="http://speech.herts.ac.uk/ihs/ihs.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="http://speech.herts.ac.uk/ihs/ihs.asmx" xmlns:q1="http://speech.herts.ac.uk/ihs" binding="q1:IhsSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="http://speech.herts.ac.uk/ihs/ihs.asmx" xmlns:q2="http://speech.herts.ac.uk/ihs" binding="q2:IhsSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

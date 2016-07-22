@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://speech.herts.ac.uk/ihs" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://speech.herts.ac.uk/ihs" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://speech.herts.ac.uk/ihs">
+      <s:element name="HouseID">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="username" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HouseIDResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="HouseIDResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InitializeHouseDetail">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="houseID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InitializeHouseDetailResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="InitializeHouseDetailResult" type="tns:HouseDetail" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="HouseDetail">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Address1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="County" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Postcode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Country" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="HomeTel" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MobileTel" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FaxNo" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetHouseDetail">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="houseID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetHouseDetailResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetHouseDetailResult" type="tns:HouseDetail" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetHouseDetail">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="houseID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="housedetail" type="tns:HouseDetail" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetHouseDetailResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="InitializeHouseOwner">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="houseID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InitializeHouseOwnerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="InitializeHouseOwnerResult" type="tns:HouseOwner" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="HouseOwner">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Email" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetHouseOwner">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="houseID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetHouseOwnerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetHouseOwnerResult" type="tns:HouseOwner" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetHouseOwner">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="houseID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="houseowner" type="tns:HouseOwner" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetHouseOwnerResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="InitializeHouse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="houseID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InitializeHouseResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="InitializeHouseResult" type="tns:House" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="House">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="DownStairs" type="tns:DownStairs" />
+          <s:element minOccurs="0" maxOccurs="1" name="UpStairs" type="tns:UpStairs" />
+          <s:element minOccurs="0" maxOccurs="1" name="Outside" type="tns:Outside" />
+          <s:element minOccurs="0" maxOccurs="1" name="Loft" type="tns:Loft" />
+          <s:element minOccurs="0" maxOccurs="1" name="Config" type="tns:HouseConfig" />
+          <s:element minOccurs="1" maxOccurs="1" name="LastUpdated" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DownStairs">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="DoorLock" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Fan" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Heater" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Lights" type="tns:ArrayOfInt" />
+          <s:element minOccurs="0" maxOccurs="1" name="LightSensors" type="tns:ArrayOfInt" />
+          <s:element minOccurs="0" maxOccurs="1" name="LightSwitches" type="tns:ArrayOfInt" />
+          <s:element minOccurs="1" maxOccurs="1" name="PIRSensor" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Television" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Temperature" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfInt">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="int" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UpStairs">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Fan" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Heater" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Lights" type="tns:ArrayOfInt" />
+          <s:element minOccurs="0" maxOccurs="1" name="LightSensors" type="tns:ArrayOfInt" />
+          <s:element minOccurs="0" maxOccurs="1" name="LightSwitches" type="tns:ArrayOfInt" />
+          <s:element minOccurs="1" maxOccurs="1" name="PIRSensor" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Temperature" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Outside">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Buzzer" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="FairyLights" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Lights" type="tns:ArrayOfInt" />
+          <s:element minOccurs="1" maxOccurs="1" name="LightSensor" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="PIRSensor" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Loft">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Fan" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Heater" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Lights" type="tns:ArrayOfInt" />
+          <s:element minOccurs="0" maxOccurs="1" name="LightSensors" type="tns:ArrayOfInt" />
+          <s:element minOccurs="0" maxOccurs="1" name="LightSwitches" type="tns:ArrayOfInt" />
+          <s:element minOccurs="1" maxOccurs="1" name="PIRSensor" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Temperature" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="HouseConfig">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ProgramID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="MFUpdate" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="BTUpdate" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="WIFIUpdate" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="SetTempLoft" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="SetTempUpStairs" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="SetTempDownStairs" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="SetLightLevelLoft1" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="SetLightLevelLoft2" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="SetLightLevelUpStairs1" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="SetLightLevelUpStairs2" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="SetLightLevelDownStairs1" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="SetLightLevelDownStairs2" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="SetLightLevelOutside" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Energy1" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" name="Energy2" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" name="Energy3" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" name="Energy4" type="s:double" />
+          <s:element minOccurs="0" maxOccurs="1" name="DebugG" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DebugH" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DebugW" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="SafeSyncUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="houseID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="house" type="tns:House" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SafeSyncUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SafeSyncUpdateResult" type="tns:House" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SafeSyncReadOnly">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="houseID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="house" type="tns:House" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SafeSyncReadOnlyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SafeSyncReadOnlyResult" type="tns:House" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LastUpdated">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="houseID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LastUpdatedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="LastUpdatedResult" type="s:dateTime" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetHouse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="houseID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetHouseResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetHouseResult" type="tns:House" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetHouse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="houseID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="house" type="tns:House" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetHouseResponse">
+        <s:complexType />
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="HouseIDSoapIn">
+    <wsdl:part name="parameters" element="tns:HouseID" />
+  </wsdl:message>
+  <wsdl:message name="HouseIDSoapOut">
+    <wsdl:part name="parameters" element="tns:HouseIDResponse" />
+  </wsdl:message>
+  <wsdl:message name="InitializeHouseDetailSoapIn">
+    <wsdl:part name="parameters" element="tns:InitializeHouseDetail" />
+  </wsdl:message>
+  <wsdl:message name="InitializeHouseDetailSoapOut">
+    <wsdl:part name="parameters" element="tns:InitializeHouseDetailResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetHouseDetailSoapIn">
+    <wsdl:part name="parameters" element="tns:GetHouseDetail" />
+  </wsdl:message>
+  <wsdl:message name="GetHouseDetailSoapOut">
+    <wsdl:part name="parameters" element="tns:GetHouseDetailResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetHouseDetailSoapIn">
+    <wsdl:part name="parameters" element="tns:SetHouseDetail" />
+  </wsdl:message>
+  <wsdl:message name="SetHouseDetailSoapOut">
+    <wsdl:part name="parameters" element="tns:SetHouseDetailResponse" />
+  </wsdl:message>
+  <wsdl:message name="InitializeHouseOwnerSoapIn">
+    <wsdl:part name="parameters" element="tns:InitializeHouseOwner" />
+  </wsdl:message>
+  <wsdl:message name="InitializeHouseOwnerSoapOut">
+    <wsdl:part name="parameters" element="tns:InitializeHouseOwnerResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetHouseOwnerSoapIn">
+    <wsdl:part name="parameters" element="tns:GetHouseOwner" />
+  </wsdl:message>
+  <wsdl:message name="GetHouseOwnerSoapOut">
+    <wsdl:part name="parameters" element="tns:GetHouseOwnerResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetHouseOwnerSoapIn">
+    <wsdl:part name="parameters" element="tns:SetHouseOwner" />
+  </wsdl:message>
+  <wsdl:message name="SetHouseOwnerSoapOut">
+    <wsdl:part name="parameters" element="tns:SetHouseOwnerResponse" />
+  </wsdl:message>
+  <wsdl:message name="InitializeHouseSoapIn">
+    <wsdl:part name="parameters" element="tns:InitializeHouse" />
+  </wsdl:message>
+  <wsdl:message name="InitializeHouseSoapOut">
+    <wsdl:part name="parameters" element="tns:InitializeHouseResponse" />
+  </wsdl:message>
+  <wsdl:message name="SafeSyncUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:SafeSyncUpdate" />
+  </wsdl:message>
+  <wsdl:message name="SafeSyncUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:SafeSyncUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="SafeSyncReadOnlySoapIn">
+    <wsdl:part name="parameters" element="tns:SafeSyncReadOnly" />
+  </wsdl:message>
+  <wsdl:message name="SafeSyncReadOnlySoapOut">
+    <wsdl:part name="parameters" element="tns:SafeSyncReadOnlyResponse" />
+  </wsdl:message>
+  <wsdl:message name="LastUpdatedSoapIn">
+    <wsdl:part name="parameters" element="tns:LastUpdated" />
+  </wsdl:message>
+  <wsdl:message name="LastUpdatedSoapOut">
+    <wsdl:part name="parameters" element="tns:LastUpdatedResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetHouseSoapIn">
+    <wsdl:part name="parameters" element="tns:GetHouse" />
+  </wsdl:message>
+  <wsdl:message name="GetHouseSoapOut">
+    <wsdl:part name="parameters" element="tns:GetHouseResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetHouseSoapIn">
+    <wsdl:part name="parameters" element="tns:SetHouse" />
+  </wsdl:message>
+  <wsdl:message name="SetHouseSoapOut">
+    <wsdl:part name="parameters" element="tns:SetHouseResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IhsSoap">
+    <wsdl:operation name="HouseID">
+      <wsdl:input message="tns:HouseIDSoapIn" />
+      <wsdl:output message="tns:HouseIDSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="InitializeHouseDetail">
+      <wsdl:input message="tns:InitializeHouseDetailSoapIn" />
+      <wsdl:output message="tns:InitializeHouseDetailSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetHouseDetail">
+      <wsdl:input message="tns:GetHouseDetailSoapIn" />
+      <wsdl:output message="tns:GetHouseDetailSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetHouseDetail">
+      <wsdl:input message="tns:SetHouseDetailSoapIn" />
+      <wsdl:output message="tns:SetHouseDetailSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="InitializeHouseOwner">
+      <wsdl:input message="tns:InitializeHouseOwnerSoapIn" />
+      <wsdl:output message="tns:InitializeHouseOwnerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetHouseOwner">
+      <wsdl:input message="tns:GetHouseOwnerSoapIn" />
+      <wsdl:output message="tns:GetHouseOwnerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetHouseOwner">
+      <wsdl:input message="tns:SetHouseOwnerSoapIn" />
+      <wsdl:output message="tns:SetHouseOwnerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="InitializeHouse">
+      <wsdl:input message="tns:InitializeHouseSoapIn" />
+      <wsdl:output message="tns:InitializeHouseSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SafeSyncUpdate">
+      <wsdl:input message="tns:SafeSyncUpdateSoapIn" />
+      <wsdl:output message="tns:SafeSyncUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SafeSyncReadOnly">
+      <wsdl:input message="tns:SafeSyncReadOnlySoapIn" />
+      <wsdl:output message="tns:SafeSyncReadOnlySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LastUpdated">
+      <wsdl:input message="tns:LastUpdatedSoapIn" />
+      <wsdl:output message="tns:LastUpdatedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetHouse">
+      <wsdl:input message="tns:GetHouseSoapIn" />
+      <wsdl:output message="tns:GetHouseSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetHouse">
+      <wsdl:input message="tns:SetHouseSoapIn" />
+      <wsdl:output message="tns:SetHouseSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="IhsSoap" type="tns:IhsSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="HouseID">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/HouseID" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InitializeHouseDetail">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/InitializeHouseDetail" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetHouseDetail">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/GetHouseDetail" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetHouseDetail">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/SetHouseDetail" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InitializeHouseOwner">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/InitializeHouseOwner" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetHouseOwner">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/GetHouseOwner" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetHouseOwner">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/SetHouseOwner" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InitializeHouse">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/InitializeHouse" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SafeSyncUpdate">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/SafeSyncUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SafeSyncReadOnly">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/SafeSyncReadOnly" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LastUpdated">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/LastUpdated" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetHouse">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/GetHouse" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetHouse">
+      <soap:operation soapAction="http://speech.herts.ac.uk/ihs/SetHouse" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="IhsSoap12" type="tns:IhsSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="HouseID">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/HouseID" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InitializeHouseDetail">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/InitializeHouseDetail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetHouseDetail">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/GetHouseDetail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetHouseDetail">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/SetHouseDetail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InitializeHouseOwner">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/InitializeHouseOwner" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetHouseOwner">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/GetHouseOwner" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetHouseOwner">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/SetHouseOwner" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InitializeHouse">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/InitializeHouse" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SafeSyncUpdate">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/SafeSyncUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SafeSyncReadOnly">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/SafeSyncReadOnly" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LastUpdated">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/LastUpdated" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetHouse">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/GetHouse" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetHouse">
+      <soap12:operation soapAction="http://speech.herts.ac.uk/ihs/SetHouse" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Ihs">
+    <wsdl:port name="IhsSoap" binding="tns:IhsSoap">
+      <soap:address location="http://speech.herts.ac.uk/ihs/ihs.asmx" />
+    </wsdl:port>
+    <wsdl:port name="IhsSoap12" binding="tns:IhsSoap12">
+      <soap12:address location="http://speech.herts.ac.uk/ihs/ihs.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

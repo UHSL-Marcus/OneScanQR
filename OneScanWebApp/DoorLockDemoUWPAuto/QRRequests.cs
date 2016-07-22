@@ -44,7 +44,7 @@ namespace DoorLockDemoUWPAuto
                         if (status == 1) progress.Report(1);
                     }
 
-                    await Task.Delay(500);
+                    await Task.Delay(250);
 
                 }
             }

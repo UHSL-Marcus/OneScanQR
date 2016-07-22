@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using XamlAnimatedGif;
+using DoorLockDemoUWPAuto.ServiceReference1;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -28,6 +29,9 @@ namespace DoorLockDemoUWPAuto
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private House house = new House();
+        private IhsSoapClient ihs = new IhsSoapClient();
+        private int houseID = 1;
         private AppStateMachine stateMachine = new AppStateMachine();
         private byte[] imgData = new byte[0];
         public MainPage()
@@ -40,6 +44,14 @@ namespace DoorLockDemoUWPAuto
             stateMachineInit();
 
             title_text.Text = "Door " + Consts.DoorID;
+
+            InitializeHouseResponse x = await ihs.InitializeHouseAsync(houseID);
+
+            house = x.Body.InitializeHouseResult;
+
+            GetHouseResponse y = await ihs.GetHouseAsync(houseID);
+
+            house = y.Body.GetHouseResult;
 
             while (true)
             {
@@ -56,7 +68,14 @@ namespace DoorLockDemoUWPAuto
                 int status = await QRRequests.doGetResult(progress);
 
                 if (status == 2)
+                {
+                    house.Outside.Lights[0] = 1;
+                    house.Outside.Lights[1] = 1;
+                    house.Outside.FairyLights = true;
+                    await ihs.SetHouseAsync(houseID, house);
+
                     stateMachine.doEvent(AppStateMachine.Event.SCAN_ACCEPTED);
+                }
                 else if (status == 3)
                     stateMachine.doEvent(AppStateMachine.Event.SCAN_DENIED);
 
@@ -71,6 +90,11 @@ namespace DoorLockDemoUWPAuto
                 }
 
                 stateMachine.doEvent(AppStateMachine.Event.RESET);
+                house.Outside.Lights[0] = 0;
+                house.Outside.Lights[1] = 0;
+                house.Outside.FairyLights = false;
+                await ihs.SetHouseAsync(houseID, house);
+
             }
 
         }
