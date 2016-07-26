@@ -1,2 +1,2 @@
-MainPackage=C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanWebApp\DoorLockDemoUWPAuto\bin\x86\Release\DoorLockDemoUWPAuto_0.1.0.0_x86.appx
-SymbolPackage=C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanWebApp\DoorLockDemoUWPAuto\AppPackages\DoorLockDemoUWPAuto_0.1.0.0_Test\DoorLockDemoUWPAuto_0.1.0.0_x86.appxsym
+MainPackage=C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanWebApp\DoorLockDemoUWPAuto\bin\x86\Release\DoorLockDemoUWPAuto_0.1.1.0_x86.appx
+SymbolPackage=C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanWebApp\DoorLockDemoUWPAuto\AppPackages\DoorLockDemoUWPAuto_0.1.1.0_Test\DoorLockDemoUWPAuto_0.1.1.0_x86.appxsym

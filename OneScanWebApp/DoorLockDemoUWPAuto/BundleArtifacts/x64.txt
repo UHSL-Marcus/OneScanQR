@@ -1,2 +1,6 @@
-MainPackage=C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanWebApp\DoorLockDemoUWPAuto\bin\x64\Release\DoorLockDemoUWPAuto_0.1.0.0_x64.appx
-SymbolPackage=C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanWebApp\DoorLockDemoUWPAuto\AppPackages\DoorLockDemoUWPAuto_0.1.0.0_Test\DoorLockDemoUWPAuto_0.1.0.0_x64.appxsym
+MainPackage=C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanWebApp\DoorLockDemoUWPAuto\bin\x64\Release\DoorLockDemoUWPAuto_0.1.1.0_x64.appx
+SymbolPackage=C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanWebApp\DoorLockDemoUWPAuto\AppPackages\DoorLockDemoUWPAuto_0.1.1.0_Test\DoorLockDemoUWPAuto_0.1.1.0_x64.appxsym
+ResourcePack=C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanWebApp\DoorLockDemoUWPAuto\bin\x64\Release\DoorLockDemoUWPAuto_0.1.1.0_scale-100.appx
+ResourcePack=C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanWebApp\DoorLockDemoUWPAuto\bin\x64\Release\DoorLockDemoUWPAuto_0.1.1.0_scale-125.appx
+ResourcePack=C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanWebApp\DoorLockDemoUWPAuto\bin\x64\Release\DoorLockDemoUWPAuto_0.1.1.0_scale-150.appx
+ResourcePack=C:\Users\ML15AAF\Documents\GitHub\OneScanQR\OneScanWebApp\DoorLockDemoUWPAuto\bin\x64\Release\DoorLockDemoUWPAuto_0.1.1.0_scale-400.appx
